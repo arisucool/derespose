@@ -1,31 +1,21 @@
-<mat-toolbar color="primary">
-  <span>angular-nest</span>
+<mat-toolbar>
+  <a routerLink="">
+    <span class="app-title">Derespose</span>
+    <span class="app-description">デレスポAR ポーズ検索</span>
+  </a>
 </mat-toolbar>
 
-<div class="content">
-  <div class="cards">
-    <mat-card>
-      <mat-card-title>What is this?</mat-card-title>
-      <mat-card-content>
-        Simple web app template with Angular v13 + NestJS + ng-openapi-gen.<br />
-        <a
-          href="https://github.com/mugifly/angular-nest"
-          target="_blank"
-          rel="noopener"
-        >
-          https://github.com/mugifly/angular-nest
-        </a>
-      </mat-card-content>
-    </mat-card>
+<router-outlet></router-outlet>
 
-    <mat-card>
-      <mat-card-title>Example request to NestJS</mat-card-title>
-      <mat-card-content>
-        {{ $getHello | async }}
-      </mat-card-content>
-      <mat-card-actions align="end">
-        <button (click)="getHello()" mat-button>Request</button>
-      </mat-card-actions>
-    </mat-card>
-  </div>
-</div>
+<footer>
+  <p>
+    Made by
+    <a
+      href="https://github.com/arisucool/derespose"
+      target="_blank"
+      rel="noopener"
+    >
+      arisu.cool 🍓
+    </a>
+  </p>
+</footer>

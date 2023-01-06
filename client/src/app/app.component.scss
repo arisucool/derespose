@@ -1,36 +1,55 @@
-.content {
-  align-items: flex-start;
-  background-color: #fafafa;
-  box-sizing: border-box;
-  padding: 2rem;
-  min-height: calc(100vh - 64px);
+// ヘッダ
 
-  .cards {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+mat-toolbar {
+  border-top: 5px solid #bedbfd;
+  background-color: white;
 
-    mat-card {
-      display: relative;
-      height: auto;
-      width: 45%;
-      margin-bottom: 10%;
-    }
+  a {
+    color: #505050;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
 
-    mat-card a {
-      color: #3f51b5;
-    }
+  a:hover {
+    opacity: 0.7;
+  }
+
+  .app-title {
+    font-weight: lighter;
+    margin-left: 1rem;
+  }
+
+  .app-description {
+    color: #777777;
+    font-weight: lighter;
+    font-size: 0.7rem;
+    margin: 4px 0 0 2rem;
   }
 }
 
-@media screen and (max-width: 640px) {
-  .content {
-    .cards {
-      flex-direction: column;
+// フッタ
 
-      mat-card {
-        width: 90% !important;
-      }
-    }
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  text-align: right;
+
+  p {
+    margin: 0 2.5rem 1.25rem 0;
+  }
+
+  p,
+  a {
+    color: #777777;
+    font-size: 0.8rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+  }
+
+  a:hover {
+    opacity: 0.7;
   }
 }

@@ -1,0 +1,44 @@
+<div class="search-selector">
+  <p class="caption">
+    ときめく
+    <ruby>瞬間<rp>(</rp><rt>ポーズ</rt><rp>)</rp></ruby> をみつけよう
+  </p>
+  <ul>
+    <li>
+      <p class="caption">
+        自分でポーズをとって探す
+        <mat-icon style="vertical-align: middle; margin: 0 -2rem 4px 1rem">
+          emoji_people
+        </mat-icon>
+      </p>
+      <button
+        mat-stroked-button
+        color="primary"
+        matTooltip="例えば、あなたが手を振ると、似た感じのポーズをデレスポARから探します"
+        routerLink="search/camera"
+      >
+        <mat-icon style="margin-bottom: 1px">photo_camera</mat-icon>
+        カメラを起動
+      </button>
+    </li>
+    <li>
+      <p class="caption">
+        タグからポーズを探す
+        <mat-icon style="vertical-align: middle; margin: 0 -2rem 4px 1rem">
+          search
+        </mat-icon>
+      </p>
+
+      <div class="tag-buttons">
+        <button
+          mat-stroked-button
+          *ngFor="let tagName of tags"
+          routerLink="search/tag/{{ tagName }}"
+        >
+          <mat-icon style="margin-bottom: 1px">tag</mat-icon>
+          {{ tagName }}
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>

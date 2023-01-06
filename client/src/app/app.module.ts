@@ -8,9 +8,11 @@ import { ApiModule } from '../.api-client/api.module';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { SearchPageComponent } from './search-page/search-page.component';
+import { HomePageComponent } from './home-page/home-page.component';
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, SearchPageComponent, HomePageComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
