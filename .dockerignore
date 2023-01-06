@@ -1,0 +1,14 @@
+# Generated files
+node_modules/
+client/node_modules/
+server/node_modules/
+client/dist/
+server/dist/
+client/TESTS-*.xml
+server/junit.xml
+
+# VCS files
+.git/
+
+# Other files
+README.md
