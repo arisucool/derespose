@@ -1,39 +1,85 @@
-<div class="container init">
-  <div class="search-form-container">
-    <p class="caption">
-      自分でポーズをとって探す
-      <mat-icon style="vertical-align: middle; margin: 0 -2rem 4px 1rem">
-        emoji_people
-      </mat-icon>
-      <br />
-      <small
-        >例えば、あなたが手を振ると、デレスポARから、手を振るポーズのある曲を探します</small
+<div class="search-form-container">
+  <p class="caption">
+    自分でポーズをとって探す
+    <mat-icon style="vertical-align: middle; margin: 0 -2rem 4px 1rem">
+      emoji_people
+    </mat-icon>
+    <br />
+    <small
+      >例えば、あなたが手を振ると、デレスポARから、手を振るポーズのある曲を探します</small
+    >
+  </p>
+  <div class="camera-search-form simple-card">
+    <div class="video-container">
+      <!-- メッセージ領域 -->
+      <div
+        class="message"
+        *ngIf="this.state === 'initializing' || this.state === 'countdown'"
+        [ngClass]="{ init: this.state === 'initializing' }"
       >
-    </p>
-    <div class="camera-search-form simple-card">
-      <img
-        *ngIf="!cameraVideoStream"
-        class="camera-preview"
-        src="https://via.placeholder.com/320x240"
-      />
+        <ng-container *ngIf="this.state === 'initializing'">
+          しばらくお待ちください...
+        </ng-container>
+        <ng-container *ngIf="this.state === 'countdown'">
+          <mat-icon>timer</mat-icon>
+          あと {{ countdownRemainSeconds }} 秒でポーズを取ってください
+        </ng-container>
+      </div>
+      <!---->
       <video
-        *ngIf="cameraVideoStream"
-        [srcObject]="cameraVideoStream"
+        #cameraVideo
+        [srcObject]="this.cameraVideoStream"
+        [style.display]="this.cameraPosePreviewStream ? 'none' : 'block'"
         class="camera-preview"
         autoplay
         muted
         playsinline
       ></video>
-
-      <button
-        class="shutter-button"
-        mat-button
-        mat-stroked-button
-        color="primary"
-      >
-        <mat-icon style="margin-bottom: 2px">emoji_people</mat-icon>
-        &nbsp; はじめる &nbsp;
-      </button>
+      <video
+        #cameraPosePreviewVideo
+        [srcObject]="this.cameraPosePreviewStream"
+        [style.display]="
+          this.cameraPosePreviewStream && this.searchTargetPoseImageDataUrl
+            ? 'none'
+            : 'block'
+        "
+        class="camera-preview"
+        autoplay
+        muted
+        playsinline
+      ></video>
+      <img
+        class="camera-preview"
+        *ngIf="this.searchTargetPoseImageDataUrl"
+        [src]="this.searchTargetPoseImageDataUrl"
+      />
     </div>
+
+    <!-- 撮影ボタン -->
+    <button
+      class="shutter-button"
+      mat-button
+      mat-stroked-button
+      color="primary"
+      (click)="this.startPhotoShootCountdown()"
+      *ngIf="this.state === 'standby' || this.state === 'completed'"
+    >
+      <mat-icon style="margin-bottom: 2px">emoji_people</mat-icon>
+      &nbsp;
+      <ng-container *ngIf="this.state === 'standby'"> はじめる </ng-container>
+      <ng-container *ngIf="this.state === 'completed'"> もう一度 </ng-container>
+      &nbsp;
+    </button>
+    <button
+      class="shutter-button"
+      mat-button
+      mat-stroked-button
+      color="warn"
+      (click)="this.cancelPhotoShootCountdown()"
+      *ngIf="this.state === 'countdown'"
+    >
+      &nbsp; キャンセル &nbsp;
+    </button>
+    <!---->
   </div>
 </div>

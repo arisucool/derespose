@@ -1,0 +1,23 @@
+<div class="container simple-card">
+  <div class="pose-summary">
+    <p class="song-name">
+      {{ pose?.songName }}
+    </p>
+    <p class="pose-time">
+      <mat-icon>schedule</mat-icon>
+      {{ pose?.timeSeconds }} 秒付近
+    </p>
+
+    <!--<button
+      class="favorite-button"
+      mat-icon-button
+      [ngClass]="{ favorite: pose?.isFavorite }"
+      (click)="pose!.isFavorite = !pose!.isFavorite"
+    >
+      <mat-icon *ngIf="!pose?.isFavorite">star_border</mat-icon>
+      <mat-icon *ngIf="pose?.isFavorite">star</mat-icon>
+    </button>-->
+  </div>
+
+  <img class="pose-image" src="/assets/snapshot-sample.jpg" />
+</div>

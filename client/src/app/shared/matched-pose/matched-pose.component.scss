@@ -1,0 +1,74 @@
+:host {
+  display: block;
+}
+
+.container.simple-card {
+  border-style: solid;
+  position: relative;
+  width: 100%;
+  padding: 0 0 0 0;
+  overflow: hidden;
+  line-height: 0;
+  box-shadow: 0 0 0px 1px #ddddddaa;
+  transition: all 0.3s ease;
+}
+
+.container:hover {
+  box-shadow: 0 0 6px 1px #a0a0a0aa;
+}
+
+@media screen and (max-width: 800px) {
+  .container.simple-card {
+    width: 100%;
+  }
+}
+
+.pose-summary {
+  background-color: #777777aa;
+  backdrop-filter: blur(8px);
+  color: #fefefe;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  text-align: center;
+  line-height: initial;
+  padding: 0.5rem 0 0.5rem 0;
+
+  .song-name {
+    margin: 0 0 0 0;
+  }
+
+  .pose-time {
+    margin: 0 0 0 -1rem;
+    font-size: 0.9em;
+
+    mat-icon {
+      font-size: 0.8rem;
+      line-height: 0.9rem;
+      vertical-align: middle;
+      margin-bottom: -9px;
+    }
+  }
+
+  .favorite-button {
+    color: #f0f0f0;
+    position: absolute;
+    top: 0.25rem;
+    bottom: 0;
+    right: 0.5rem;
+    vertical-align: middle;
+
+    &.favorite {
+      color: #f1c40f;
+    }
+  }
+}
+
+img.pose-image {
+  object-fit: cover;
+  width: 100%;
+  aspect-ratio: 9/16;
+  max-height: 100vh;
+}

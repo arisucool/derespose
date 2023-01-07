@@ -1,16 +1,3 @@
-:host {
-  display: block;
-  padding: 0.5rem 2rem;
-}
-
-.container.init {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: calc(100dvh - (64px * 2));
-  width: 100%;
-}
-
 .search-form-container {
   display: flex;
   flex-direction: column;
@@ -29,16 +16,47 @@
   }
 
   .camera-search-form {
+    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     padding: 1rem 1rem;
     width: fit-content;
     gap: 1rem;
 
-    .camera-preview {
-      max-height: 50dvh;
-      max-width: 90dvw;
-      width: fit-content;
+    .video-container {
+      position: relative;
+
+      .message {
+        color: #ffffff;
+        font-size: 1rem;
+        position: absolute;
+        right: 0.5rem;
+        left: 0.5rem;
+        top: 0.5rem;
+        padding: 1rem 1rem;
+        box-sizing: border-box;
+        border-radius: 3rem;
+        background-color: rgba(0, 0, 0, 0.5);
+
+        &.init {
+          background-color: white;
+          font-size: 0.8rem;
+          color: black;
+        }
+
+        mat-icon {
+          vertical-align: middle;
+          margin: 0 5px 0 -0.5rem;
+          line-height: 1.2rem;
+          font-size: 1.2rem;
+        }
+      }
+
+      .camera-preview {
+        max-height: 100%;
+        max-width: 100%;
+        width: fit-content;
+      }
     }
 
     .shutter-button {

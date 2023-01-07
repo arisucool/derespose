@@ -12,8 +12,17 @@ import { SearchPageComponent } from './search-page/search-page.component';
 import { HomePageComponent } from './home-page/home-page.component';
 import { CameraSearchFormComponent } from './search-page/camera-search-form/camera-search-form.component';
 
+import { NgxMpPoseExtractorModule } from 'ngx-mp-pose-extractor';
+import { MatchedPoseComponent } from './shared/matched-pose/matched-pose.component';
+
 @NgModule({
-  declarations: [AppComponent, SearchPageComponent, HomePageComponent, CameraSearchFormComponent],
+  declarations: [
+    AppComponent,
+    SearchPageComponent,
+    HomePageComponent,
+    CameraSearchFormComponent,
+    MatchedPoseComponent,
+  ],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -23,6 +32,7 @@ import { CameraSearchFormComponent } from './search-page/camera-search-form/came
       rootUrl: '',
     }),
     AppRoutingModule,
+    NgxMpPoseExtractorModule,
   ],
   providers: [],
   bootstrap: [AppComponent],

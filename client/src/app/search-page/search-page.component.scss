@@ -1,0 +1,54 @@
+:host {
+  display: block;
+  padding: 0.5rem 2rem;
+}
+
+.container {
+  // set variable
+  --item-width: 14vw;
+  display: grid;
+  grid-template-columns:
+    var(--item-width) var(--item-width) var(--item-width) var(--item-width)
+    var(--item-width) var(--item-width);
+  grid-gap: 2vw 2.2vw;
+
+  &.init {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: calc(100dvh - (64px * 2));
+    width: 100%;
+  }
+
+  &:not(.init) {
+    app-camera-search-form {
+      margin-top: 2rem;
+    }
+  }
+}
+
+@media screen and (min-width: 1000px) and (max-width: 1270px) {
+  .container {
+    --item-width: 20vw;
+    grid-template-columns: var(--item-width) var(--item-width) var(--item-width) var(
+        --item-width
+      );
+    grid-gap: 3vw 5vw;
+  }
+}
+
+@media screen and (min-width: 800px) and (max-width: 999px) {
+  .container {
+    --item-width: 44vw;
+    grid-template-columns: var(--item-width) var(--item-width);
+    grid-gap: 3vw 3vw;
+  }
+}
+
+@media screen and (max-width: 799px) {
+  .container {
+    display: grid;
+    grid-template-columns: 85vw;
+    grid-gap: 2vw 0;
+  }
+}
