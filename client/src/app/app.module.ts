@@ -14,6 +14,7 @@ import { CameraSearchFormComponent } from './search-page/camera-search-form/came
 
 import { NgxMpPoseExtractorModule } from 'ngx-mp-pose-extractor';
 import { MatchedPoseComponent } from './shared/matched-pose/matched-pose.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,8 @@ import { MatchedPoseComponent } from './shared/matched-pose/matched-pose.compone
     BrowserAnimationsModule,
     HttpClientModule,
     MaterialModule,
+    FormsModule,
+    ReactiveFormsModule,
     ApiModule.forRoot({
       rootUrl: '',
     }),

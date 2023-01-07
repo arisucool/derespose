@@ -12,4 +12,7 @@ export interface MatchedPose {
 
   // お気に入りに入れているか
   isFavorite: boolean;
+
+  // タグ
+  tags?: string[];
 }

@@ -1,11 +1,11 @@
-<div class="container simple-card">
+<div class="container simple-card" *ngIf="pose">
   <div class="pose-summary">
     <p class="song-name">
-      {{ pose?.songName }}
+      {{ pose.songName }}
     </p>
     <p class="pose-time">
       <mat-icon>schedule</mat-icon>
-      {{ pose?.timeSeconds }} 秒付近
+      {{ pose.timeSeconds }} 秒付近
     </p>
 
     <!--<button
@@ -20,4 +20,72 @@
   </div>
 
   <img class="pose-image" src="/assets/snapshot-sample.jpg" />
+
+  <div class="pose-tags">
+    <!-- タグのトグルボタン -->
+    <div
+      class="tag-toggle-button"
+      (click)="isShowingTagEditForm = !isShowingTagEditForm"
+      [ngClass]="{ 'empty-tags': !pose.tags || pose.tags.length === 0 }"
+    >
+      <ng-container *ngIf="isShowingTagEditForm">
+        <mat-icon style="line-height: 2rem">expand_more</mat-icon>
+      </ng-container>
+      <ng-container *ngIf="!isShowingTagEditForm">
+        <ng-container *ngIf="!pose.tags || pose.tags.length === 0">
+          タグを付けてください
+        </ng-container>
+        <ng-container *ngIf="pose.tags && pose.tags.length === 1">
+          #{{ pose.tags[0] }}
+        </ng-container>
+        <ng-container *ngIf="pose.tags && 2 <= pose.tags.length">
+          #{{ pose.tags[0] }} &nbsp;
+          <small>＋ {{ pose.tags.length - 1 }} 件</small>
+        </ng-container>
+      </ng-container>
+    </div>
+    <!---->
+
+    <!-- タグ編集フォーム -->
+    <form
+      class="tag-edit-form"
+      [style.display]="isShowingTagEditForm ? 'block' : 'none'"
+    >
+      <mat-form-field class="example-chip-list" appearance="fill">
+        <mat-chip-grid #chipGrid>
+          <mat-chip-row
+            *ngFor="let tagName of pose?.tags"
+            (removed)="this.removeTag(tagName)"
+          >
+            {{ tagName }}
+            <button matChipRemove>
+              <mat-icon>cancel</mat-icon>
+            </button>
+          </mat-chip-row>
+        </mat-chip-grid>
+        <input
+          *ngIf="this.pose.tags && this.pose.tags.length < 5"
+          placeholder="タグを追加..."
+          #tagInput
+          [formControl]="this.tagFormCtrl"
+          [matChipInputFor]="chipGrid"
+          [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+          [matAutocomplete]="auto"
+          (matChipInputTokenEnd)="addTag($event)"
+        />
+        <mat-autocomplete
+          #auto="matAutocomplete"
+          (optionSelected)="this.onTagSelected($event)"
+        >
+          <mat-option
+            *ngFor="let tagName of filteredAvailableTags | async"
+            [value]="tagName"
+          >
+            {{ tagName }}
+          </mat-option>
+        </mat-autocomplete>
+      </mat-form-field>
+    </form>
+    <!---->
+  </div>
 </div>

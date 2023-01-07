@@ -23,6 +23,8 @@
   }
 }
 
+// ポーズの概要
+
 .pose-summary {
   background-color: #777777aa;
   backdrop-filter: blur(8px);
@@ -66,9 +68,64 @@
   }
 }
 
+// ポーズ画像
+
 img.pose-image {
   object-fit: cover;
   width: 100%;
   aspect-ratio: 9/16;
   max-height: 100vh;
+}
+
+// タグ
+
+.pose-tags {
+  background-color: #777777aa;
+  backdrop-filter: blur(8px);
+  color: #fefefe;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  min-height: 2rem;
+  padding: 0 0 0 0;
+
+  .tag-toggle-button {
+    color: #eeeeee;
+    cursor: pointer;
+    font-size: 0.8rem;
+    width: 100%;
+    line-height: 2rem;
+    text-align: center;
+
+    &.empty-tags {
+      color: #ffffff;
+    }
+  }
+
+  .tag-toggle-button:hover {
+    background-color: #ddddddaa;
+    color: #222222;
+  }
+
+  form {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+  }
+}
+
+::ng-deep .pose-tags mat-form-field {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 1rem 1rem;
+}
+
+::ng-deep .pose-tags mat-form-field,
+::ng-deep .pose-tags .mat-mdc-text-field-wrapper {
+  background-color: transparent;
+  color: #ffffff;
+  font-size: 0.8rem;
+}
+
+.pose-tags ::placeholder {
+  color: #f0f0f0 !important;
 }

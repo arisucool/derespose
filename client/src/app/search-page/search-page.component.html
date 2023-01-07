@@ -3,8 +3,10 @@
     (onSearchTargetPoseDecided)="this.onSearchTargetPoseDecided($event)"
   ></app-camera-search-form>
 
-  <app-matched-pose
-    *ngFor="let pose of this.matchedPoses"
-    [pose]="pose"
-  ></app-matched-pose>
+  <ng-container *ngIf="searchTargetPose">
+    <app-matched-pose
+      *ngFor="let pose of this.matchedPoses"
+      [pose]="pose"
+    ></app-matched-pose>
+  </ng-container>
 </div>

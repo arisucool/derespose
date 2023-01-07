@@ -11,14 +11,46 @@ export class SearchPageComponent {
   public searchTargetPose?: DetectedPose;
 
   public matchedPoses?: MatchedPose[] = [
-    /**
     {
       id: 1000,
       songName: 'お願い！シンデレラ',
       timeSeconds: 10,
       score: 0.9,
       isFavorite: false,
-    },**/
+      tags: ['手を振る', '考える'],
+    },
+    {
+      id: 1000,
+      songName: 'お願い！シンデレラ',
+      timeSeconds: 10,
+      score: 0.9,
+      isFavorite: false,
+      tags: ['手を振る', '考える'],
+    },
+    {
+      id: 1000,
+      songName: 'お願い！シンデレラ',
+      timeSeconds: 10,
+      score: 0.9,
+      isFavorite: false,
+      tags: ['手を振る', '考える'],
+    },
+    {
+      id: 1000,
+      songName: 'お願い！シンデレラ',
+      timeSeconds: 10,
+      score: 0.9,
+      isFavorite: false,
+      tags: ['手を振る', '考える'],
+    },
+    {
+      id: 1000,
+      songName: 'お願い！シンデレラ',
+      timeSeconds: 10,
+      score: 0.9,
+      isFavorite: false,
+      tags: ['手を振る', '考える'],
+    },
   ];
 
   constructor() {}
