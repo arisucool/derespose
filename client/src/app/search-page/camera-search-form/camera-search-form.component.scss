@@ -1,0 +1,48 @@
+:host {
+  display: block;
+  padding: 0.5rem 2rem;
+}
+
+.container.init {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: calc(100dvh - (64px * 2));
+  width: 100%;
+}
+
+.search-form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  top: -1.2rem;
+
+  .caption {
+    font-size: 1rem;
+    margin: 0.1rem 0 1rem 0;
+
+    small {
+      font-size: 0.7rem;
+    }
+  }
+
+  .camera-search-form {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 1rem;
+    width: fit-content;
+    gap: 1rem;
+
+    .camera-preview {
+      max-height: 50dvh;
+      max-width: 90dvw;
+      width: fit-content;
+    }
+
+    .shutter-button {
+      width: 100%;
+    }
+  }
+}

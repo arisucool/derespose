@@ -34,3 +34,14 @@
     }
   }
 }
+
+.simple-card {
+  box-sizing: border-box;
+  width: 60vw;
+  max-width: 800px;
+  padding: 1.2rem 0;
+  position: relative;
+  background-color: #ffffff;
+  border-radius: 10px;
+  border: dashed 1px #dddddd;
+}
