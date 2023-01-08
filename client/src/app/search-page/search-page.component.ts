@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { DetectedPose } from '../shared/detected-pose';
 import { MatchedPose } from '../shared/matched-pose';
 import { PoseSearchService } from '../shared/pose-search.service';
+import { CameraSearchFormComponent } from './camera-search-form/camera-search-form.component';
 
 @Component({
   selector: 'app-search-page',
@@ -9,6 +10,9 @@ import { PoseSearchService } from '../shared/pose-search.service';
   styleUrls: ['../shared/style.scss', './search-page.component.scss'],
 })
 export class SearchPageComponent implements OnInit {
+  @ViewChild('cameraSearchForm')
+  public cameraSearchFormComponent?: CameraSearchFormComponent;
+
   public searchTargetPose?: DetectedPose;
 
   public matchedPoses?: MatchedPose[] = [];
@@ -33,6 +37,9 @@ export class SearchPageComponent implements OnInit {
     if (this.matchedPoses.length === 0) {
       // ポーズが一件も見つからなければ
       this.searchTargetPose = undefined;
+      if (this.cameraSearchFormComponent) {
+        this.cameraSearchFormComponent.retryPhotoShootCountdown();
+      }
     }
   }
 }

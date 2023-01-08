@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PoseExtractorService } from 'ngx-mp-pose-extractor';
-import { interval, Subscription } from 'rxjs';
+import { interval, Subscription, timer } from 'rxjs';
 import { DetectedPose } from 'src/app/shared/detected-pose';
 
 @Component({
@@ -55,7 +55,8 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
     | 'standby'
     | 'countdown'
     | 'processing'
-    | 'completed' = 'initializing';
+    | 'completed'
+    | 'retrying' = 'initializing';
 
   // 撮影までのカウントダウン
   public readonly COUNT_DOWN_SECONDS = 3;
@@ -160,6 +161,16 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
       this.countdownTimerSubscription?.unsubscribe();
       this.state = 'processing';
       this.searchPose();
+    });
+  }
+
+  public retryPhotoShootCountdown() {
+    this.state = 'retrying';
+
+    // 3秒待ってもう一度カウントダウンを開始
+    this.countdownTimerSubscription = timer(3000).subscribe(() => {
+      this.countdownTimerSubscription?.unsubscribe();
+      this.startPhotoShootCountdown();
     });
   }
 

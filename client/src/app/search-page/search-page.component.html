@@ -1,5 +1,6 @@
 <div class="container" [ngClass]="{ init: !searchTargetPose }">
   <app-camera-search-form
+    #cameraSearchForm
     (onSearchTargetPoseDecided)="this.onSearchTargetPoseDecided($event)"
   ></app-camera-search-form>
 

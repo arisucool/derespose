@@ -14,11 +14,18 @@
       <!-- メッセージ領域 -->
       <div
         class="message"
-        *ngIf="this.state === 'initializing' || this.state === 'countdown'"
+        *ngIf="
+          this.state === 'initializing' ||
+          this.state === 'countdown' ||
+          this.state === 'retrying'
+        "
         [ngClass]="{ init: this.state === 'initializing' }"
       >
         <ng-container *ngIf="this.state === 'initializing'">
           しばらくお待ちください...
+        </ng-container>
+        <ng-container *ngIf="this.state === 'retrying'">
+          一致するポーズがありません。もう一度試しましょう！
         </ng-container>
         <ng-container *ngIf="this.state === 'countdown'">
           <mat-icon>timer</mat-icon>
