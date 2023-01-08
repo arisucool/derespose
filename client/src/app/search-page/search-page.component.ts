@@ -60,10 +60,20 @@ export class SearchPageComponent implements OnInit {
     this.poseSearchService.loadPoseFiles();
   }
 
-  public async onSearchTargetPoseDecided(event: any) {
-    console.log(`[SearchPageComponent] onSearchTargetPoseDecided`, event);
-    this.searchTargetPose = event;
+  public async onSearchTargetPoseDecided(searchTargetPoses: DetectedPose[]) {
+    console.log(
+      `[SearchPageComponent] onSearchTargetPoseDecided`,
+      searchTargetPoses,
+    );
+    this.searchTargetPose = searchTargetPoses[searchTargetPoses.length - 1];
 
-    this.matchedPoses = await this.poseSearchService.searchPoseByPose(event);
+    this.matchedPoses = await this.poseSearchService.searchPoseByPose(
+      searchTargetPoses,
+    );
+
+    if (this.matchedPoses.length === 0) {
+      // ポーズが一件も見つからなければ
+      this.searchTargetPose = undefined;
+    }
   }
 }

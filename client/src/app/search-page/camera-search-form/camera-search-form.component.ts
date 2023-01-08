@@ -26,7 +26,8 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
 
   // 撮影結果を親コンポーネントに渡すための EventEmitter
   @Output()
-  public onSearchTargetPoseDecided: EventEmitter<DetectedPose> = new EventEmitter();
+  public onSearchTargetPoseDecided: EventEmitter<DetectedPose[]> =
+    new EventEmitter();
 
   // カメラ映像のストリーム
   public cameraVideoStream?: MediaStream;
@@ -35,6 +36,10 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
   public cameraPosePreviewStream?: MediaStream;
   public currentPosePreviewImageDataUrl?: string;
   public currentPose?: DetectedPose;
+
+  // 最近のポーズ検出結果
+  public readonly KEEPED_RECENTLY_POSES_MAX_COUNT = 5;
+  public recentlyPoses: DetectedPose[] = [];
 
   // 最新のポーズ検出結果を受け取るための Subscription
   public onResultsEventEmitterSubscription?: Subscription;
@@ -195,6 +200,11 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
   ) {
     this.currentPosePreviewImageDataUrl = posePreviewImageDataUrl;
     this.currentPose = mpResults;
+
+    this.recentlyPoses.push(mpResults);
+    if (this.KEEPED_RECENTLY_POSES_MAX_COUNT < this.recentlyPoses.length) {
+      this.recentlyPoses.shift();
+    }
   }
 
   private searchPose() {
@@ -202,6 +212,6 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
     this.searchTargetPoseImageDataUrl =
       this.currentPosePreviewImageDataUrl + '';
     this.state = 'completed';
-    this.onSearchTargetPoseDecided.emit(this.searchTargetPose);
+    this.onSearchTargetPoseDecided.emit(this.recentlyPoses);
   }
 }

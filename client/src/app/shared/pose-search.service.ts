@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { Pose } from 'ngx-mp-pose-extractor';
+import { Pose, PoseItem } from 'ngx-mp-pose-extractor';
 import { DetectedPose } from './detected-pose';
 import { MatchedPose } from './matched-pose';
 
@@ -85,7 +85,7 @@ export class PoseSearchService {
     this.poseFiles = poseFiles;
   }
 
-  async searchPoseByPose(targetPose: DetectedPose): Promise<MatchedPose[]> {
+  async searchPoseByPose(targetPoses: DetectedPose[]): Promise<MatchedPose[]> {
     if (!this.poseFiles) {
       await this.loadPoseFiles();
     }
@@ -99,7 +99,19 @@ export class PoseSearchService {
       const pose = this.poseFiles[poseFileName].pose;
       const title = this.poseFiles[poseFileName].title;
 
-      const poseItems = pose.getSimilarPoses(targetPose as any); // TODO
+      let usedFrames = new Set();
+      let poseItems: PoseItem[] = [];
+      for (const targetPose of targetPoses) {
+        const poseItems_ = pose.getSimilarPoses(targetPose as any); // TODO 型定義を修正する
+        for (const poseItem of poseItems_) {
+          if (usedFrames.has(poseItem.t)) {
+            continue;
+          }
+          poseItems.push(poseItem);
+          usedFrames.add(poseItem.t);
+        }
+      }
+
       console.log(
         `[PoseSearchService] - searchPoseByPose`,
         pose.getVideoName(),
