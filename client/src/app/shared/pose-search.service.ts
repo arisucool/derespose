@@ -7,46 +7,98 @@ import { MatchedPose } from './matched-pose';
   providedIn: 'root',
 })
 export class PoseSearchService {
+  // ポーズファイルのURL
+  public static readonly POSE_FILE_BASE_URL =
+    'https://arisucool.github.io/derespose-poses/';
+  public static readonly POSE_FILE_DEFINITIONS_URL = `${PoseSearchService.POSE_FILE_BASE_URL}poses.json`;
+
+  // ポーズファイル定義のキャッシュ有効期限 (6時間)
+  public static readonly POSE_FILE_DEFINITIONS_CACHE_EXPIRES =
+    1000 * 60 * 60 * 6;
+
+  // ポーズファイルのキャッシュ有効期限 (1週間)
+  public static readonly POSE_FILE_CACHE_EXPIRES = 1000 * 60 * 60 * 24 * 7;
+
   public availableTags: string[] = [];
   public onAvailableTagChanged: EventEmitter<string[]> = new EventEmitter();
 
-  public static readonly POSE_JSON_NAMES = ['0'];
-
-  private poses?: Pose[];
+  private poseFiles?: {
+    [key: string]: {
+      title: string;
+      type: 'song' | 'chanpoku';
+      pose: Pose;
+    };
+  };
 
   constructor() {}
 
-  async loadPoses() {
-    const poses = [];
-    for (const poseJsonName of PoseSearchService.POSE_JSON_NAMES) {
-      console.log(`Loading pose...`);
-      try {
-        const poseJson = await fetch(`assets/poses/${poseJsonName}.json`);
-        const pose = new Pose();
-        pose.loadJson(await poseJson.text());
-        poses.push(pose);
-      } catch (e: any) {
-        console.error(
-          `[PoseSearchService] loadPoses - Failed to load pose: ${poseJsonName}`,
-          e,
-        );
-        throw e;
-      }
+  async loadPoseFiles() {
+    if (this.poseFiles) {
+      return;
     }
-    this.poses = poses;
+
+    // ポーズ定義ファイルを読み込む
+    let poseFileDefinitions: {
+      [key: string]: {
+        title: string;
+        type: 'song' | 'chanpoku';
+      };
+    };
+
+    const cache = this.getCachedJson(
+      'poseFileDefinitions',
+      PoseSearchService.POSE_FILE_DEFINITIONS_CACHE_EXPIRES,
+    );
+
+    if (cache !== undefined) {
+      poseFileDefinitions = cache;
+    } else {
+      console.log(
+        `[PoseSearchService] loadPoses - Requesting pose file definitions...`,
+      );
+      const res = await fetch(PoseSearchService.POSE_FILE_DEFINITIONS_URL);
+      poseFileDefinitions = await res.json();
+
+      this.setCachedJson(
+        'poseFileDefinitions',
+        poseFileDefinitions,
+        PoseSearchService.POSE_FILE_DEFINITIONS_CACHE_EXPIRES,
+      );
+    }
+    console.log(
+      `[PoseSearchService] loadPoses - Loaded pose file definitions`,
+      poseFileDefinitions,
+    );
+
+    const poseFiles: any = {};
+    for (const poseFileName of Object.keys(poseFileDefinitions)) {
+      const pose = await this.loadPoseFile(poseFileName);
+      poseFiles[poseFileName] = {
+        title: poseFileDefinitions[poseFileName].title,
+        type: poseFileDefinitions[poseFileName].type,
+        pose: pose,
+      };
+    }
+    console.log(
+      `[PoseSearchService] loadPoses - Loaded ${poseFiles.length} pose files`,
+    );
+    this.poseFiles = poseFiles;
   }
 
   async searchPoseByPose(targetPose: DetectedPose): Promise<MatchedPose[]> {
-    if (!this.poses) {
-      await this.loadPoses();
+    if (!this.poseFiles) {
+      await this.loadPoseFiles();
     }
 
-    if (!this.poses) {
+    if (!this.poseFiles) {
       throw new Error('Failed to load poses');
     }
 
     let matchedPoses: MatchedPose[] = [];
-    for (const pose of this.poses) {
+    for (const poseFileName of Object.keys(this.poseFiles)) {
+      const pose = this.poseFiles[poseFileName].pose;
+      const title = this.poseFiles[poseFileName].title;
+
       const poseItems = pose.getSimilarPoses(targetPose as any); // TODO
       console.log(
         `[PoseSearchService] - searchPoseByPose`,
@@ -57,11 +109,12 @@ export class PoseSearchService {
       for (const poseItem of poseItems) {
         const matchedPose: MatchedPose = {
           id: poseItem.t,
-          songName: pose.getVideoName(),
+          title: title,
           timeSeconds: Math.floor(poseItem.t / 1000),
           score: 0,
           isFavorite: false,
           tags: [],
+          imageUrl: `${PoseSearchService.POSE_FILE_BASE_URL}${poseFileName}/frame-${poseItem.t}.jpg`,
         };
         matchedPoses.push(matchedPose);
       }
@@ -86,5 +139,84 @@ export class PoseSearchService {
 
   removeTag(id: number, tagName: string) {
     throw new Error('Method not implemented.');
+  }
+
+  private async loadPoseFile(poseFileName: string) {
+    let pose: Pose;
+    try {
+      let cache = this.getCachedJson(
+        poseFileName,
+        PoseSearchService.POSE_FILE_CACHE_EXPIRES,
+      );
+
+      pose = new Pose();
+      if (cache !== undefined) {
+        pose.loadJson(JSON.stringify(cache));
+      } else {
+        console.log(
+          `[PoseSearchService] loadPoses - Requesting pose file...`,
+          poseFileName,
+        );
+        const req = await fetch(
+          `${PoseSearchService.POSE_FILE_BASE_URL}${poseFileName}/poses.json`,
+        );
+
+        const poseJson = await req.text();
+        pose.loadJson(poseJson);
+
+        this.setCachedJson(
+          poseFileName,
+          poseJson,
+          PoseSearchService.POSE_FILE_CACHE_EXPIRES,
+        );
+      }
+    } catch (e: any) {
+      console.error(
+        `[PoseSearchService] loadPoses - Failed to load pose: ${poseFileName}`,
+        e,
+      );
+      throw e;
+    }
+    return pose;
+  }
+
+  private getCachedJson(key: string, expires: number) {
+    const cacheStr = window.localStorage.getItem(`cache__${key}`);
+    if (cacheStr === null) return undefined;
+
+    let cache: {
+      content: any;
+      createdAt: number;
+    };
+    try {
+      cache = JSON.parse(cacheStr);
+    } catch (e: any) {
+      return undefined;
+    }
+    if (!cache || !cache.content || !cache.createdAt) {
+      return undefined;
+    }
+
+    const now = new Date().getTime();
+    if (expires < now - cache.createdAt) {
+      window.localStorage.removeItem(key);
+      return undefined;
+    }
+
+    return cache['content'];
+  }
+
+  private setCachedJson(key: string, content: any, expires: number) {
+    const now = new Date().getTime();
+
+    if (typeof content === 'string') {
+      content = JSON.parse(content);
+    }
+
+    const cache = {
+      content: content,
+      createdAt: now,
+    };
+    window.localStorage.setItem(`cache__${key}`, JSON.stringify(cache));
   }
 }

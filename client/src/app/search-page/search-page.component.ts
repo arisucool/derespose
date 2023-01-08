@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { DetectedPose } from '../shared/detected-pose';
 import { MatchedPose } from '../shared/matched-pose';
 import { PoseSearchService } from '../shared/pose-search.service';
@@ -8,13 +8,13 @@ import { PoseSearchService } from '../shared/pose-search.service';
   templateUrl: './search-page.component.html',
   styleUrls: ['../shared/style.scss', './search-page.component.scss'],
 })
-export class SearchPageComponent {
+export class SearchPageComponent implements OnInit {
   public searchTargetPose?: DetectedPose;
 
   public matchedPoses?: MatchedPose[] = [
     {
       id: 1000,
-      songName: 'お願い！シンデレラ',
+      title: 'お願い！シンデレラ',
       timeSeconds: 10,
       score: 0.9,
       isFavorite: false,
@@ -22,7 +22,7 @@ export class SearchPageComponent {
     },
     {
       id: 1000,
-      songName: 'お願い！シンデレラ',
+      title: 'お願い！シンデレラ',
       timeSeconds: 10,
       score: 0.9,
       isFavorite: false,
@@ -30,7 +30,7 @@ export class SearchPageComponent {
     },
     {
       id: 1000,
-      songName: 'お願い！シンデレラ',
+      title: 'お願い！シンデレラ',
       timeSeconds: 10,
       score: 0.9,
       isFavorite: false,
@@ -38,7 +38,7 @@ export class SearchPageComponent {
     },
     {
       id: 1000,
-      songName: 'お願い！シンデレラ',
+      title: 'お願い！シンデレラ',
       timeSeconds: 10,
       score: 0.9,
       isFavorite: false,
@@ -46,7 +46,7 @@ export class SearchPageComponent {
     },
     {
       id: 1000,
-      songName: 'お願い！シンデレラ',
+      title: 'お願い！シンデレラ',
       timeSeconds: 10,
       score: 0.9,
       isFavorite: false,
@@ -55,6 +55,10 @@ export class SearchPageComponent {
   ];
 
   constructor(private poseSearchService: PoseSearchService) {}
+
+  async ngOnInit() {
+    this.poseSearchService.loadPoseFiles();
+  }
 
   public async onSearchTargetPoseDecided(event: any) {
     console.log(`[SearchPageComponent] onSearchTargetPoseDecided`, event);

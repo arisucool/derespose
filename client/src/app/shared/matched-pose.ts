@@ -2,7 +2,7 @@ export interface MatchedPose {
   id: number;
 
   // 曲名または「ちゃんぽく」のポーズ名
-  songName: string;
+  title: string;
 
   // ポーズの登場する再生位置 (秒数)
   timeSeconds: number;
@@ -15,4 +15,7 @@ export interface MatchedPose {
 
   // タグ
   tags?: string[];
+
+  // 画像URL
+  imageUrl?: string;
 }

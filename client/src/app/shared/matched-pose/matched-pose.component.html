@@ -1,7 +1,7 @@
 <div class="container simple-card" *ngIf="pose">
   <div class="pose-summary">
     <p class="song-name">
-      {{ pose.songName }}
+      {{ pose.title }}
     </p>
     <p class="pose-time">
       <mat-icon>schedule</mat-icon>
@@ -19,7 +19,7 @@
     </button>-->
   </div>
 
-  <img class="pose-image" src="/assets/snapshot-sample.jpg" />
+  <img class="pose-image" [src]="pose.imageUrl" />
 
   <div class="pose-tags">
     <!-- タグのトグルボタン -->
