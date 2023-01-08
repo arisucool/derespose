@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { Pose } from 'ngx-mp-pose-extractor';
+import { Pose, PoseItem } from 'ngx-mp-pose-extractor';
 import { SimilarPoseItem } from 'ngx-mp-pose-extractor/lib/interfaces/matched-pose-item';
 import { lastValueFrom } from 'rxjs';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
@@ -158,6 +158,12 @@ export class PoseSearchService {
         // スコア算出 - ポーズの登場する早さ
         score -= (item.poseItem.timeMiliseconds / 1000) * 0.01;
 
+        // スコア算出 - お気に入りの数
+        // TODO
+
+        // スコア算出 - タグの数
+        // TODO
+
         // スコアを小数点以下2桁に丸める
         const scoreString: string = `${Math.round(score * 100) / 100}`;
 
@@ -198,42 +204,87 @@ export class PoseSearchService {
   }
 
   async searchPosesByTag(tagName: string) {
-    const poseItems = await lastValueFrom(
+    const receivedPoses = await lastValueFrom(
       this.apiService.posesControllerGetPosesByPoseTag({
         poseTagName: tagName,
       }),
     );
 
-    console.log(`[PoseSearchService] - searchPosesByTag`, poseItems);
+    console.log(`[PoseSearchService] - searchPosesByTag`, receivedPoses);
 
     let matchedPoses: MatchedPose[] = [];
-    for (const item of poseItems) {
+    for (const receivedPose of receivedPoses) {
+      const poseItem = this.getPoseByPoseFileNameAndTime(
+        receivedPose.poseFileName,
+        receivedPose.time,
+      );
+      if (!poseItem) continue;
+
+      let poseFileTitle = 'Unknown';
+      if (this.poseFiles && this.poseFiles[receivedPose.poseFileName]) {
+        poseFileTitle = this.poseFiles[receivedPose.poseFileName].title;
+      }
+
+      // スコア算出 - ポーズの長さ
+      let score = (poseItem.durationMiliseconds / 1000) * 0.1;
+
+      // スコア算出 - ポーズの登場する早さ
+      score -= (poseItem.timeMiliseconds / 1000) * 0.01;
+
+      // スコア算出 - お気に入りの数
+      // TODO
+
+      // スコア算出 - タグの数
+      // TODO
+
+      // スコアを小数点以下2桁に丸める
+      const scoreString: string = `${Math.round(score * 100) / 100}`;
+
       // 整形して配列へ追加
       const matchedPose: MatchedPose = {
-        id: 0,
-        title: item.poseFileName,
-        poseFileName: item.poseFileName,
-        time: item.time,
-        timeSeconds: Math.floor(item.time / 1000),
-        durationSeconds: 0,
-        score: 0,
-        scoreString: '0',
+        id: receivedPose.id,
+        title: poseFileTitle,
+        poseFileName: receivedPose.poseFileName,
+        time: receivedPose.time,
+        timeSeconds: Math.floor(receivedPose.time / 1000),
+        durationSeconds:
+          Math.floor((poseItem.durationMiliseconds / 1000) * 10) / 10,
+        score: score,
+        scoreString: scoreString,
         scoreDetails: {
-          similarity: 0,
-          foundTargetPoseIndex: 0,
-          duration: 0,
-          time: 0,
+          similarity: -1,
+          foundTargetPoseIndex: -1,
+          duration: poseItem.durationMiliseconds,
+          time: poseItem.timeMiliseconds,
         },
         isFavorite: false,
-        tags: item.tags.map((tag: PoseTag) => {
+        tags: receivedPose.tags.map((tag: PoseTag) => {
           return tag.name;
         }),
-        imageUrl: `${PoseSearchService.POSE_FILE_BASE_URL}${item.poseFileName}/frame-${item.time}.jpg`,
+        imageUrl: `${PoseSearchService.POSE_FILE_BASE_URL}${receivedPose.poseFileName}/frame-${receivedPose.time}.jpg`,
       };
       matchedPoses.push(matchedPose);
     }
 
+    // スコア順にソート
+    matchedPoses = matchedPoses.sort((a, b) => {
+      return b.score - a.score;
+    });
+
     return matchedPoses;
+  }
+
+  private getPoseByPoseFileNameAndTime(
+    poseFileName: string,
+    timeMiliseconds: number,
+  ) {
+    if (!this.poseFiles) return;
+
+    const poseFile = this.poseFiles[poseFileName];
+    if (!poseFile) return;
+
+    const pose = poseFile.pose.getPoseByTime(timeMiliseconds);
+    return pose;
   }
 
   private async loadPoseFile(poseFileName: string) {
