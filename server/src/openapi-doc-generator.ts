@@ -1,16 +1,21 @@
+/**
+ * APIドキュメントを生成するためのスクリプト
+ * (サーバの起動なしにAPIドキュメントのJSONファイルを生成可能)
+ */
+
 import { Test } from '@nestjs/testing';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import * as fs from 'fs';
 import { AppModule } from './app.module';
+import { Helper } from './helper';
+import * as fs from 'fs';
 
 async function bootstrap(): Promise<void> {
-  // Get the modules included by AppModule
+  // AppModule にてインポートされているモジュールを取得
   const imports = Reflect.getMetadata('imports', AppModule);
   const modules = imports.filter((item: any) => {
     return typeof item === 'function';
   });
 
-  // Get the controllers and providers
+  // 各モジュールのコントローラおよびプロバイダを取得
   let controllers = Reflect.getMetadata('controllers', AppModule);
   let providers = Reflect.getMetadata('providers', AppModule);
   for (const mod of modules) {
@@ -18,15 +23,19 @@ async function bootstrap(): Promise<void> {
     providers = providers.concat(Reflect.getMetadata('providers', mod));
   }
 
-  // Generate a mock
-  const mockedProviders = providers.map((provider: any) => {
-    return {
-      provide: provider,
-      useValue: {},
-    };
-  });
+  // プロバイダのモックを生成
+  const mockedProviders = providers
+    .filter((provider: any) => {
+      return provider !== undefined;
+    })
+    .map((provider: any) => {
+      return {
+        provide: provider,
+        useValue: {},
+      };
+    });
 
-  // Generate an application instance
+  // アプリケーションのインスタンスを生成
   const testingModule = await Test.createTestingModule({
     controllers: controllers,
     providers: mockedProviders,
@@ -34,15 +43,14 @@ async function bootstrap(): Promise<void> {
 
   const app = testingModule.createNestApplication();
 
-  // Change the URL prefix to `/api` on backend
+  // URLのプレフィックスが /api となるように設定
   app.setGlobalPrefix('api');
 
-  // Generate API JSON
-  const doc_options = new DocumentBuilder().setTitle(`API Document`).build();
-  const doc = SwaggerModule.createDocument(app, doc_options);
-  const docJson = JSON.stringify(doc);
+  // API ドキュメント (JSON) を生成
+  const document = Helper.generateAPIDocument(app);
+  const docJson = JSON.stringify(document);
 
-  // Check the argument
+  // 引数を確認
   let outputPath = null;
   for (const arg of process.argv) {
     if (arg.match(/^--output=(.+)$/)) {
@@ -51,7 +59,7 @@ async function bootstrap(): Promise<void> {
     }
   }
 
-  // Output JSON document
+  // API ドキュメント (JSON) を出力
   if (outputPath) {
     fs.writeFileSync(outputPath, docJson);
   } else {

@@ -11,8 +11,4 @@ export class AppComponent {
   $getHello!: Observable<void>;
 
   constructor(private api: ApiService) {}
-
-  getHello() {
-    this.$getHello = this.api.appControllerGetHello();
-  }
 }

@@ -4,8 +4,12 @@ export interface MatchedPose {
   // 曲名または「ちゃんぽく」のポーズ名
   title: string;
 
+  // ポーズデータ名
+  poseFileName: string;
+
   // ポーズの登場する再生位置 (秒数)
   timeSeconds: number;
+  time: number;
 
   // ポーズの長さ
   durationSeconds: number;

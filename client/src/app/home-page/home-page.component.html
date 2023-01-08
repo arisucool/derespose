@@ -43,11 +43,11 @@
       <div class="tag-buttons">
         <button
           mat-stroked-button
-          *ngFor="let tagName of tags"
-          routerLink="search/tag/{{ tagName }}"
+          *ngFor="let tag of this.poseTags"
+          routerLink="search/tag/{{ tag.name }}"
         >
           <mat-icon style="margin-bottom: 1px">tag</mat-icon>
-          {{ tagName }}
+          {{ tag.name }}
         </button>
       </div>
     </li>

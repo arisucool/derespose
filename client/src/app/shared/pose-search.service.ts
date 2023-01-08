@@ -163,6 +163,8 @@ export class PoseSearchService {
         const matchedPose: MatchedPose = {
           id: item.poseItem.timeMiliseconds,
           title: title,
+          poseFileName: poseFileName,
+          time: item.poseItem.timeMiliseconds,
           timeSeconds: Math.floor(item.poseItem.timeMiliseconds / 1000),
           durationSeconds:
             Math.floor((item.poseItem.durationMiliseconds / 1000) * 10) / 10,

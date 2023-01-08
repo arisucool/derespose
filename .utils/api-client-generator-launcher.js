@@ -54,7 +54,10 @@ class APIClientGeneratorLauncher {
     const result = childProcess.execSync(
       `ts-node --project \"${APIClientGeneratorLauncher.SERVER_DIR}/tsconfig.json\" --require tsconfig-paths/register \"${APIClientGeneratorLauncher.SERVER_DIR}/src/openapi-doc-generator.ts\"`,
     );
-    return JSON.parse(result.toString());
+    const json = result
+      .toString()
+      .replace(/^\[NOTE\] On memory database enabled\n/, '');
+    return JSON.parse(json);
   }
 
   shouldGenerateApiClient(yaml) {
