@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { DetectedPose } from '../shared/detected-pose';
 import { MatchedPose } from '../shared/matched-pose';
+import { PoseSearchService } from '../shared/pose-search.service';
 
 @Component({
   selector: 'app-search-page',
@@ -53,10 +54,12 @@ export class SearchPageComponent {
     },
   ];
 
-  constructor() {}
+  constructor(private poseSearchService: PoseSearchService) {}
 
-  public onSearchTargetPoseDecided(event: any) {
+  public async onSearchTargetPoseDecided(event: any) {
     console.log(`[SearchPageComponent] onSearchTargetPoseDecided`, event);
     this.searchTargetPose = event;
+
+    this.matchedPoses = await this.poseSearchService.searchPoseByPose(event);
   }
 }
