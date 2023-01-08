@@ -26,4 +26,4 @@ RUN echo "Building app...\n" && \
     echo "build was completed."
 
 # Start app
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:prod"]
