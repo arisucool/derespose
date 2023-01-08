@@ -15,6 +15,7 @@ import { CameraSearchFormComponent } from './search-page/camera-search-form/came
 import { NgxMpPoseExtractorModule } from 'ngx-mp-pose-extractor';
 import { MatchedPoseComponent } from './shared/matched-pose/matched-pose.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { TagSearchFormComponent } from './search-page/tag-search-form/tag-search-form.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
     HomePageComponent,
     CameraSearchFormComponent,
     MatchedPoseComponent,
+    TagSearchFormComponent,
   ],
   imports: [
     BrowserModule,

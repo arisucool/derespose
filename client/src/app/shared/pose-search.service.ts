@@ -1,6 +1,9 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { Pose } from 'ngx-mp-pose-extractor';
 import { SimilarPoseItem } from 'ngx-mp-pose-extractor/lib/interfaces/matched-pose-item';
+import { lastValueFrom } from 'rxjs';
+import { PoseTag } from 'src/.api-client/models/pose-tag';
+import { ApiService } from 'src/.api-client/services/api.service';
 import { DetectedPose } from './detected-pose';
 import { MatchedPose } from './matched-pose';
 
@@ -27,7 +30,6 @@ export class PoseSearchService {
   public static readonly MAX_POSE_COUNT = 10;
 
   public availableTags: string[] = [];
-  public onAvailableTagChanged: EventEmitter<string[]> = new EventEmitter();
 
   private poseFiles?: {
     [key: string]: {
@@ -37,7 +39,7 @@ export class PoseSearchService {
     };
   };
 
-  constructor() {}
+  constructor(private apiService: ApiService) {}
 
   async loadPoseFiles() {
     if (this.poseFiles) {
@@ -195,22 +197,43 @@ export class PoseSearchService {
     return matchedPoses;
   }
 
-  searchPosesByTag(tagName: string) {
-    throw new Error('Method not implemented.');
-  }
+  async searchPosesByTag(tagName: string) {
+    const poseItems = await lastValueFrom(
+      this.apiService.posesControllerGetPosesByPoseTag({
+        poseTagName: tagName,
+      }),
+    );
 
-  addTag(id: number, tagName: string) {
-    // TODO: サーバへ送信する処理
-    throw new Error('Method not implemented.');
+    console.log(`[PoseSearchService] - searchPosesByTag`, poseItems);
 
-    if (!this.availableTags.includes(tagName)) {
-      this.availableTags.push(tagName);
-      this.onAvailableTagChanged.emit(this.availableTags);
+    let matchedPoses: MatchedPose[] = [];
+    for (const item of poseItems) {
+      // 整形して配列へ追加
+      const matchedPose: MatchedPose = {
+        id: 0,
+        title: item.poseFileName,
+        poseFileName: item.poseFileName,
+        time: item.time,
+        timeSeconds: Math.floor(item.time / 1000),
+        durationSeconds: 0,
+        score: 0,
+        scoreString: '0',
+        scoreDetails: {
+          similarity: 0,
+          foundTargetPoseIndex: 0,
+          duration: 0,
+          time: 0,
+        },
+        isFavorite: false,
+        tags: item.tags.map((tag: PoseTag) => {
+          return tag.name;
+        }),
+        imageUrl: `${PoseSearchService.POSE_FILE_BASE_URL}${item.poseFileName}/frame-${item.time}.jpg`,
+      };
+      matchedPoses.push(matchedPose);
     }
-  }
 
-  removeTag(id: number, tagName: string) {
-    throw new Error('Method not implemented.');
+    return matchedPoses;
   }
 
   private async loadPoseFile(poseFileName: string) {

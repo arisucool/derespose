@@ -26,6 +26,17 @@ export class PosesService {
     });
   }
 
+  getPosesByPoseTag(poseTagName: string) {
+    return this.poseRepository.find({
+      where: {
+        tags: {
+          name: poseTagName,
+        },
+      },
+      relations: ['tags'],
+    });
+  }
+
   registerPose(poseFileName: string, poseTime: number): Promise<Pose> {
     return this.poseRepository.save({
       poseFileName: poseFileName,

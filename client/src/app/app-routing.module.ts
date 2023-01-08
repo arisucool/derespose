@@ -13,7 +13,7 @@ const routes: Routes = [
     component: SearchPageComponent,
   },
   {
-    path: 'search/tag/:tag',
+    path: 'search/tag/:tagName',
     component: SearchPageComponent,
   },
 ];

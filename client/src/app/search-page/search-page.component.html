@@ -1,10 +1,15 @@
 <div class="container" [ngClass]="{ init: !searchTargetPose }">
   <app-camera-search-form
+    *ngIf="this.searchMode && this.searchMode === 'camera'"
     #cameraSearchForm
     (onSearchTargetPoseDecided)="this.onSearchTargetPoseDecided($event)"
   ></app-camera-search-form>
+  <app-tag-search-form
+    *ngIf="this.searchMode && this.searchMode === 'tag'"
+    [tagName]="this.searchTargetTag"
+  ></app-tag-search-form>
 
-  <ng-container *ngIf="searchTargetPose">
+  <ng-container *ngIf="searchTargetPose || searchTargetTag">
     <app-matched-pose
       *ngFor="let pose of this.matchedPoses"
       [pose]="pose"

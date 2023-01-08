@@ -6,13 +6,29 @@ import {
   Param,
   Post,
 } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
+import { PoseTag } from 'src/pose-tags/entities/pose-tag.entity';
+import { Pose } from './entities/pose.entity';
 import { PosesService } from './poses.service';
 
 @Controller('poses')
 export class PosesController {
   constructor(private posesService: PosesService) {}
 
+  @Get('by-pose-tags/:poseTagName')
+  @ApiResponse({
+    type: Pose,
+    isArray: true,
+  })
+  async getPosesByPoseTag(@Param('poseTagName') poseTagName: string) {
+    return this.posesService.getPosesByPoseTag(poseTagName);
+  }
+
   @Get(':poseFileName/:poseTime/pose-tags')
+  @ApiResponse({
+    type: PoseTag,
+    isArray: true,
+  })
   async getPoseTags(
     @Param('poseFileName') poseFileName,
     @Param('poseTime') poseTimeString,
@@ -30,6 +46,10 @@ export class PosesController {
   }
 
   @Post(':poseFileName/:poseTime/pose-tags/:poseTagName')
+  @ApiResponse({
+    type: PoseTag,
+    isArray: true,
+  })
   async addPoseTag(
     @Param('poseFileName') poseFileName: string,
     @Param('poseTime') poseTimeString: string,
@@ -50,6 +70,10 @@ export class PosesController {
   }
 
   @Delete(':poseFileName/:poseTime/pose-tags/:poseTagName')
+  @ApiResponse({
+    type: PoseTag,
+    isArray: true,
+  })
   async removePoseTag(
     @Param('poseFileName') poseFileName: string,
     @Param('poseTime') poseTimeString: string,
