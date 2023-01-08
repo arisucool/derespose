@@ -204,6 +204,10 @@ export class PoseSearchService {
   }
 
   async searchPosesByTag(tagName: string) {
+    if (!this.poseFiles) {
+      await this.loadPoseFiles();
+    }
+
     const receivedPoses = await lastValueFrom(
       this.apiService.posesControllerGetPosesByPoseTag({
         poseTagName: tagName,
