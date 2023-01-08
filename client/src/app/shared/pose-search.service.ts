@@ -1,5 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { Pose, PoseItem } from 'ngx-mp-pose-extractor';
+import { Pose } from 'ngx-mp-pose-extractor';
+import { SimilarPoseItem } from 'ngx-mp-pose-extractor/lib/interfaces/matched-pose-item';
 import { DetectedPose } from './detected-pose';
 import { MatchedPose } from './matched-pose';
 
@@ -18,6 +19,12 @@ export class PoseSearchService {
 
   // ポーズファイルのキャッシュ有効期限 (1週間)
   public static readonly POSE_FILE_CACHE_EXPIRES = 1000 * 60 * 60 * 24 * 7;
+
+  // ポーズの類似度のしきい値
+  public static readonly POSE_SIMILARITY_THRESHOLD = 0.85;
+
+  // ポーズの最大数
+  public static readonly MAX_POSE_COUNT = 10;
 
   public availableTags: string[] = [];
   public onAvailableTagChanged: EventEmitter<string[]> = new EventEmitter();
@@ -94,21 +101,39 @@ export class PoseSearchService {
       throw new Error('Failed to load poses');
     }
 
+    // 一番最近のポーズを先頭にする
+    targetPoses = targetPoses.slice().reverse();
+
+    // 各ポーズファイルを反復
     let matchedPoses: MatchedPose[] = [];
     for (const poseFileName of Object.keys(this.poseFiles)) {
       const pose = this.poseFiles[poseFileName].pose;
       const title = this.poseFiles[poseFileName].title;
 
       let usedFrames = new Set();
-      let poseItems: PoseItem[] = [];
-      for (const targetPose of targetPoses) {
-        const poseItems_ = pose.getSimilarPoses(targetPose as any); // TODO 型定義を修正する
+      let poseItems: {
+        poseItem: SimilarPoseItem;
+        // どのポーズに一番近いか (この数値が高いならば、直近の撮影タイミングのポーズに近い。この数値が低いならば、古い撮影タイミングのポーズに近い)
+        foundTargetPoseIndex: number;
+      }[] = [];
+
+      // 直近の撮影タイミングのポーズを反復
+      for (let i = 0, l = targetPoses.length; i < l; i++) {
+        const targetPose = targetPoses[i];
+
+        const poseItems_ = pose.getSimilarPoses(
+          targetPose as any,
+          PoseSearchService.POSE_SIMILARITY_THRESHOLD,
+        ); // TODO 型定義を修正する
         for (const poseItem of poseItems_) {
-          if (usedFrames.has(poseItem.t)) {
+          if (usedFrames.has(poseItem.timeMiliseconds)) {
             continue;
           }
-          poseItems.push(poseItem);
-          usedFrames.add(poseItem.t);
+          poseItems.push({
+            poseItem: poseItem,
+            foundTargetPoseIndex: l - i,
+          });
+          usedFrames.add(poseItem.timeMiliseconds);
         }
       }
 
@@ -118,19 +143,52 @@ export class PoseSearchService {
         poseItems,
       );
 
-      for (const poseItem of poseItems) {
+      for (const item of poseItems) {
+        // スコア算出 - 類似度
+        let score = item.poseItem.similarity * 1.2;
+
+        // スコア算出 - どの撮影タイミングのポーズに一番近いか
+        score += item.foundTargetPoseIndex * 0.1;
+
+        // スコア算出 - ポーズの長さ
+        score += (item.poseItem.durationMiliseconds / 1000) * 0.05;
+
+        // スコア算出 - ポーズの登場する早さ
+        score -= (item.poseItem.timeMiliseconds / 1000) * 0.01;
+
+        // スコアを小数点以下2桁に丸める
+        const scoreString: string = `${Math.round(score * 100) / 100}`;
+
+        // 整形して配列へ追加
         const matchedPose: MatchedPose = {
-          id: poseItem.t,
+          id: item.poseItem.timeMiliseconds,
           title: title,
-          timeSeconds: Math.floor(poseItem.t / 1000),
-          score: 0,
+          timeSeconds: Math.floor(item.poseItem.timeMiliseconds / 1000),
+          durationSeconds:
+            Math.floor((item.poseItem.durationMiliseconds / 1000) * 10) / 10,
+          score: score,
+          scoreString: scoreString,
+          scoreDetails: {
+            similarity: item.poseItem.similarity,
+            foundTargetPoseIndex: item.foundTargetPoseIndex,
+            duration: item.poseItem.durationMiliseconds,
+            time: item.poseItem.timeMiliseconds,
+          },
           isFavorite: false,
           tags: [],
-          imageUrl: `${PoseSearchService.POSE_FILE_BASE_URL}${poseFileName}/frame-${poseItem.t}.jpg`,
+          imageUrl: `${PoseSearchService.POSE_FILE_BASE_URL}${poseFileName}/frame-${item.poseItem.timeMiliseconds}.jpg`,
         };
         matchedPoses.push(matchedPose);
       }
     }
+
+    // スコア順にソート
+    matchedPoses = matchedPoses.sort((a, b) => {
+      return b.score - a.score;
+    });
+
+    // 上限まで削る
+    matchedPoses = matchedPoses.slice(0, PoseSearchService.MAX_POSE_COUNT);
 
     return matchedPoses;
   }

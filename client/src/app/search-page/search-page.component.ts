@@ -11,48 +11,7 @@ import { PoseSearchService } from '../shared/pose-search.service';
 export class SearchPageComponent implements OnInit {
   public searchTargetPose?: DetectedPose;
 
-  public matchedPoses?: MatchedPose[] = [
-    {
-      id: 1000,
-      title: 'お願い！シンデレラ',
-      timeSeconds: 10,
-      score: 0.9,
-      isFavorite: false,
-      tags: ['手を振る', '考える'],
-    },
-    {
-      id: 1000,
-      title: 'お願い！シンデレラ',
-      timeSeconds: 10,
-      score: 0.9,
-      isFavorite: false,
-      tags: ['手を振る', '考える'],
-    },
-    {
-      id: 1000,
-      title: 'お願い！シンデレラ',
-      timeSeconds: 10,
-      score: 0.9,
-      isFavorite: false,
-      tags: ['手を振る', '考える'],
-    },
-    {
-      id: 1000,
-      title: 'お願い！シンデレラ',
-      timeSeconds: 10,
-      score: 0.9,
-      isFavorite: false,
-      tags: ['手を振る', '考える'],
-    },
-    {
-      id: 1000,
-      title: 'お願い！シンデレラ',
-      timeSeconds: 10,
-      score: 0.9,
-      isFavorite: false,
-      tags: ['手を振る', '考える'],
-    },
-  ];
+  public matchedPoses?: MatchedPose[] = [];
 
   constructor(private poseSearchService: PoseSearchService) {}
 

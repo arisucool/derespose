@@ -3,9 +3,12 @@
     <p class="song-name">
       {{ pose.title }}
     </p>
-    <p class="pose-time">
+    <p
+      class="pose-time"
+      matTooltip="{{ pose.scoreString }} --> {{ pose.scoreDetails | json }}"
+    >
       <mat-icon>schedule</mat-icon>
-      {{ pose.timeSeconds }} 秒付近
+      {{ pose.timeSeconds }} 秒付近から {{ pose.durationSeconds }} 秒間
     </p>
 
     <!--<button
