@@ -12,11 +12,18 @@ export class PoseTagsService {
     new EventEmitter();
 
   private poseTags?: PoseTag[];
+  private isRequestingPoseTags = false;
 
   constructor(private apiService: ApiService) {}
 
   async getPoseTags(): Promise<PoseTag[]> {
     if (this.poseTags !== undefined) return this.poseTags;
+
+    if (this.isRequestingPoseTags)
+      return firstValueFrom(this.onAvailablePoseTagsChanged);
+    this.isRequestingPoseTags = true;
+
+    console.log(`getPoseTags - Requesting...`);
 
     const poseTags = await lastValueFrom(
       this.apiService.poseTagsControllerGetPoseTags(),
