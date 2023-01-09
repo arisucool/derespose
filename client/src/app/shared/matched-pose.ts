@@ -38,4 +38,7 @@ export interface MatchedPose {
 
   // 画像URL
   imageUrl?: string;
+
+  // レイアウトを調整するためのダミー要素 (表示されない)
+  isNonDisplayItemForLayoutAdjustment?: boolean;
 }

@@ -4,7 +4,6 @@
   align-items: center;
   text-align: center;
   position: relative;
-  top: -1.2rem;
 
   .caption {
     font-size: 1rem;
@@ -19,8 +18,13 @@
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
-    padding: 1rem 1rem;
+    padding: 1rem 0 0 0;
     width: fit-content;
     gap: 1rem;
+
+    .tag-name {
+      font-size: 1rem;
+      margin-left: -1rem;
+    }
   }
 }

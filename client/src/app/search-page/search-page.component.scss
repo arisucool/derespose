@@ -1,70 +1,96 @@
 :host {
   display: block;
-  padding: 0.5rem 2rem;
+  padding: 0 2rem 0 2rem;
 }
 
 .container {
-  // set variable
-  --item-width: 14vw;
-  display: grid;
-  grid-template-columns:
-    var(--item-width) var(--item-width) var(--item-width) var(--item-width)
-    var(--item-width) var(--item-width);
-  grid-gap: 2vw 2.2vw;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
 
-  &.init {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: calc(100dvh - (64px * 2));
-    width: 100%;
-  }
+  // 検索の概要
 
-  &:not(.init) {
-    app-camera-search-form {
-      margin-top: 2rem;
-    }
-  }
-
-  .spinner-container {
+  .search-summary {
     position: relative;
-    width: 320px;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    box-sizing: border-box;
+    width: 20vw;
+    min-width: 320px;
+    max-width: 400px;
 
-    p {
-      color: #555555;
-      font-size: 0.7rem;
-      text-align: center;
-      margin-top: 8rem;
+    &.camera-search {
+      margin-top: 1.25rem;
+    }
+
+    &.tag-search {
+      margin-top: 10rem;
+    }
+
+    // ローディングスピナー
+
+    .spinner-container {
+      position: relative;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2.5rem;
     }
   }
-}
 
-@media screen and (min-width: 1000px) and (max-width: 1270px) {
-  .container {
-    --item-width: 20vw;
-    grid-template-columns: var(--item-width) var(--item-width) var(--item-width) var(
-        --item-width
-      );
-    grid-gap: 3vw 5vw;
+  // 検索結果
+
+  .matched-poses-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    width: 80vw;
+    overflow: hidden;
   }
 }
 
-@media screen and (min-width: 800px) and (max-width: 999px) {
+// レスポンス対応
+
+@media screen and (min-width: 800px) {
   .container {
-    --item-width: 44vw;
-    grid-template-columns: var(--item-width) var(--item-width);
-    grid-gap: 3vw 3vw;
+    // 初期状態 ＆ 検索中
+    &.init,
+    &.loading {
+      align-items: center;
+      flex-direction: column;
+      height: calc(100dvh - 100px);
+
+      // 検索の概要
+
+      .search-summary {
+        width: 50vw;
+        max-width: 480px;
+        margin-top: 0 !important;
+      }
+    }
   }
 }
 
 @media screen and (max-width: 799px) {
   .container {
-    display: grid;
-    grid-template-columns: 85vw;
-    grid-gap: 2vw 0;
+    flex-direction: column;
+
+    .search-summary {
+      width: 100%;
+      margin-top: 3rem !important;
+      min-width: unset;
+      max-width: unset;
+
+      // ローディングスピナー
+
+      .spinner-container {
+        width: 100%;
+        margin-top: 3rem;
+      }
+    }
+
+    .matched-poses-container {
+      width: 100%;
+    }
   }
 }

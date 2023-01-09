@@ -1,32 +1,81 @@
-<div class="container" [ngClass]="{ init: !searchTargetPose }">
-  <app-camera-search-form
-    *ngIf="this.searchMode && this.searchMode === 'camera'"
-    #cameraSearchForm
-    (onSearchTargetPoseDecided)="this.onSearchTargetPoseDecided($event)"
-  ></app-camera-search-form>
-  <app-tag-search-form
-    *ngIf="this.searchMode && this.searchMode === 'tag'"
-    [tagName]="this.searchTargetTag"
-  ></app-tag-search-form>
+<div
+  class="container"
+  #container
+  [ngClass]="{
+    init: !searchTargetPose && !searchTargetTag,
+    loading: isLoading
+  }"
+>
+  <!-- 検索の概要 -->
+  <div
+    class="search-summary"
+    [ngClass]="{
+      'camera-search': this.searchMode && this.searchMode === 'camera',
+      'tag-search': this.searchMode && this.searchMode === 'tag'
+    }"
+  >
+    <!-- カメラによる検索 -->
+    <app-camera-search-form
+      class="camera-search-form"
+      *ngIf="this.searchMode && this.searchMode === 'camera'"
+      #cameraSearchForm
+      (onSearchTargetPoseDecided)="this.onSearchTargetPoseDecided($event)"
+      (onRetryPhotoShootStarted)="this.onRetryPhotoShootStarted($event)"
+    ></app-camera-search-form>
+    <!---->
 
-  <!-- ローディングスピナー -->
-  <div class="spinner-container" *ngIf="isLoading">
-    <ngx-spinner
-      type="ball-fussion"
-      [fullScreen]="false"
-      color="#bedbfd"
-      size="medium"
-      bdColor="#fefefe88"
-      [showSpinner]="isLoading"
-    >
-    </ngx-spinner>
+    <!-- タグによる検索 -->
+    <app-tag-search-form
+      class="tag-search-form"
+      *ngIf="this.searchMode && this.searchMode === 'tag'"
+      [tagName]="this.searchTargetTag"
+    ></app-tag-search-form>
+    <!---->
+
+    <!-- ローディングスピナー -->
+    <div class="spinner-container" *ngIf="isLoading">
+      <ngx-spinner
+        type="ball-fussion"
+        [fullScreen]="false"
+        color="#bedbfd"
+        size="medium"
+        bdColor="#fefefe88"
+        [showSpinner]="isLoading"
+      >
+      </ngx-spinner>
+    </div>
+    <!---->
   </div>
   <!---->
 
-  <ng-container *ngIf="searchTargetPose || searchTargetTag">
-    <app-matched-pose
-      *ngFor="let pose of this.matchedPoses"
-      [pose]="pose"
-    ></app-matched-pose>
-  </ng-container>
+  <div
+    class="matched-poses-container"
+    [ngClass]="{ init: !searchTargetPose }"
+    #matchedPosesContainer
+  >
+    <ng-container *ngIf="searchTargetPose || searchTargetTag">
+      <ng-container *ngIf="this.matchedPoses && 0 < this.matchedPoses.length">
+        <!-- 検索結果の各ポーズ -->
+        <app-matched-pose
+          *ngFor="let pose of this.matchedPoses"
+          [pose]="pose"
+          [style.visibility]="
+            pose.isNonDisplayItemForLayoutAdjustment ? 'hidden' : 'visible'
+          "
+        ></app-matched-pose>
+        <!---->
+
+        <!-- 最終行のレイアウト崩れを防ぐための要素 (不可視) -->
+        <app-matched-pose
+          class="layout-adjustment-item"
+          [pose]="this.matchedPoses[this.matchedPoses.length - 1]"
+          style="visibility: hidden; height: 0; padding: 0 0 0 0"
+          *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+        >
+          &nbsp;
+        </app-matched-pose>
+        <!---->
+      </ng-container>
+    </ng-container>
+  </div>
 </div>

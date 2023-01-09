@@ -24,7 +24,7 @@
 
   <img class="pose-image" [src]="pose.imageUrl" />
 
-  <div class="pose-tags">
+  <div class="pose-tags" *ngIf="!pose.isNonDisplayItemForLayoutAdjustment">
     <!-- タグのトグルボタン -->
     <div
       class="tag-toggle-button"

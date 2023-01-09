@@ -24,10 +24,14 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
   @ViewChild('cameraVideo')
   cameraVideoElement!: ElementRef<HTMLVideoElement>;
 
-  // 撮影結果を親コンポーネントに渡すための EventEmitter
+  // 撮影結果を親コンポーネントに知らせるための EventEmitter
   @Output()
   public onSearchTargetPoseDecided: EventEmitter<DetectedPose[]> =
     new EventEmitter();
+
+  // 再撮影が開始されたときに親コンポーネントに知らせるための EventEmitter
+  @Output()
+  public onRetryPhotoShootStarted: EventEmitter<number> = new EventEmitter();
 
   // カメラ映像のストリーム
   public cameraVideoStream?: MediaStream;
@@ -149,6 +153,7 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
   public startPhotoShootCountdown() {
     if (!this.cameraVideoStream) return;
     console.log(`[CameraSearchFormComponent] startPhotoShootCountdown`);
+    this.onRetryPhotoShootStarted.emit(1);
 
     this.searchTargetPoseImageDataUrl = undefined;
     this.countdownRemainSeconds = this.COUNT_DOWN_SECONDS;

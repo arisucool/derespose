@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { lastValueFrom, timer } from 'rxjs';
@@ -49,7 +49,16 @@ export class SearchPageComponent implements OnInit {
       this.onSearchTargetTagDecided(routeParams['tagName']);
     } else {
       this.searchMode = 'camera';
+      this.isLoading = false;
     }
+  }
+
+  public async onRetryPhotoShootStarted(event: any) {
+    console.log(`[SearchPageComponent] onRetryPhotoShootStarted`);
+    this.searchTargetPose = undefined;
+    this.matchedPoses = [];
+    this.isLoading = false;
+    this.spinner.hide();
   }
 
   public async onSearchTargetPoseDecided(searchTargetPoses: DetectedPose[]) {
@@ -63,7 +72,7 @@ export class SearchPageComponent implements OnInit {
     this.spinner.show();
 
     // 少し待つ
-    await lastValueFrom(timer(200));
+    await lastValueFrom(timer(300));
 
     // ポーズを検索
     const matchedPoses = await this.poseSearchService.searchPoseByPose(
@@ -71,21 +80,23 @@ export class SearchPageComponent implements OnInit {
     );
 
     // タグを取得
-    const posesWithPoseTags = await this.poseTagsService.getPosesWithPoseTags(
-      matchedPoses,
-    );
-    for (const poseWithPoseTags of posesWithPoseTags) {
-      const matchedPose = matchedPoses.find((matchedPose: MatchedPose) => {
-        return (
-          matchedPose.poseFileName === poseWithPoseTags.poseFileName &&
-          matchedPose.time === poseWithPoseTags.time
-        );
-      });
-      if (!matchedPose) {
-        continue;
-      }
+    if (0 < matchedPoses.length) {
+      const posesWithPoseTags = await this.poseTagsService.getPosesWithPoseTags(
+        matchedPoses,
+      );
+      for (const poseWithPoseTags of posesWithPoseTags) {
+        const matchedPose = matchedPoses.find((matchedPose: MatchedPose) => {
+          return (
+            matchedPose.poseFileName === poseWithPoseTags.poseFileName &&
+            matchedPose.time === poseWithPoseTags.time
+          );
+        });
+        if (!matchedPose) {
+          continue;
+        }
 
-      matchedPose.tags = poseWithPoseTags.tags.map((t: PoseTag) => t.name);
+        matchedPose.tags = poseWithPoseTags.tags.map((t: PoseTag) => t.name);
+      }
     }
 
     this.isLoading = false;

@@ -42,7 +42,6 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
         const t = tagName
           ? this.filterTagName(tagName)
           : this.availableTags.slice().map((tag) => tag.name);
-        console.log(`[MatchedPoseComponent] filteredAvailableTags`, t);
         return t;
       }),
     );

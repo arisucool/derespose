@@ -1,6 +1,9 @@
 :host {
   display: block;
+  padding: 1rem 1rem;
 }
+
+// ポーズカード
 
 .container.simple-card {
   border-style: solid;
@@ -17,13 +20,7 @@
   box-shadow: 0 0 6px 1px #a0a0a0aa;
 }
 
-@media screen and (max-width: 800px) {
-  .container.simple-card {
-    width: 100%;
-  }
-}
-
-// ポーズの概要
+// ポーズカード > ポーズの概要
 
 .pose-summary {
   background-color: #777777aa;
@@ -68,16 +65,16 @@
   }
 }
 
-// ポーズ画像
+// ポーズカード > ポーズ画像
 
 img.pose-image {
   object-fit: cover;
-  width: 100%;
   aspect-ratio: 9/16;
-  max-height: 60vh;
+  width: 12vw;
+  min-width: 200px;
 }
 
-// タグ
+// ポーズカード > タグ
 
 .pose-tags {
   background-color: #777777aa;
@@ -128,4 +125,23 @@ img.pose-image {
 
 .pose-tags ::placeholder {
   color: #f0f0f0 !important;
+}
+
+// モバイル対応
+
+@media screen and (max-width: 799px) {
+  // ポーズカード
+
+  .container.simple-card {
+    width: 100%;
+    margin-bottom: 2rem;
+  }
+
+  // ポーズカード > ポーズ画像
+
+  img.pose-image {
+    width: 100%;
+    aspect-ratio: 9/14;
+    max-height: 70vh;
+  }
 }
