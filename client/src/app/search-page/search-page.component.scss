@@ -25,6 +25,22 @@
       margin-top: 2rem;
     }
   }
+
+  .spinner-container {
+    position: relative;
+    width: 320px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    p {
+      color: #555555;
+      font-size: 0.7rem;
+      text-align: center;
+      margin-top: 8rem;
+    }
+  }
 }
 
 @media screen and (min-width: 1000px) and (max-width: 1270px) {

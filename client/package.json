@@ -27,6 +27,7 @@
     "cos-similarity": "^1.1.1",
     "jszip": "^3.10.1",
     "ngx-mp-pose-extractor": "github:mugiply/mp-video-pose-extractor#library",
+    "ngx-spinner": "^15.0.1",
     "rxjs": "7.8.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"

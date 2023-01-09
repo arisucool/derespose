@@ -16,6 +16,7 @@ import { NgxMpPoseExtractorModule } from 'ngx-mp-pose-extractor';
 import { MatchedPoseComponent } from './shared/matched-pose/matched-pose.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TagSearchFormComponent } from './search-page/tag-search-form/tag-search-form.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
 
 @NgModule({
   declarations: [
@@ -38,6 +39,9 @@ import { TagSearchFormComponent } from './search-page/tag-search-form/tag-search
     }),
     AppRoutingModule,
     NgxMpPoseExtractorModule,
+    NgxSpinnerModule.forRoot({
+      type: 'ball-fussion',
+    }),
   ],
   providers: [],
   bootstrap: [AppComponent],

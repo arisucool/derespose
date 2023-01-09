@@ -1,5 +1,7 @@
 import { Component, OnInit, ViewChild, ViewChildren } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { lastValueFrom, timer } from 'rxjs';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { DetectedPose } from '../shared/detected-pose';
 import { MatchedPose } from '../shared/matched-pose';
@@ -24,6 +26,9 @@ export class SearchPageComponent implements OnInit {
   public searchTargetPose?: DetectedPose;
   public searchTargetTag?: string;
 
+  // 読み込み中フラグ
+  public isLoading = true;
+
   // 検索結果
   public matchedPoses?: MatchedPose[] = [];
 
@@ -31,6 +36,7 @@ export class SearchPageComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private poseSearchService: PoseSearchService,
     private poseTagsService: PoseTagsService,
+    private spinner: NgxSpinnerService,
   ) {}
 
   async ngOnInit() {
@@ -52,6 +58,12 @@ export class SearchPageComponent implements OnInit {
       searchTargetPoses,
     );
     this.searchTargetPose = searchTargetPoses[searchTargetPoses.length - 1];
+
+    this.isLoading = true;
+    this.spinner.show();
+
+    // 少し待つ
+    await lastValueFrom(timer(200));
 
     // ポーズを検索
     const matchedPoses = await this.poseSearchService.searchPoseByPose(
@@ -76,6 +88,9 @@ export class SearchPageComponent implements OnInit {
       matchedPose.tags = poseWithPoseTags.tags.map((t: PoseTag) => t.name);
     }
 
+    this.isLoading = false;
+    this.spinner.hide();
+
     // ポーズのリストを反映
     this.matchedPoses = matchedPoses;
     if (this.matchedPoses.length === 0) {
@@ -88,11 +103,20 @@ export class SearchPageComponent implements OnInit {
   }
 
   public async onSearchTargetTagDecided(tagName: string) {
+    this.isLoading = true;
+    this.spinner.show();
+
+    // 少し待つ
+    await lastValueFrom(timer(200));
+
     // ポーズを検索
     let matchedPoses = await this.poseSearchService.searchPosesByTag(tagName);
     if (!matchedPoses) {
       matchedPoses = [];
     }
+
+    this.isLoading = false;
+    this.spinner.hide();
 
     // ポーズのリストを反映
     this.matchedPoses = matchedPoses;
