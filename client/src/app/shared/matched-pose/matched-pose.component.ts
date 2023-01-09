@@ -67,7 +67,8 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
   onTagSelected(event: MatAutocompleteSelectedEvent): void {
     if (!this.pose || !this.tagInput) return;
 
-    const tagName = event.option.viewValue;
+    const tagName = this.validateTagName(event.option.viewValue);
+    if (!tagName) return;
 
     if (!this.pose.tags) {
       this.pose.tags = [];
@@ -92,10 +93,12 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
     if (!this.pose) return;
     if (!this.pose.tags) this.pose.tags = [];
 
-    const tagName = (event.value || '').trim();
+    let tagName: string | undefined = (event.value || '').trim();
 
     event.chipInput!.clear();
     this.tagFormCtrl.setValue(null);
+
+    tagName = this.validateTagName(tagName);
 
     if (!tagName) {
       return;
@@ -140,5 +143,21 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
       });
     console.log(`[MatchedPoseComponent] filterTagName - ${tagName}`, tagNames);
     return tagNames;
+  }
+
+  private validateTagName(tagName: string) {
+    if (tagName === undefined) return undefined;
+
+    tagName = tagName.trim();
+
+    // ひらがな・全角カタカナ・漢字・英数字・一部記号のみ許可
+    tagName.replace(/\?/g, '？');
+    tagName.replace(/@/g, '＠');
+    tagName.replace(/!/g, '！');
+    tagName.replace(/^[ぁ-んーァ-ヶー一-龠0-9a-zA-Z！？＠]*$/g, '');
+
+    if (tagName.length === 0) return undefined;
+
+    return tagName;
   }
 }
