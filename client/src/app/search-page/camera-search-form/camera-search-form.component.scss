@@ -1,3 +1,18 @@
+@keyframes shutterAnimation {
+  0% {
+    transform: scaleY(0);
+  }
+  40% {
+    transform: scaleY(101%);
+  }
+  60% {
+    transform: scaleY(101%);
+  }
+  100% {
+    transform: scaleY(0);
+  }
+}
+
 .search-form-container {
   display: flex;
   flex-direction: column;
@@ -25,6 +40,39 @@
 
     .video-container {
       position: relative;
+
+      .shutter {
+        background-color: transparent;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+
+        &::before {
+          animation: shutterAnimation 1s forwards 1;
+          transform-origin: top;
+          content: '';
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 50%;
+          left: 0;
+          background-color: #303030;
+        }
+
+        &::after {
+          animation: shutterAnimation 1s forwards 1;
+          transform-origin: bottom;
+          content: '';
+          position: absolute;
+          top: 50%;
+          right: 0;
+          bottom: 0;
+          left: 0;
+          background-color: #303030;
+        }
+      }
 
       .message {
         color: #ffffff;

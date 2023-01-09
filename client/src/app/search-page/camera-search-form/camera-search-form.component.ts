@@ -63,6 +63,9 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
   public countdownRemainSeconds = this.COUNT_DOWN_SECONDS;
   private countdownTimerSubscription?: Subscription;
 
+  // 撮影アニメーション
+  public isEnableShutterAnimation = false;
+
   constructor(
     private snackBar: MatSnackBar,
     private poseExtractorService: PoseExtractorService,
@@ -151,6 +154,7 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
     this.countdownRemainSeconds = this.COUNT_DOWN_SECONDS;
 
     this.state = 'countdown';
+    this.isEnableShutterAnimation = false;
 
     this.countdownTimerSubscription = interval(1000).subscribe(() => {
       if (1 <= this.countdownRemainSeconds) {
@@ -160,6 +164,7 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
 
       this.countdownTimerSubscription?.unsubscribe();
       this.state = 'processing';
+      this.isEnableShutterAnimation = true;
       this.searchPose();
     });
   }
