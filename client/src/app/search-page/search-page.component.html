@@ -2,8 +2,10 @@
   class="container"
   #container
   [ngClass]="{
-    init: !searchTargetPose && !searchTargetTag,
-    loading: isLoading
+    initializing: this.state === 'initializing',
+    standby: this.state === 'standby',
+    searching: this.state === 'searching',
+    completed: this.state === 'completed'
   }"
 >
   <!-- 検索の概要 -->
@@ -33,14 +35,13 @@
     <!---->
 
     <!-- ローディングスピナー -->
-    <div class="spinner-container" *ngIf="isLoading">
+    <div class="spinner-container" *ngIf="this.state === 'searching'">
       <ngx-spinner
         type="ball-fussion"
         [fullScreen]="false"
         color="#bedbfd"
         size="medium"
         bdColor="#fefefe88"
-        [showSpinner]="isLoading"
       >
       </ngx-spinner>
     </div>

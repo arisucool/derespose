@@ -26,8 +26,9 @@ export class SearchPageComponent implements OnInit {
   public searchTargetPose?: DetectedPose;
   public searchTargetTag?: string;
 
-  // 読み込み中フラグ
-  public isLoading = true;
+  // 状態
+  public state: 'initializing' | 'standby' | 'searching' | 'completed' =
+    'initializing';
 
   // 検索結果
   public matchedPoses?: MatchedPose[] = [];
@@ -49,7 +50,7 @@ export class SearchPageComponent implements OnInit {
       this.onSearchTargetTagDecided(routeParams['tagName']);
     } else {
       this.searchMode = 'camera';
-      this.isLoading = false;
+      this.state = 'initializing';
     }
   }
 
@@ -57,7 +58,7 @@ export class SearchPageComponent implements OnInit {
     console.log(`[SearchPageComponent] onRetryPhotoShootStarted`);
     this.searchTargetPose = undefined;
     this.matchedPoses = [];
-    this.isLoading = false;
+    this.state = 'standby';
     this.spinner.hide();
   }
 
@@ -68,14 +69,14 @@ export class SearchPageComponent implements OnInit {
     );
     this.searchTargetPose = searchTargetPoses[searchTargetPoses.length - 1];
 
-    this.isLoading = true;
+    this.state = 'searching';
     this.spinner.show();
 
     // 少し待つ
     await lastValueFrom(timer(300));
 
     // ポーズを検索
-    const matchedPoses = await this.poseSearchService.searchPoseByPose(
+    let matchedPoses = await this.poseSearchService.searchPoseByPose(
       searchTargetPoses,
     );
 
@@ -99,22 +100,26 @@ export class SearchPageComponent implements OnInit {
       }
     }
 
-    this.isLoading = false;
-    this.spinner.hide();
-
-    // ポーズのリストを反映
-    this.matchedPoses = matchedPoses;
-    if (this.matchedPoses.length === 0) {
+    if (matchedPoses.length === 0) {
       // ポーズが一件も見つからなければ
       this.searchTargetPose = undefined;
       if (this.cameraSearchFormComponent) {
+        // もう一度撮影
         this.cameraSearchFormComponent.retryPhotoShootCountdown();
+        this.spinner.hide();
+        return;
       }
     }
+
+    this.matchedPoses = matchedPoses;
+
+    // 完了
+    this.state = 'completed';
+    this.spinner.hide();
   }
 
   public async onSearchTargetTagDecided(tagName: string) {
-    this.isLoading = true;
+    this.state = 'searching';
     this.spinner.show();
 
     // 少し待つ
@@ -126,7 +131,7 @@ export class SearchPageComponent implements OnInit {
       matchedPoses = [];
     }
 
-    this.isLoading = false;
+    this.state = 'completed';
     this.spinner.hide();
 
     // ポーズのリストを反映

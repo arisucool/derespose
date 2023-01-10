@@ -33,7 +33,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-top: 2.5rem;
+      margin-top: 3rem;
     }
   }
 
@@ -49,13 +49,14 @@
   }
 }
 
-// レスポンス対応
+// レスポンシブ対応
 
 @media screen and (min-width: 800px) {
   .container {
-    // 初期状態 ＆ 検索中
-    &.init,
-    &.loading {
+    // 初期化中・待機中・検索中
+    &.initializing,
+    &.standby,
+    &.searching {
       align-items: center;
       flex-direction: column;
       height: calc(100dvh - 100px);
