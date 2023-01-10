@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { join } from 'path';
@@ -7,6 +7,7 @@ import { Helper } from './helper';
 import { PosesModule } from './poses/poses.module';
 import { PoseTagsModule } from './pose-tags/pose-tags.module';
 import { ConfigModule } from '@nestjs/config';
+import { ForceHttpsMiddleware } from './shared/force-https/force-https.middleware';
 
 @Module({
   imports: [
@@ -14,6 +15,11 @@ import { ConfigModule } from '@nestjs/config';
     // (for production environment)
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'client', 'dist', 'client'),
+      serveStaticOptions: {
+        setHeaders(res, path, stat) {
+          console.log(res);
+        },
+      },
     }),
     // .env ファイルの読み込み
     ConfigModule.forRoot({
@@ -28,4 +34,8 @@ import { ConfigModule } from '@nestjs/config';
   controllers: [AppController],
   providers: [],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(ForceHttpsMiddleware).forRoutes('*');
+  }
+}
