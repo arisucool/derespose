@@ -164,9 +164,7 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
     this.state = 'retrying';
 
     // 3秒待ってもう一度カウントダウンを開始
-    this.countdownTimerSubscription = timer(
-      this.countdownSecondsForDecidePose,
-    ).subscribe(async () => {
+    this.countdownTimerSubscription = timer(3000).subscribe(async () => {
       this.countdownTimerSubscription?.unsubscribe();
       await this.initCamera();
       await this.startPhotoShootCountdown();
