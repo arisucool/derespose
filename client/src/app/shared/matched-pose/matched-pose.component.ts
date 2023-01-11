@@ -9,7 +9,14 @@ import {
 import { FormControl } from '@angular/forms';
 import { MatAutocompleteSelectedEvent } from '@angular/material/autocomplete';
 import { MatChipInputEvent } from '@angular/material/chips';
-import { map, Observable, startWith, Subscription } from 'rxjs';
+import {
+  lastValueFrom,
+  map,
+  Observable,
+  startWith,
+  Subscription,
+  timer,
+} from 'rxjs';
 import { MatchedPose } from '../matched-pose';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { PoseTagsService } from '../pose-tags.service';
@@ -86,6 +93,13 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
       this.pose.time,
       tagName,
     );
+  }
+
+  async openAvailableTags(event: any, trigger: any) {
+    console.log(`[MatchedPoseComponent] showAvailableTags`, trigger);
+    event.stopPropagation();
+    this.tagFormCtrl?.reset();
+    trigger.openPanel();
   }
 
   addTag(event: MatChipInputEvent) {

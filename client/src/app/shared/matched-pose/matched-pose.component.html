@@ -70,11 +70,13 @@
           *ngIf="this.pose.tags && this.pose.tags.length < 5"
           placeholder="タグを追加..."
           #tagInput
+          (click)="this.openAvailableTags($event, trigger)"
           [formControl]="this.tagFormCtrl"
           [matChipInputFor]="chipGrid"
           [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
           [matAutocomplete]="auto"
           (matChipInputTokenEnd)="addTag($event)"
+          #trigger="matAutocompleteTrigger"
         />
         <mat-autocomplete
           #auto="matAutocomplete"
