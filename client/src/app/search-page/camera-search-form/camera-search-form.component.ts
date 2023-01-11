@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   ChangeDetectorRef,
   Component,
   ElementRef,
@@ -8,6 +9,7 @@ import {
   Output,
   ViewChild,
 } from '@angular/core';
+import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PoseExtractorService } from 'ngx-mp-pose-extractor';
 import { interval, Subscription, timer } from 'rxjs';
@@ -32,6 +34,9 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
   // 再撮影が開始されたときに親コンポーネントに知らせるための EventEmitter
   @Output()
   public onRetryPhotoShootStarted: EventEmitter<number> = new EventEmitter();
+
+  // ボタン
+  @ViewChild('shutterButton') shutterButtonRef?: MatButton;
 
   // カメラ映像のストリーム
   public cameraVideoStream?: MediaStream;
@@ -91,6 +96,9 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
           );
         },
       );
+
+    // シャッターボタンにフォーカスを当てる
+    this.setFocusToShutterButton();
   }
 
   ngOnDestroy() {
@@ -265,6 +273,9 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
     this.onSearchTargetPoseDecided.emit(this.recentlyPoses);
 
     this.stopCamera();
+
+    // シャッターボタンにフォーカスを当てる
+    this.setFocusToShutterButton();
   }
 
   private waitForCameraVideoFrame(
@@ -287,5 +298,12 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
         }
       }, 500);
     });
+  }
+
+  private setFocusToShutterButton() {
+    setTimeout(() => {
+      if (this.shutterButtonRef === undefined) return;
+      this.shutterButtonRef.focus();
+    }, 100);
   }
 }
