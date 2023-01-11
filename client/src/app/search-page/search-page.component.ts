@@ -1,4 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { lastValueFrom, timer } from 'rxjs';
@@ -38,6 +39,7 @@ export class SearchPageComponent implements OnInit {
     private poseSearchService: PoseSearchService,
     private poseTagsService: PoseTagsService,
     private spinner: NgxSpinnerService,
+    private snackBar: MatSnackBar,
   ) {}
 
   async ngOnInit() {
@@ -82,21 +84,25 @@ export class SearchPageComponent implements OnInit {
 
     // タグを取得
     if (0 < matchedPoses.length) {
-      const posesWithPoseTags = await this.poseTagsService.getPosesWithPoseTags(
-        matchedPoses,
-      );
-      for (const poseWithPoseTags of posesWithPoseTags) {
-        const matchedPose = matchedPoses.find((matchedPose: MatchedPose) => {
-          return (
-            matchedPose.poseFileName === poseWithPoseTags.poseFileName &&
-            matchedPose.time === poseWithPoseTags.time
-          );
-        });
-        if (!matchedPose) {
-          continue;
-        }
+      try {
+        const posesWithPoseTags =
+          await this.poseTagsService.getPosesWithPoseTags(matchedPoses);
+        for (const poseWithPoseTags of posesWithPoseTags) {
+          const matchedPose = matchedPoses.find((matchedPose: MatchedPose) => {
+            return (
+              matchedPose.poseFileName === poseWithPoseTags.poseFileName &&
+              matchedPose.time === poseWithPoseTags.time
+            );
+          });
+          if (!matchedPose) {
+            continue;
+          }
 
-        matchedPose.tags = poseWithPoseTags.tags.map((t: PoseTag) => t.name);
+          matchedPose.tags = poseWithPoseTags.tags.map((t: PoseTag) => t.name);
+        }
+      } catch (e) {
+        this.snackBar.open('エラー: タグの取得に失敗しました', 'OK');
+        console.error(e);
       }
     }
 

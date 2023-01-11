@@ -13,6 +13,7 @@ import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PoseExtractorService } from 'ngx-mp-pose-extractor';
 import { interval, Subscription, timer } from 'rxjs';
+import { ConfigService } from 'src/app/shared/config.service';
 import { DetectedPose } from 'src/app/shared/detected-pose';
 
 @Component({
@@ -68,8 +69,8 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
     | 'retrying' = 'initializing';
 
   // 撮影までのカウントダウン
-  public readonly COUNT_DOWN_SECONDS = 3;
-  public countdownRemainSeconds = this.COUNT_DOWN_SECONDS;
+  public countdownSecondsForDecidePose: 3 | 10 = 3;
+  public countdownRemainSeconds = this.countdownSecondsForDecidePose;
   private countdownTimerSubscription?: Subscription;
 
   // 撮影アニメーション
@@ -78,10 +79,18 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
   constructor(
     private snackBar: MatSnackBar,
     private poseExtractorService: PoseExtractorService,
+    private configService: ConfigService,
   ) {}
 
   async ngOnInit() {
+    // カメラの初期化
     await this.initCamera();
+
+    // 設定の読み込み
+    this.countdownSecondsForDecidePose = this.configService.getConfig(
+      'countdownSecondsForDecidePose',
+      3,
+    );
 
     // ポーズを検出したときのイベントリスナを設定
     this.onResultsEventEmitterSubscription =
@@ -133,7 +142,7 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
     this.onRetryPhotoShootStarted.emit(1);
 
     this.searchTargetPoseImageDataUrl = undefined;
-    this.countdownRemainSeconds = this.COUNT_DOWN_SECONDS;
+    this.countdownRemainSeconds = this.countdownSecondsForDecidePose;
 
     this.state = 'countdown';
     this.isEnableShutterAnimation = false;
@@ -153,15 +162,13 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
 
   public async retryPhotoShootCountdown() {
     this.state = 'retrying';
-    this.countdownTimerSubscription = timer(3000).subscribe(async () => {
-      this.countdownTimerSubscription?.unsubscribe();
-      await this.initCamera();
-      await this.startPhotoShootCountdown();
-    });
 
     // 3秒待ってもう一度カウントダウンを開始
-    this.countdownTimerSubscription = timer(3000).subscribe(async () => {
+    this.countdownTimerSubscription = timer(
+      this.countdownSecondsForDecidePose,
+    ).subscribe(async () => {
       this.countdownTimerSubscription?.unsubscribe();
+      await this.initCamera();
       await this.startPhotoShootCountdown();
     });
   }
@@ -172,6 +179,14 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
     }
     this.searchTargetPoseImageDataUrl = undefined;
     this.state = 'standby';
+  }
+
+  public setCountdownSecondsForDecidePose(seconds: 3 | 10) {
+    this.countdownSecondsForDecidePose = seconds;
+    window.localStorage.setItem(
+      'deresposeConfig',
+      JSON.stringify({ countdownSecondsForDecidePose: seconds }),
+    );
   }
 
   private async initCamera() {
@@ -232,7 +247,6 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
   }
 
   private async onCameraVideoFrame() {
-    console.log(`[CameraSearchFormComponent] onCameraVideoFrame`);
     const videoElement = this.cameraVideoElement?.nativeElement;
     if (!videoElement) return;
 

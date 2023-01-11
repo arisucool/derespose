@@ -107,8 +107,20 @@
       }
     }
 
-    .shutter-button {
-      width: 100%;
+    .shutter-button-container {
+      width: 100;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .shutter-button {
+        width: calc(100% + 0.5rem);
+      }
+
+      .shutter-menu-button {
+        position: relative;
+        right: -0.5rem;
+      }
     }
   }
 }

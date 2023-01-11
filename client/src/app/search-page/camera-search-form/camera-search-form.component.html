@@ -68,32 +68,78 @@
       <!---->
     </div>
 
-    <!-- 撮影ボタン -->
-    <button
-      #shutterButton
-      class="shutter-button"
-      mat-button
-      mat-stroked-button
-      color="primary"
-      (click)="this.startPhotoShootCountdown()"
-      *ngIf="this.state === 'standby' || this.state === 'completed'"
+    <!-- 撮影/キャンセルボタン -->
+    <div
+      class="shutter-button-container"
+      *ngIf="
+        this.state === 'standby' ||
+        this.state === 'completed' ||
+        this.state === 'countdown'
+      "
     >
-      <mat-icon style="margin-bottom: 2px">emoji_people</mat-icon>
-      &nbsp;
-      <ng-container *ngIf="this.state === 'standby'"> はじめる </ng-container>
-      <ng-container *ngIf="this.state === 'completed'"> もう一度 </ng-container>
-      &nbsp;
-    </button>
-    <button
-      class="shutter-button"
-      mat-button
-      mat-stroked-button
-      color="warn"
-      (click)="this.cancelPhotoShootCountdown()"
-      *ngIf="this.state === 'countdown'"
-    >
-      &nbsp; キャンセル &nbsp;
-    </button>
+      <button
+        #shutterButton
+        class="shutter-button"
+        mat-button
+        mat-stroked-button
+        color="primary"
+        (click)="this.startPhotoShootCountdown()"
+        *ngIf="this.state === 'standby' || this.state === 'completed'"
+      >
+        <mat-icon style="margin-bottom: 2px">emoji_people</mat-icon>
+        &nbsp;
+        <ng-container *ngIf="this.state === 'standby'"> はじめる </ng-container>
+        <ng-container *ngIf="this.state === 'completed'">
+          もう一度
+        </ng-container>
+        &nbsp;
+      </button>
+
+      <button
+        class="shutter-button"
+        mat-button
+        mat-stroked-button
+        color="warn"
+        (click)="this.cancelPhotoShootCountdown()"
+        *ngIf="this.state === 'countdown'"
+      >
+        &nbsp; キャンセル &nbsp;
+      </button>
+
+      <button
+        class="shutter-menu-button"
+        mat-icon-button
+        [matMenuTriggerFor]="shutterMenu"
+        aria-label="ポーズ認識までの待ち時間"
+        matTooltip="ポーズ認識までの待ち時間"
+        [disabled]="this.state === 'countdown'"
+      >
+        <mat-icon *ngIf="this.countdownSecondsForDecidePose === 3"
+          >timer_3</mat-icon
+        >
+        <mat-icon *ngIf="this.countdownSecondsForDecidePose === 10"
+          >timer_10</mat-icon
+        >
+      </button>
+      <mat-menu #shutterMenu="matMenu">
+        <button
+          (click)="this.setCountdownSecondsForDecidePose(3)"
+          mat-menu-item
+          [disabled]="this.countdownSecondsForDecidePose === 3"
+        >
+          <mat-icon>timer_3</mat-icon>
+          <span>3秒後にポーズ認識</span>
+        </button>
+        <button
+          (click)="this.setCountdownSecondsForDecidePose(10)"
+          mat-menu-item
+          [disabled]="this.countdownSecondsForDecidePose === 10"
+        >
+          <mat-icon>timer_10</mat-icon>
+          <span>10秒後にポーズ認識</span>
+        </button>
+      </mat-menu>
+    </div>
     <!---->
   </div>
 </div>
