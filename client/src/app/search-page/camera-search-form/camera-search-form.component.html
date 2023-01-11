@@ -50,7 +50,8 @@
         #cameraPosePreviewVideo
         [srcObject]="this.cameraPosePreviewStream"
         [style.display]="
-          this.cameraPosePreviewStream && this.searchTargetPoseImageDataUrl
+          (this.cameraPosePreviewStream && this.searchTargetPoseImageDataUrl) ||
+          !this.cameraPosePreviewStream
             ? 'none'
             : 'block'
         "

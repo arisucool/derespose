@@ -123,10 +123,16 @@ export class PoseSearchService {
       for (let i = 0, l = targetPoses.length; i < l; i++) {
         const targetPose = targetPoses[i];
 
-        const poseItems_ = pose.getSimilarPoses(
-          targetPose as any,
-          PoseSearchService.POSE_SIMILARITY_THRESHOLD,
-        ); // TODO 型定義を修正する
+        let poseItems_: SimilarPoseItem[] = [];
+        try {
+          poseItems_ = pose.getSimilarPoses(
+            targetPose as any,
+            PoseSearchService.POSE_SIMILARITY_THRESHOLD,
+          ); // TODO 型定義を修正する
+        } catch (e) {
+          console.error(e);
+          continue;
+        }
         for (const poseItem of poseItems_) {
           if (usedFrames.has(poseItem.timeMiliseconds)) {
             continue;

@@ -77,6 +77,8 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     await this.initCamera();
+
+    // ポーズを検出したときのイベントリスナを設定
     this.onResultsEventEmitterSubscription =
       this.poseExtractorService.onResultsEventEmitter.subscribe(
         (results: {
@@ -106,6 +108,62 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
     if (this.cameraPosePreviewStream) {
       this.cameraPosePreviewStream.getTracks().forEach((track) => track.stop());
     }
+  }
+
+  public async startPhotoShootCountdown() {
+    if (!this.cameraVideoStream) return;
+
+    console.log(`[CameraSearchFormComponent] startPhotoShootCountdown`);
+
+    if (this.cameraVideoElement.nativeElement.paused) {
+      console.log(
+        `[CameraSearchFormComponent] startPhotoShootCountdown - Restarting camera...`,
+      );
+      await this.initCamera();
+    }
+
+    this.onRetryPhotoShootStarted.emit(1);
+
+    this.searchTargetPoseImageDataUrl = undefined;
+    this.countdownRemainSeconds = this.COUNT_DOWN_SECONDS;
+
+    this.state = 'countdown';
+    this.isEnableShutterAnimation = false;
+
+    this.countdownTimerSubscription = interval(1000).subscribe(() => {
+      if (1 <= this.countdownRemainSeconds) {
+        this.countdownRemainSeconds--;
+        return;
+      }
+
+      this.countdownTimerSubscription?.unsubscribe();
+      this.state = 'processing';
+      this.isEnableShutterAnimation = true;
+      this.searchPose();
+    });
+  }
+
+  public async retryPhotoShootCountdown() {
+    this.state = 'retrying';
+    this.countdownTimerSubscription = timer(3000).subscribe(async () => {
+      this.countdownTimerSubscription?.unsubscribe();
+      await this.initCamera();
+      await this.startPhotoShootCountdown();
+    });
+
+    // 3秒待ってもう一度カウントダウンを開始
+    this.countdownTimerSubscription = timer(3000).subscribe(async () => {
+      this.countdownTimerSubscription?.unsubscribe();
+      await this.startPhotoShootCountdown();
+    });
+  }
+
+  public cancelPhotoShootCountdown() {
+    if (this.countdownTimerSubscription) {
+      this.countdownTimerSubscription.unsubscribe();
+    }
+    this.searchTargetPoseImageDataUrl = undefined;
+    this.state = 'standby';
   }
 
   private async initCamera() {
@@ -144,55 +202,29 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
     }
 
     this.cameraVideoStream = stream;
+    await this.waitForCameraVideoFrame();
     await this.onCameraVideoFrame();
 
     this.cameraPosePreviewStream =
       this.poseExtractorService.getPosePreviewMediaStream();
   }
 
-  public startPhotoShootCountdown() {
-    if (!this.cameraVideoStream) return;
-    console.log(`[CameraSearchFormComponent] startPhotoShootCountdown`);
-    this.onRetryPhotoShootStarted.emit(1);
-
-    this.searchTargetPoseImageDataUrl = undefined;
-    this.countdownRemainSeconds = this.COUNT_DOWN_SECONDS;
-
-    this.state = 'countdown';
-    this.isEnableShutterAnimation = false;
-
-    this.countdownTimerSubscription = interval(1000).subscribe(() => {
-      if (1 <= this.countdownRemainSeconds) {
-        this.countdownRemainSeconds--;
-        return;
-      }
-
-      this.countdownTimerSubscription?.unsubscribe();
-      this.state = 'processing';
-      this.isEnableShutterAnimation = true;
-      this.searchPose();
-    });
-  }
-
-  public retryPhotoShootCountdown() {
-    this.state = 'retrying';
-
-    // 3秒待ってもう一度カウントダウンを開始
-    this.countdownTimerSubscription = timer(3000).subscribe(() => {
-      this.countdownTimerSubscription?.unsubscribe();
-      this.startPhotoShootCountdown();
-    });
-  }
-
-  public cancelPhotoShootCountdown() {
-    if (this.countdownTimerSubscription) {
-      this.countdownTimerSubscription.unsubscribe();
+  private stopCamera() {
+    if (this.cameraVideoStream) {
+      this.cameraVideoStream.getTracks().forEach((track) => track.stop());
     }
-    this.searchTargetPoseImageDataUrl = undefined;
-    this.state = 'standby';
+
+    if (this.cameraPosePreviewStream) {
+      this.cameraPosePreviewStream.getTracks().forEach((track) => track.stop());
+    }
+
+    if (this.cameraVideoElement) {
+      this.cameraVideoElement.nativeElement.pause();
+    }
   }
 
   private async onCameraVideoFrame() {
+    console.log(`[CameraSearchFormComponent] onCameraVideoFrame`);
     const videoElement = this.cameraVideoElement?.nativeElement;
     if (!videoElement) return;
 
@@ -201,9 +233,6 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
       videoElement.ended ||
       this.state === 'completed'
     ) {
-      setTimeout(() => {
-        this.onCameraVideoFrame();
-      }, 500);
       return;
     }
 
@@ -234,5 +263,29 @@ export class CameraSearchFormComponent implements OnInit, OnDestroy {
       this.currentPosePreviewImageDataUrl + '';
     this.state = 'completed';
     this.onSearchTargetPoseDecided.emit(this.recentlyPoses);
+
+    this.stopCamera();
+  }
+
+  private waitForCameraVideoFrame(
+    i: number = 0,
+    resolver?: any,
+  ): Promise<void> {
+    console.log(
+      `[CameraSearchFormComponent] waitForCameraVideoFrame`,
+      i,
+      resolver,
+    );
+    return new Promise((resolve) => {
+      const waitTimer = setInterval(() => {
+        const videoElement = this.cameraVideoElement?.nativeElement;
+        if (!videoElement) return;
+
+        if (!videoElement.paused && !videoElement.ended) {
+          clearInterval(waitTimer);
+          resolve();
+        }
+      }, 500);
+    });
   }
 }
