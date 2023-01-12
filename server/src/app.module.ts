@@ -15,11 +15,6 @@ import { ForceHttpsMiddleware } from './shared/force-https/force-https.middlewar
     // (for production environment)
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', '..', 'client', 'dist', 'client'),
-      serveStaticOptions: {
-        setHeaders(res, path, stat) {
-          console.log(res);
-        },
-      },
     }),
     // .env ファイルの読み込み
     ConfigModule.forRoot({
