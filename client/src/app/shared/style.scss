@@ -35,6 +35,11 @@
   }
 }
 
+a {
+  word-wrap: break-word;
+  color: #4d75c2;
+}
+
 .simple-card {
   box-sizing: border-box;
   width: 60vw;
@@ -44,4 +49,10 @@
   background-color: #ffffff;
   border-radius: 10px;
   border: dashed 1px #dddddd;
+
+  &.bordered {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
+  }
 }

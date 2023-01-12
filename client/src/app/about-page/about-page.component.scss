@@ -1,0 +1,33 @@
+:host {
+  padding: 1rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.simple-card {
+  padding: 1rem 1rem 0.75rem 1rem;
+  width: 80vw;
+}
+
+h3 {
+  font-size: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+h4 {
+  font-size: 0.9rem;
+  margin: 0 0 0 0;
+}
+
+p {
+  font-size: 0.8rem;
+}
+
+.policy {
+  p {
+    margin: 0 0.5rem 1rem 0.5rem;
+  }
+}
