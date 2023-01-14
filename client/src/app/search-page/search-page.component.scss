@@ -54,6 +54,14 @@
   }
 }
 
+// トップページへ戻るためのナビゲーション
+
+.bottom-navigation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 // レスポンシブ対応
 
 @media screen and (min-width: 800px) {
@@ -104,5 +112,11 @@
         display: none;
       }
     }
+  }
+
+  // トップページへ戻るためのナビゲーション
+
+  .bottom-navigation {
+    margin-bottom: 1rem;
   }
 }
