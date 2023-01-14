@@ -1,0 +1,12 @@
+ul {
+  > li {
+    margin: 0.5rem 0 0.8rem 0;
+
+    ul {
+      list-style: square;
+      li {
+        margin: 0.25rem 0 0.5rem 0;
+      }
+    }
+  }
+}

@@ -6,6 +6,7 @@ import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { ApiService } from 'src/.api-client/services/api.service';
 import { DetectedPose } from './detected-pose';
 import { MatchedPose } from './matched-pose';
+import { PoseFile } from './pose-file';
 
 @Injectable({
   providedIn: 'root',
@@ -32,11 +33,7 @@ export class PoseSearchService {
   public availableTags: string[] = [];
 
   private poseFiles?: {
-    [key: string]: {
-      title: string;
-      type: 'song' | 'chanpoku';
-      pose: Pose;
-    };
+    [key: string]: PoseFile;
   };
 
   constructor(private apiService: ApiService) {}
@@ -92,6 +89,14 @@ export class PoseSearchService {
       `[PoseSearchService] loadPoses - Loaded ${poseFiles.length} pose files`,
     );
     this.poseFiles = poseFiles;
+  }
+
+  async getPoseFiles() {
+    if (!this.poseFiles) {
+      await this.loadPoseFiles();
+    }
+
+    return this.poseFiles;
   }
 
   async searchPoseByPose(targetPoses: DetectedPose[]): Promise<MatchedPose[]> {

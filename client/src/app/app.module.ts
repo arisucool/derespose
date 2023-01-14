@@ -18,6 +18,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { TagSearchFormComponent } from './search-page/tag-search-form/tag-search-form.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AboutPageComponent } from './about-page/about-page.component';
+import { SupportedPosesComponent } from './about-page/supported-poses/supported-poses.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { AboutPageComponent } from './about-page/about-page.component';
     MatchedPoseComponent,
     TagSearchFormComponent,
     AboutPageComponent,
+    SupportedPosesComponent,
   ],
   imports: [
     BrowserModule,
