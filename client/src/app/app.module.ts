@@ -19,6 +19,7 @@ import { TagSearchFormComponent } from './search-page/tag-search-form/tag-search
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { AboutPageComponent } from './about-page/about-page.component';
 import { SupportedPosesComponent } from './about-page/supported-poses/supported-poses.component';
+import { FaqComponent } from './about-page/faq/faq.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { SupportedPosesComponent } from './about-page/supported-poses/supported-
     TagSearchFormComponent,
     AboutPageComponent,
     SupportedPosesComponent,
+    FaqComponent,
   ],
   imports: [
     BrowserModule,
