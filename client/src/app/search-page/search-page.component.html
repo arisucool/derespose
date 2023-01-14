@@ -56,9 +56,6 @@
         <app-matched-pose
           *ngFor="let pose of this.matchedPoses"
           [pose]="pose"
-          [style.visibility]="
-            pose.isNonDisplayItemForLayoutAdjustment ? 'hidden' : 'visible'
-          "
         ></app-matched-pose>
         <!---->
 
@@ -66,7 +63,6 @@
         <app-matched-pose
           class="layout-adjustment-item"
           [pose]="this.matchedPoses[this.matchedPoses.length - 1]"
-          style="visibility: hidden; height: 0"
           *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
         >
           &nbsp;

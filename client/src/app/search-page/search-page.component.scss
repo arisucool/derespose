@@ -46,6 +46,11 @@
     justify-content: space-around;
     width: 80vw;
     overflow: hidden;
+
+    .layout-adjustment-item {
+      visibility: hidden;
+      height: 0;
+    }
   }
 }
 
@@ -90,8 +95,14 @@
       }
     }
 
+    // 検索結果
+
     .matched-poses-container {
       width: 100%;
+
+      .layout-adjustment-item {
+        display: none;
+      }
     }
   }
 }
