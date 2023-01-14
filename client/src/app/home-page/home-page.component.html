@@ -42,7 +42,11 @@
         </mat-icon>
       </p>
 
-      <div class="tag-buttons">
+      <div class="loading-message" *ngIf="this.poseTags === undefined">
+        読み込んでいます...
+      </div>
+
+      <div class="tag-buttons" *ngIf="this.poseTags !== undefined">
         <button
           mat-stroked-button
           *ngFor="let tag of this.poseTags"

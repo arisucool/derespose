@@ -49,11 +49,7 @@
   </div>
   <!---->
 
-  <div
-    class="matched-poses-container"
-    [ngClass]="{ init: !searchTargetPose }"
-    #matchedPosesContainer
-  >
+  <div class="matched-poses-container" [ngClass]="{ init: !searchTargetPose }">
     <ng-container *ngIf="searchTargetPose || searchTargetTag">
       <ng-container *ngIf="this.matchedPoses && 0 < this.matchedPoses.length">
         <!-- 検索結果の各ポーズ -->

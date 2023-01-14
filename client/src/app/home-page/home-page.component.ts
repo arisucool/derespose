@@ -8,7 +8,7 @@ import { PoseTagsService } from '../shared/pose-tags.service';
   styleUrls: ['../shared/style.scss', './home-page.component.scss'],
 })
 export class HomePageComponent implements OnInit {
-  public poseTags: PoseTag[] = [];
+  public poseTags?: PoseTag[];
 
   constructor(private poseTagsService: PoseTagsService) {}
 
