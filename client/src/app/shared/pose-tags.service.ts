@@ -52,7 +52,7 @@ export class PoseTagsService {
       await this.getPoseTags();
     }
 
-    const poseTags = await lastValueFrom(
+    let poseTags = await lastValueFrom(
       this.apiService.posesControllerAddPoseTag({
         poseFileName: poseFileName,
         poseTime: poseTime.toString(),

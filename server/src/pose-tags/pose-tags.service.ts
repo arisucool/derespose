@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Pose } from 'src/poses/entities/pose.entity';
 import { Repository } from 'typeorm';
+import { BlockedPoseTag } from './entities/blocked-pose-tag.entity';
 import { PoseTag } from './entities/pose-tag.entity';
 
 @Injectable()
@@ -11,6 +12,8 @@ export class PoseTagsService {
     private poseTagRepository: Repository<PoseTag>,
     @InjectRepository(Pose)
     private poseRepository: Repository<Pose>,
+    @InjectRepository(BlockedPoseTag)
+    private blockedPoseTagRepository: Repository<BlockedPoseTag>,
   ) {
     return;
   }
@@ -55,5 +58,15 @@ export class PoseTagsService {
     console.warn(poses);
 
     return poses;
+  }
+
+  async isBlockedPoseTag(tagName: string) {
+    const tag = await this.blockedPoseTagRepository.findOne({
+      where: {
+        name: tagName,
+      },
+    });
+
+    return tag !== null;
   }
 }

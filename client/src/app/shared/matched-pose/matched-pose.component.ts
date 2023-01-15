@@ -21,6 +21,7 @@ import { MatchedPose } from '../matched-pose';
 import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { PoseTagsService } from '../pose-tags.service';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-matched-pose',
@@ -42,7 +43,10 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
   filteredAvailableTags: Observable<string[]>;
   separatorKeysCodes: number[] = [ENTER, COMMA];
 
-  constructor(private poseTagsService: PoseTagsService) {
+  constructor(
+    private poseTagsService: PoseTagsService,
+    private snackBar: MatSnackBar,
+  ) {
     this.filteredAvailableTags = this.tagFormCtrl.valueChanges.pipe(
       startWith(null),
       map((tagName: string | null) => {
@@ -70,7 +74,8 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
     }
   }
 
-  onTagSelected(event: MatAutocompleteSelectedEvent): void {
+  async onTagSelected(event: MatAutocompleteSelectedEvent) {
+    console.log(`[MatchedPoseComponent] onTagSelected`, event);
     if (!this.pose || !this.tagInput) return;
 
     const tagName = this.validateTagName(event.option.viewValue);
@@ -84,15 +89,13 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
       return;
     }
 
+    if (!(await this.registerTagName(tagName))) {
+      return;
+    }
+
     this.pose.tags.push(tagName);
     this.tagInput.nativeElement.value = '';
     this.tagFormCtrl.setValue(null);
-
-    this.poseTagsService.addPoseTag(
-      this.pose.poseFileName,
-      this.pose.time,
-      tagName,
-    );
   }
 
   async openAvailableTags(event: any, trigger: any) {
@@ -102,7 +105,8 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
     trigger.openPanel();
   }
 
-  addTag(event: MatChipInputEvent) {
+  async addTag(event: MatChipInputEvent) {
+    console.log(`[MatchedPoseComponent] addTag`, event);
     if (!this.pose) return;
     if (!this.pose.tags) this.pose.tags = [];
 
@@ -121,13 +125,11 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.pose.tags.push(tagName);
+    if (!(await this.registerTagName(tagName))) {
+      return;
+    }
 
-    this.poseTagsService.addPoseTag(
-      this.pose.poseFileName,
-      this.pose.time,
-      tagName,
-    );
+    this.pose.tags.push(tagName);
   }
 
   async removeTag(tagName: string) {
@@ -145,6 +147,10 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
       this.pose.time,
       tagName,
     );
+
+    this.snackBar.open('タグを削除しました: ' + tagName, undefined, {
+      duration: 3000,
+    });
   }
 
   private filterTagName(tagName: string): any {
@@ -156,6 +162,37 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
       });
     console.log(`[MatchedPoseComponent] filterTagName - ${tagName}`, tagNames);
     return tagNames;
+  }
+
+  private async registerTagName(tagName: string): Promise<boolean> {
+    const message = this.snackBar.open('タグを追加しています...' + tagName);
+
+    if (!this.pose) return false;
+
+    try {
+      await this.poseTagsService.addPoseTag(
+        this.pose.poseFileName,
+        this.pose.time,
+        tagName,
+      );
+      message.dismiss();
+    } catch (e: any) {
+      message.dismiss();
+      console.error(`[MatchedPoseComponent] addTag - Error occurred`, e);
+      this.snackBar.open(
+        'エラー: ' + e.error?.message ?? '不明なエラー',
+        undefined,
+        {
+          duration: 5000,
+        },
+      );
+      return false;
+    }
+
+    this.snackBar.open('タグを追加しました: ' + tagName, undefined, {
+      duration: 3000,
+    });
+    return true;
   }
 
   private validateTagName(tagName: string) {

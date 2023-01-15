@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PoseTagsService } from 'src/pose-tags/pose-tags.service';
 import { Pose } from 'src/poses/entities/pose.entity';
@@ -45,6 +45,10 @@ export class PosesService {
   }
 
   async addPoseTag(poseId: number, poseTagName: string): Promise<PoseTag[]> {
+    if (await this.poseTagsService.isBlockedPoseTag(poseTagName)) {
+      throw new HttpException('このタグ名は使用できません', 400);
+    }
+
     const pose = await this.poseRepository.findOne({
       where: {
         id: poseId,
