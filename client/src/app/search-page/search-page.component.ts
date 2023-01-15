@@ -43,8 +43,6 @@ export class SearchPageComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.poseSearchService.loadPoseFiles();
-
     const routeParams = this.activatedRoute.snapshot.params;
     if (routeParams['tagName']) {
       this.searchMode = 'tag';
@@ -53,6 +51,7 @@ export class SearchPageComponent implements OnInit {
     } else {
       this.searchMode = 'camera';
       this.state = 'initializing';
+      this.poseSearchService.loadPoseFiles();
     }
   }
 
