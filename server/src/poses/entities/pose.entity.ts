@@ -27,11 +27,12 @@ export class Pose extends BaseEntity {
   time: number;
 
   // タグ
-  @ManyToMany(() => PoseTag)
+  @ManyToMany(() => PoseTag, (poseTag) => poseTag.poses)
   @JoinTable()
   @ApiProperty({
-    type: PoseTag,
+    type: () => PoseTag,
     isArray: true,
+    required: false,
   })
   tags: PoseTag[];
 }

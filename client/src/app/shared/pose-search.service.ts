@@ -273,7 +273,7 @@ export class PoseSearchService {
           time: poseItem.timeMiliseconds,
         },
         isFavorite: false,
-        tags: receivedPose.tags.map((tag: PoseTag) => {
+        tags: receivedPose?.tags?.map((tag: PoseTag) => {
           return tag.name;
         }),
         imageUrl: `${PoseSearchService.POSE_FILE_BASE_URL}${receivedPose.poseFileName}/frame-${receivedPose.time}.jpg`,

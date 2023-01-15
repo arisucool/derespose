@@ -97,7 +97,15 @@ export class SearchPageComponent implements OnInit {
             continue;
           }
 
-          matchedPose.tags = poseWithPoseTags.tags.map((t: PoseTag) => t.name);
+          if (poseWithPoseTags.tags === undefined) {
+            continue;
+          }
+
+          const tagNames = [];
+          for (const poseTag of poseWithPoseTags.tags) {
+            tagNames.push(poseTag.name);
+          }
+          matchedPose.tags = tagNames;
         }
       } catch (e) {
         this.snackBar.open('エラー: タグの取得に失敗しました', 'OK');

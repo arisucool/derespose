@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BaseEntity, Entity, PrimaryColumn } from 'typeorm';
+import { Pose } from 'src/poses/entities/pose.entity';
+import { BaseEntity, Entity, ManyToMany, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class PoseTag extends BaseEntity {
@@ -7,4 +8,13 @@ export class PoseTag extends BaseEntity {
   @PrimaryColumn()
   @ApiProperty()
   name: string;
+
+  // ポーズ
+  @ManyToMany(() => Pose, (pose) => pose.tags)
+  @ApiProperty({
+    type: () => Pose,
+    isArray: true,
+    required: false,
+  })
+  poses?: Pose[];
 }

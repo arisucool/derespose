@@ -21,8 +21,21 @@ export class PoseTagsService {
     return this.poseTagRepository.save(tag);
   }
 
-  getPoseTags(): Promise<PoseTag[]> {
-    return this.poseTagRepository.find();
+  async getPoseTags(): Promise<PoseTag[]> {
+    const poseTags = (
+      await this.poseTagRepository.find({
+        loadRelationIds: true,
+      })
+    )
+      .sort((a, b) => {
+        return b.poses.length - a.poses.length;
+      })
+      .map((poseTag) => {
+        poseTag.poses = undefined;
+        return poseTag;
+      });
+
+    return poseTags;
   }
 
   async getPosesWithPoseTags(
