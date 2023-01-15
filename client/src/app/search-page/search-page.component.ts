@@ -6,6 +6,7 @@ import { lastValueFrom, timer } from 'rxjs';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { DetectedPose } from '../shared/detected-pose';
 import { MatchedPose } from '../shared/matched-pose';
+import { PoseFile } from '../shared/pose-file';
 import { PoseSearchService } from '../shared/pose-search.service';
 import { PoseTagsService } from '../shared/pose-tags.service';
 import { CameraSearchFormComponent } from './camera-search-form/camera-search-form.component';
@@ -17,15 +18,16 @@ import { CameraSearchFormComponent } from './camera-search-form/camera-search-fo
 })
 export class SearchPageComponent implements OnInit {
   // 検索モード
-  public searchMode?: 'camera' | 'tag';
+  public searchMode?: 'camera' | 'tag' | 'file';
 
   // カメラでポーズ検索するときの子コンポーネント
   @ViewChild('cameraSearchForm')
   public cameraSearchFormComponent?: CameraSearchFormComponent;
 
-  // 検索対象 (ポーズまたはタグ)
+  // 検索対象 (ポーズ・タグ・ファイル)
   public searchTargetPose?: DetectedPose;
   public searchTargetTag?: string;
+  public searchTargetFile?: PoseFile;
 
   // 状態
   public state: 'initializing' | 'standby' | 'searching' | 'completed' =
@@ -48,6 +50,12 @@ export class SearchPageComponent implements OnInit {
       this.searchMode = 'tag';
       this.searchTargetTag = routeParams['tagName'];
       this.onSearchTargetTagDecided(routeParams['tagName']);
+    } else if (routeParams['poseFileName']) {
+      this.searchMode = 'file';
+      this.searchTargetFile = await this.poseSearchService.getPoseFile(
+        routeParams['poseFileName'],
+      );
+      this.onSearchTargetFileDecided(routeParams['poseFileName']);
     } else {
       this.searchMode = 'camera';
       this.state = 'initializing';
@@ -81,37 +89,8 @@ export class SearchPageComponent implements OnInit {
       searchTargetPoses,
     );
 
-    // タグを取得
-    if (0 < matchedPoses.length) {
-      try {
-        const posesWithPoseTags =
-          await this.poseTagsService.getPosesWithPoseTags(matchedPoses);
-        for (const poseWithPoseTags of posesWithPoseTags) {
-          const matchedPose = matchedPoses.find((matchedPose: MatchedPose) => {
-            return (
-              matchedPose.poseFileName === poseWithPoseTags.poseFileName &&
-              matchedPose.time === poseWithPoseTags.time
-            );
-          });
-          if (!matchedPose) {
-            continue;
-          }
-
-          if (poseWithPoseTags.tags === undefined) {
-            continue;
-          }
-
-          const tagNames = [];
-          for (const poseTag of poseWithPoseTags.tags) {
-            tagNames.push(poseTag.name);
-          }
-          matchedPose.tags = tagNames;
-        }
-      } catch (e) {
-        this.snackBar.open('エラー: タグの取得に失敗しました', 'OK');
-        console.error(e);
-      }
-    }
+    // 各ポーズのタグを取得
+    matchedPoses = await this.setTagsToPoses(matchedPoses);
 
     if (matchedPoses.length === 0) {
       // ポーズが一件も見つからなければ
@@ -149,5 +128,72 @@ export class SearchPageComponent implements OnInit {
 
     // ポーズのリストを反映
     this.matchedPoses = matchedPoses;
+  }
+
+  public async onSearchTargetFileDecided(poseFileName: string) {
+    this.state = 'searching';
+    this.spinner.show();
+
+    // 少し待つ
+    await lastValueFrom(timer(200));
+
+    // ポーズを検索
+    let matchedPoses: MatchedPose[] = [];
+    try {
+      matchedPoses = await this.poseSearchService.getPosesByFileName(
+        poseFileName,
+      );
+    } catch (e: any) {
+      this.snackBar.open('エラー: ポーズの取得に失敗しました', 'OK');
+      console.error(e);
+    }
+
+    // 各ポーズのタグを取得
+    matchedPoses = await this.setTagsToPoses(matchedPoses);
+
+    this.state = 'completed';
+    this.spinner.hide();
+
+    // ポーズのリストを反映
+    this.matchedPoses = matchedPoses;
+  }
+
+  public async setTagsToPoses(
+    matchedPoses: MatchedPose[],
+  ): Promise<MatchedPose[]> {
+    if (0 == matchedPoses.length) {
+      return [];
+    }
+
+    try {
+      const posesWithPoseTags = await this.poseTagsService.getPosesWithPoseTags(
+        matchedPoses,
+      );
+      for (const poseWithPoseTags of posesWithPoseTags) {
+        const matchedPose = matchedPoses.find((matchedPose: MatchedPose) => {
+          return (
+            matchedPose.poseFileName === poseWithPoseTags.poseFileName &&
+            matchedPose.time === poseWithPoseTags.time
+          );
+        });
+        if (!matchedPose) {
+          continue;
+        }
+
+        if (poseWithPoseTags.tags === undefined) {
+          continue;
+        }
+
+        const tagNames = [];
+        for (const poseTag of poseWithPoseTags.tags) {
+          tagNames.push(poseTag.name);
+        }
+        matchedPose.tags = tagNames;
+      }
+    } catch (e) {
+      this.snackBar.open('エラー: タグの取得に失敗しました', 'OK');
+      console.error(e);
+    }
+    return matchedPoses;
   }
 }

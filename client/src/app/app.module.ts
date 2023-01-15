@@ -20,6 +20,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { AboutPageComponent } from './about-page/about-page.component';
 import { SupportedPosesComponent } from './about-page/supported-poses/supported-poses.component';
 import { FaqComponent } from './about-page/faq/faq.component';
+import { FileSearchFormComponent } from './search-page/file-search-form/file-search-form.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { FaqComponent } from './about-page/faq/faq.component';
     AboutPageComponent,
     SupportedPosesComponent,
     FaqComponent,
+    FileSearchFormComponent,
   ],
   imports: [
     BrowserModule,

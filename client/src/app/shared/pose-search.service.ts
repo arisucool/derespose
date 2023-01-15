@@ -99,6 +99,57 @@ export class PoseSearchService {
     return this.poseFiles;
   }
 
+  async getPoseFile(poseFileName: string) {
+    if (!this.poseFiles) {
+      await this.loadPoseFiles();
+    }
+
+    if (!this.poseFiles) {
+      throw new Error('Failed to load poses');
+    }
+
+    if (this.poseFiles[poseFileName] === undefined) {
+      throw new Error(`Pose file not found: ${poseFileName}`);
+    }
+
+    return this.poseFiles[poseFileName];
+  }
+
+  async getPosesByFileName(poseFileName: string): Promise<MatchedPose[]> {
+    const poseFile = await this.getPoseFile(poseFileName);
+
+    const pose = poseFile.pose;
+    const title = poseFile.title;
+
+    let matchedPoses: MatchedPose[] = [];
+    for (const poseItem of pose.getPoses()) {
+      // 整形して配列へ追加
+      const matchedPose: MatchedPose = {
+        id: poseItem.timeMiliseconds,
+        title: title,
+        poseFileName: poseFileName,
+        time: poseItem.timeMiliseconds,
+        timeSeconds: Math.floor(poseItem.timeMiliseconds / 1000),
+        durationSeconds:
+          Math.floor((poseItem.durationMiliseconds / 1000) * 10) / 10,
+        score: 0,
+        scoreString: 'N/A',
+        scoreDetails: {
+          similarity: 0,
+          foundTargetPoseIndex: 0,
+          duration: 0,
+          time: 0,
+        },
+        isFavorite: false,
+        tags: [],
+        imageUrl: `${PoseSearchService.POSE_FILE_BASE_URL}${poseFileName}/frame-${poseItem.timeMiliseconds}.jpg`,
+      };
+      matchedPoses.push(matchedPose);
+    }
+
+    return matchedPoses;
+  }
+
   async searchPoseByPose(targetPoses: DetectedPose[]): Promise<MatchedPose[]> {
     if (!this.poseFiles) {
       await this.loadPoseFiles();

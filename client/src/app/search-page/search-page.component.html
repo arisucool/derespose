@@ -13,7 +13,8 @@
     class="search-summary"
     [ngClass]="{
       'camera-search': this.searchMode && this.searchMode === 'camera',
-      'tag-search': this.searchMode && this.searchMode === 'tag'
+      'tag-search': this.searchMode && this.searchMode === 'tag',
+      'file-search': this.searchMode && this.searchMode === 'file'
     }"
   >
     <!-- カメラによる検索 -->
@@ -34,6 +35,14 @@
     ></app-tag-search-form>
     <!---->
 
+    <!-- ファイルによる検索 -->
+    <app-file-search-form
+      class="file-search-form"
+      *ngIf="this.searchMode && this.searchMode === 'file'"
+      [poseFile]="this.searchTargetFile"
+    ></app-file-search-form>
+    <!---->
+
     <!-- ローディングスピナー -->
     <div class="spinner-container" *ngIf="this.state === 'searching'">
       <ngx-spinner
@@ -50,7 +59,9 @@
   <!---->
 
   <div class="matched-poses-container" [ngClass]="{ init: !searchTargetPose }">
-    <ng-container *ngIf="searchTargetPose || searchTargetTag">
+    <ng-container
+      *ngIf="searchTargetPose || searchTargetTag || searchTargetFile"
+    >
       <ng-container *ngIf="this.matchedPoses && 0 < this.matchedPoses.length">
         <!-- 検索結果の各ポーズ -->
         <app-matched-pose

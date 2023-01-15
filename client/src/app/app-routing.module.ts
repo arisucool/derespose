@@ -24,6 +24,11 @@ const routes: Routes = [
     title: 'タグでポーズを探す',
   },
   {
+    path: 'poses/:poseFileName',
+    component: SearchPageComponent,
+    title: 'ポーズの一覧',
+  },
+  {
     path: 'about',
     component: AboutPageComponent,
     title: 'Derespose について',
