@@ -46,7 +46,7 @@
         読み込んでいます...
       </div>
 
-      <div class="tag-buttons" *ngIf="this.poseTags !== undefined">
+      <div class="buttons" *ngIf="this.poseTags !== undefined">
         <button
           mat-stroked-button
           *ngFor="let tag of this.poseTags"
@@ -57,5 +57,52 @@
         </button>
       </div>
     </li>
+    <li>
+      <p class="caption">
+        全てのポーズをじっくり眺める
+        <mat-icon style="vertical-align: middle; margin: 0 -2rem 4px 1rem">
+          travel_explore
+        </mat-icon>
+      </p>
+
+      <div class="buttons">
+        <button
+          mat-stroked-button
+          routerLink="pose-sets"
+          [queryParams]="{ type: 'song' }"
+        >
+          <mat-icon style="margin-bottom: 1px">music_note</mat-icon>
+          楽曲ポーズ一覧
+        </button>
+
+        <button
+          mat-stroked-button
+          routerLink="pose-sets"
+          [queryParams]="{ type: 'commonPose' }"
+          [disabled]="true"
+        >
+          <mat-icon style="margin-bottom: 1px">people</mat-icon>
+          共通ポーズ一覧
+        </button>
+
+        <button
+          mat-stroked-button
+          routerLink="pose-sets"
+          [queryParams]="{ type: 'chanpokuPose' }"
+          [disabled]="true"
+          matTooltip="aaa"
+        >
+          <mat-icon style="margin-bottom: 1px">face_4</mat-icon>
+          ○○ちゃんっぽくポーズ一覧
+        </button>
+      </div>
+    </li>
   </ul>
+
+  <p>
+    <small
+      >どの機能を使えばいいか、迷ったときは
+      <a routerLink="/about/faq">FAQ</a> をご覧ください</small
+    >
+  </p>
 </div>

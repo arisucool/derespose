@@ -55,7 +55,6 @@ export class PoseTagsService {
       where: wheres,
       relations: ['tags'],
     });
-    console.warn(poses);
 
     return poses;
   }

@@ -38,6 +38,10 @@
       .caption {
         font-size: 0.85rem;
         margin: 0.1rem 0 1rem 0;
+
+        mat-icon {
+          color: #555555;
+        }
       }
 
       button {
@@ -51,9 +55,9 @@
         margin-left: 1rem;
       }
 
-      // タグのボタン
+      // 横並びのボタン
 
-      .tag-buttons {
+      .buttons {
         display: flex;
         flex-wrap: wrap;
         flex-direction: row;

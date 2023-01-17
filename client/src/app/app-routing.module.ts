@@ -6,6 +6,7 @@ import { SearchPageComponent } from './search-page/search-page.component';
 import { SupportedPosesComponent } from './about-page/supported-poses/supported-poses.component';
 import { FaqComponent } from './about-page/faq/faq.component';
 import { AppTitleStrategy } from './app.title-strategy';
+import { PoseSetsPageComponent } from './pose-sets-page/pose-sets-page.component';
 
 const routes: Routes = [
   {
@@ -24,7 +25,12 @@ const routes: Routes = [
     title: 'タグでポーズを探す',
   },
   {
-    path: 'poses/:poseFileName',
+    path: 'pose-sets',
+    component: PoseSetsPageComponent,
+    title: 'ポーズの一覧',
+  },
+  {
+    path: 'pose-sets/:poseFileName',
     component: SearchPageComponent,
     title: 'ポーズの一覧',
   },

@@ -1,0 +1,43 @@
+<div class="page-summary">
+  <h2 *ngIf="this.poseSetsType === undefined">ポーズ一覧</h2>
+  <h2 *ngIf="this.poseSetsType === 'song'">楽曲ポーズ一覧</h2>
+  <h2 *ngIf="this.poseSetsType === 'commonPose'">共通ポーズ一覧</h2>
+  <h2 *ngIf="this.poseSetsType === 'chanpokuPose'">○○ちゃんっぽくポーズ一覧</h2>
+</div>
+
+<p class="note">
+  全てのポーズをじっくり眺めることができます。<br />
+  どのようなポーズがあるのかを一覧したり、全ポーズから発掘したいときにご利用ください。<br /><br />
+  　※ お急ぎのときは、"自分でポーズをとって探す" や "タグからポーズを探す"
+  をおすすめします (<a routerLink="/about/faq" target="_blank">詳細</a>)。<br />
+  <br />
+  ※ 本ページをご利用いただくうえで注意事項については、<a
+    routerLink="/about/supported-poses"
+    target="_blank"
+    >ポーズの対応状況</a
+  >
+  をご覧ください。
+</p>
+
+<ng-container *ngIf="!this.poseSets">
+  <div class="about-app simple-card bordered">読み込んでいます...</div>
+</ng-container>
+
+<ng-container *ngIf="this.poseSets">
+  <a
+    class="pose-set"
+    routerLink="/pose-sets/{{ poseSetName }}"
+    *ngFor="let poseSetName of this.objectKeys(this.poseSets)"
+  >
+    <div class="about-app simple-card bordered">
+      <h3>{{ this.poseSets[poseSetName].title }}</h3>
+      <p>{{ this.poseSets[poseSetName].pose.getNumberOfPoses() }} 件のポーズ</p>
+    </div>
+  </a>
+</ng-container>
+
+<div class="bottom-navigation">
+  <a routerLink="/"
+    ><mat-icon>navigate_before</mat-icon> &nbsp; トップページへ</a
+  >
+</div>

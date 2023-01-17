@@ -35,6 +35,8 @@
   }
 }
 
+// リンク
+
 a {
   word-wrap: break-word;
   color: #4d75c2;
@@ -44,6 +46,8 @@ a {
     opacity: 0.7;
   }
 }
+
+// カード
 
 .simple-card {
   box-sizing: border-box;
@@ -61,6 +65,22 @@ a {
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
   }
 }
+
+// ページの概要
+
+.page-summary {
+  width: 80vw;
+  text-align: center;
+
+  h2 {
+    color: #555555;
+    font-size: 1.5rem;
+    font-weight: lighter;
+    margin: 0 0 0 0;
+  }
+}
+
+// ページ下部のナビゲーション
 
 .bottom-navigation {
   a {
