@@ -22,6 +22,8 @@ import { SupportedPosesComponent } from './about-page/supported-poses/supported-
 import { FaqComponent } from './about-page/faq/faq.component';
 import { FileSearchFormComponent } from './search-page/file-search-form/file-search-form.component';
 import { PoseSetsPageComponent } from './pose-sets-page/pose-sets-page.component';
+import { LoginFormComponent } from './login-page/login-form/login-form.component';
+import { LoginPageComponent } from './login-page/login-page.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,8 @@ import { PoseSetsPageComponent } from './pose-sets-page/pose-sets-page.component
     FaqComponent,
     FileSearchFormComponent,
     PoseSetsPageComponent,
+    LoginFormComponent,
+    LoginPageComponent,
   ],
   imports: [
     BrowserModule,

@@ -7,6 +7,7 @@ import { SupportedPosesComponent } from './about-page/supported-poses/supported-
 import { FaqComponent } from './about-page/faq/faq.component';
 import { AppTitleStrategy } from './app.title-strategy';
 import { PoseSetsPageComponent } from './pose-sets-page/pose-sets-page.component';
+import { LoginPageComponent } from './login-page/login-page.component';
 
 const routes: Routes = [
   {
@@ -48,6 +49,11 @@ const routes: Routes = [
     path: 'about/faq',
     component: FaqComponent,
     title: 'FAQ',
+  },
+  {
+    path: 'login',
+    component: LoginPageComponent,
+    title: 'ログイン',
   },
   {
     path: '**',
