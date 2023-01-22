@@ -8,6 +8,8 @@ import { PosesModule } from './poses/poses.module';
 import { PoseTagsModule } from './pose-tags/pose-tags.module';
 import { ConfigModule } from '@nestjs/config';
 import { ForceHttpsMiddleware } from './shared/force-https/force-https.middleware';
+import { UsersModule } from './users/users.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { ForceHttpsMiddleware } from './shared/force-https/force-https.middlewar
     // モジュール
     PosesModule,
     PoseTagsModule,
+    UsersModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [],

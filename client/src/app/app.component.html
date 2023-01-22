@@ -3,6 +3,28 @@
     <span class="app-title">Derespose</span>
     <span class="app-description">デレスポAR ポーズ検索</span>
   </a>
+
+  <!-- ログイン/アカウントリンク -->
+  <div class="user">
+    <ng-container *ngIf="$currentUser | async as currentUser; else loginLink">
+      <a routerLink="/users/me">
+        <p class="user-name-container">
+          こんにちは、
+          <span class="user-name">{{ currentUser.displayName }} </span>
+          さん
+        </p>
+        <mat-icon class="logged-in">account_circle</mat-icon>
+      </a>
+    </ng-container>
+
+    <ng-template #loginLink>
+      <a routerLink="/auth/login">
+        <p class="user-name-container">ログイン</p>
+        <mat-icon>account_circle</mat-icon>
+      </a>
+    </ng-template>
+  </div>
+  <!---->
 </mat-toolbar>
 
 <router-outlet></router-outlet>

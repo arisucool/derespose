@@ -23,6 +23,10 @@ async function bootstrap(): Promise<void> {
     providers = providers.concat(Reflect.getMetadata('providers', mod));
   }
 
+  controllers = controllers.filter((controller: any) => {
+    return controller !== undefined;
+  });
+
   // プロバイダのモックを生成
   const mockedProviders = providers
     .filter((provider: any) => {

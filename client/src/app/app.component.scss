@@ -13,6 +13,7 @@
 mat-toolbar {
   border-top: 5px solid #bedbfd;
   background-color: white;
+  position: relative;
 
   a {
     color: #505050;
@@ -34,6 +35,51 @@ mat-toolbar {
     font-weight: lighter;
     font-size: 0.7rem;
     margin: 4px 0 0 2rem;
+  }
+
+  // ユーザ情報
+  .user {
+    position: absolute;
+    right: 1rem;
+    font-size: 0.8rem;
+    font-weight: lighter;
+    text-align: right;
+
+    .user-name-container {
+      margin: 0 0 0 0;
+      padding: 0 0 0 0;
+      display: inline;
+
+      .user-name {
+        display: inline-block;
+        font-weight: normal;
+        overflow: hidden;
+        max-width: 10vw;
+        text-overflow: ellipsis;
+        vertical-align: middle;
+        margin-bottom: 4px;
+      }
+    }
+
+    mat-icon {
+      color: #888888;
+      vertical-align: middle;
+      margin: 0 0 2px 0.5rem;
+
+      &.logged-in {
+        color: #698fd6;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  mat-toolbar {
+    .user {
+      .user-name-container {
+        display: none;
+      }
+    }
   }
 }
 

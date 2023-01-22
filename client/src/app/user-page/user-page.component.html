@@ -1,0 +1,33 @@
+<ng-container *ngIf="this.$currentUser | async as currentUser; else loading">
+  <div class="page-summary">
+    <h2>マイページ</h2>
+  </div>
+
+  <div class="about-app simple-card bordered">
+    <h3>{{ currentUser.displayName }} さん</h3>
+    <p style="text-align: right">
+      <button mat-stroked-button (click)="this.logout()">ログアウト</button>
+    </p>
+  </div>
+
+  <div class="about-app simple-card bordered">
+    <h3>あなたのマイリスト</h3>
+    <p>(実装中...)</p>
+  </div>
+
+  <div class="about-app simple-card bordered">
+    <h3>アカウントの削除</h3>
+    <p>アカウントやマイリストを削除します。</p>
+    <p>
+      <button mat-button mat-raised-button color="warn" disabled="">
+        Derespose からアカウント情報を削除 (実装中)
+      </button>
+    </p>
+  </div>
+</ng-container>
+
+<ng-template #loading>
+  <div class="page-summary">
+    <h2>読み込んでいます...</h2>
+  </div>
+</ng-template>

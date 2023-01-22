@@ -1,15 +1,14 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { User } from 'src/.api-client/models/user';
-import { ApiService } from 'src/.api-client/services/api.service';
-import { AuthService } from './shared/auth.service';
+import { AuthService } from '../shared/auth.service';
 
 @Component({
-  selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.scss'],
+  selector: 'app-user-page',
+  templateUrl: './user-page.component.html',
+  styleUrls: ['../shared/style.scss', './user-page.component.scss'],
 })
-export class AppComponent implements OnInit {
+export class UserPageComponent implements OnInit {
   $currentUser!: Observable<User | undefined>;
 
   constructor(private authService: AuthService) {}
@@ -17,5 +16,9 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.$currentUser = this.authService.$currentUser;
     this.authService.getCurrentUser();
+  }
+
+  logout() {
+    this.authService.logout();
   }
 }

@@ -1,7 +1,7 @@
-import { NgModule } from '@angular/core';
+import { forwardRef, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 
 import { MaterialModule } from 'src/material.module';
 import { ApiModule } from '../.api-client/api.module';
@@ -22,8 +22,10 @@ import { SupportedPosesComponent } from './about-page/supported-poses/supported-
 import { FaqComponent } from './about-page/faq/faq.component';
 import { FileSearchFormComponent } from './search-page/file-search-form/file-search-form.component';
 import { PoseSetsPageComponent } from './pose-sets-page/pose-sets-page.component';
-import { LoginFormComponent } from './login-page/login-form/login-form.component';
-import { LoginPageComponent } from './login-page/login-page.component';
+import { LoginFormComponent } from './auth-page/login-form/login-form.component';
+import { AuthPageComponent } from './auth-page/auth-page.component';
+import { ApiIntercepter } from './shared/api.intercepter';
+import { UserPageComponent } from './user-page/user-page.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,8 @@ import { LoginPageComponent } from './login-page/login-page.component';
     FileSearchFormComponent,
     PoseSetsPageComponent,
     LoginFormComponent,
-    LoginPageComponent,
+    AuthPageComponent,
+    UserPageComponent,
   ],
   imports: [
     BrowserModule,
@@ -57,7 +60,14 @@ import { LoginPageComponent } from './login-page/login-page.component';
       type: 'ball-fussion',
     }),
   ],
-  providers: [],
+  providers: [
+    ApiIntercepter,
+    {
+      provide: HTTP_INTERCEPTORS,
+      useExisting: forwardRef(() => ApiIntercepter),
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
