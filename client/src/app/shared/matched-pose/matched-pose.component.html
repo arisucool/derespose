@@ -14,10 +14,17 @@
       class="favorite-button"
       mat-icon-button
       [ngClass]="{ favorite: pose.isFavorite }"
-      (click)="pose!.isFavorite = !pose!.isFavorite"
+      (click)="onFavoriteButtonClicked()"
+      style="right: 3px"
     >
-      <mat-icon *ngIf="!pose?.isFavorite">star_border</mat-icon>
-      <mat-icon *ngIf="pose?.isFavorite">star</mat-icon>
+      <mat-icon
+        *ngIf="!pose?.isFavorite"
+        [matBadge]="1 <= addedPoseLists.length ? addedPoseLists.length : ''"
+        matBadgeColor="warn"
+        matBadgeSize="small"
+        >playlist_add</mat-icon
+      >
+      <mat-icon *ngIf="pose?.isFavorite">playlist_add</mat-icon>
     </button>
   </div>
 

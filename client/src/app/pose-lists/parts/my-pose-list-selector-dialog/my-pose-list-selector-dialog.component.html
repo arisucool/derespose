@@ -1,0 +1,46 @@
+<h1 mat-dialog-title>ポーズリストへ追加...</h1>
+<mat-dialog-content>
+  <!-- ログインしているとき -->
+  <ng-container *ngIf="isLoggedIn">
+    <section class="my-pose-lists-selector">
+      <ul>
+        <li *ngFor="let poseList of this.poseLists">
+          <mat-checkbox
+            [(ngModel)]="poseList.selected"
+            (ngModelChange)="onSelectionChanges(poseList.poseList.id, $event)"
+          >
+            {{ poseList.poseList.title }}
+          </mat-checkbox>
+        </li>
+      </ul>
+    </section>
+  </ng-container>
+  <!---->
+
+  <!-- ログインしていないとき -->
+  <ng-container *ngIf="!isLoggedIn">
+    <p>
+      ポーズリストを作成するには、Twitter アカウントによるログインが必要です。
+    </p>
+    <p>
+      ポーズをリストにまとめて、スマートフォンで確認したり、<br />
+      他のユーザに共有したり。機能をぜひお試しください。<br />
+      <a href="/auth/login" target="_blank" style="font-size: 0.8rem"
+        >詳しくはこちら</a
+      >
+    </p>
+    <p style="text-align: right">
+      <app-login-form [openWithNewWindow]="true"></app-login-form>
+    </p>
+  </ng-container>
+  <!---->
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="createPoseList()" [disabled]="!isLoggedIn">
+    <mat-icon>add</mat-icon>
+    新しいリストを作成
+  </button>
+  &nbsp;
+  <button mat-button mat-dialog-close>閉じる</button>
+</mat-dialog-actions>

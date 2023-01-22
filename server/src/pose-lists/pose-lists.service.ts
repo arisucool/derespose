@@ -3,7 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { PosesService } from 'src/poses/poses.service';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
+import { AddPoseToPoseListDto } from './dtos/add-pose-to-pose-list.dto';
 import { CreatePostListDto } from './dtos/create-pose-list.dto';
+import { RemovePoseFromPoseListDto } from './dtos/remove-pose-from-pose-list.dto';
 import { UpdatePoseListDto } from './dtos/update-pose-list.dto';
 import { PoseList } from './entities/pose-list.entity';
 
@@ -59,6 +61,18 @@ export class PoseListsService {
 
   async createPoseList(dto: CreatePostListDto, user: User) {
     const now = new Date();
+
+    if (
+      await this.poseListsRepository.countBy({
+        title: dto.title,
+        user: {
+          id: user.id,
+        },
+      })
+    ) {
+      throw new HttpException('Title already exists', 400);
+    }
+
     return this.poseListsRepository.save({
       title: dto.title,
       createdAt: now,
@@ -107,6 +121,81 @@ export class PoseListsService {
     }
 
     return item.remove();
+  }
+
+  async addPoseToPoseList(
+    id: string,
+    dto: AddPoseToPoseListDto,
+    user: User,
+  ): Promise<PoseList> {
+    const pose = await this.posesService.getPose(
+      dto.poseFileName,
+      dto.poseTime,
+      true,
+    );
+
+    if (!pose) return;
+
+    const item = await this.poseListsRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['user', 'poses'],
+    });
+
+    if (!item) {
+      throw new HttpException('Item not found', 404);
+    }
+
+    if (item.user.id !== user.id) {
+      throw new HttpException('Forbidden', 403);
+    }
+
+    item.poses.push(pose);
+    return this.poseListsRepository.save(item);
+  }
+
+  async removePoseFromPoseList(
+    id: string,
+    dto: RemovePoseFromPoseListDto,
+    user: User,
+  ): Promise<PoseList> {
+    const pose = await this.posesService.getPose(
+      dto.poseFileName,
+      dto.poseTime,
+      true,
+    );
+
+    if (!pose) return;
+
+    const item = await this.poseListsRepository.findOne({
+      where: {
+        id,
+      },
+      relations: ['user', 'poses'],
+    });
+
+    if (!item) {
+      throw new HttpException('Item not found', 404);
+    }
+
+    if (item.user.id !== user.id) {
+      throw new HttpException('Forbidden', 403);
+    }
+
+    item.poses = item.poses.filter((p) => p.id !== pose.id);
+    return this.poseListsRepository.save(item);
+  }
+
+  getPoseListsByUserId(userId: string): Promise<PoseList[]> {
+    return this.poseListsRepository.find({
+      where: {
+        user: {
+          id: userId,
+        },
+      },
+      relations: ['poses'],
+    });
   }
 
   private async getPoseByPoseIdentifiers(poseIdentifiers: string[]) {

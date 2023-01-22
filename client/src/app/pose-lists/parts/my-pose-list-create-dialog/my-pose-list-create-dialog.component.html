@@ -1,0 +1,46 @@
+<h1 mat-dialog-title>ポーズリストの作成</h1>
+<mat-dialog-content>
+  <form #poseListCreateForm="ngForm" (ngSubmit)="create()">
+    <p style="padding-top: 0.25rem">
+      <mat-form-field appearance="outline" floatLabel="always">
+        <mat-label>リストの名前</mat-label>
+        <input
+          name="listName"
+          [(ngModel)]="title"
+          matInput
+          placeholder="例: ハートポーズ集"
+        />
+        <mat-hint></mat-hint>
+      </mat-form-field>
+    </p>
+
+    <p>
+      <mat-label>公開モード: &nbsp;&nbsp;</mat-label>
+      <mat-radio-group name="publicMode" [(ngModel)]="publicMode">
+        <mat-radio-button value="public">公開</mat-radio-button>
+        &nbsp;
+        <mat-radio-button value="sharedByUrl"
+          >限定公開</mat-radio-button
+        > </mat-radio-group
+      ><br />
+      <small
+        >"公開" にすると、このリストを全てのユーザが閲覧できます。<br />
+        リストには、あなたのユーザ名が表示されます。
+      </small>
+    </p>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <span class="note">上記の設定はあとから変更できます</span>
+  <button
+    (click)="this.create()"
+    mat-button
+    color="primary"
+    [disabled]="isCreating"
+  >
+    <ng-container *ngIf="isCreating">作成中...</ng-container>
+    <ng-container *ngIf="!isCreating">作成</ng-container>
+  </button>
+  <button mat-button mat-dialog-close>キャンセル</button>
+</mat-dialog-actions>

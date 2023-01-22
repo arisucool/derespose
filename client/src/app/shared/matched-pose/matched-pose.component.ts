@@ -22,6 +22,13 @@ import { COMMA, ENTER } from '@angular/cdk/keycodes';
 import { PoseTagsService } from '../pose-tags.service';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
+import {
+  MyPoseListSelectorDialogComponent,
+  MyPoseListSelectorDialogData,
+} from 'src/app/pose-lists/parts/my-pose-list-selector-dialog/my-pose-list-selector-dialog.component';
+import { PoseListsService } from 'src/app/pose-lists/pose-lists.service';
+import { PoseList } from 'src/.api-client/models/pose-list';
 
 @Component({
   selector: 'app-matched-pose',
@@ -29,11 +36,16 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['../../shared/style.scss', './matched-pose.component.scss'],
 })
 export class MatchedPoseComponent implements OnInit, OnDestroy {
+  // ポーズ
   @Input()
   public pose?: MatchedPose;
 
-  public availableTags: PoseTag[] = [];
+  // 当該ポーズが追加されたポーズリスト
+  public addedPoseLists: PoseList[] = [];
+  public onMyPoseListsChangedSubscription?: Subscription;
 
+  // 利用可能なすべてのタグ
+  public availableTags: PoseTag[] = [];
   public onAvailablePoseTagsChangedSubscription?: Subscription;
 
   // タグ編集
@@ -45,7 +57,9 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
 
   constructor(
     private poseTagsService: PoseTagsService,
+    private poseListsService: PoseListsService,
     private snackBar: MatSnackBar,
+    private matDialog: MatDialog,
   ) {
     this.filteredAvailableTags = this.tagFormCtrl.valueChanges.pipe(
       startWith(null),
@@ -59,6 +73,7 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
   }
 
   async ngOnInit() {
+    // 利用可能なタグを取得
     this.availableTags = await this.poseTagsService.getPoseTags();
     this.onAvailablePoseTagsChangedSubscription =
       this.poseTagsService.onAvailablePoseTagsChanged.subscribe(
@@ -66,11 +81,36 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
           this.availableTags = poseTags;
         },
       );
+
+    // 当該ポーズの属するポーズリストを取得
+    this.onMyPoseListsChanged();
+    this.onMyPoseListsChangedSubscription =
+      this.poseListsService.onMyPoseListsChanged.subscribe(
+        async (poseLists: PoseList[]) => {
+          this.onMyPoseListsChanged();
+        },
+      );
+
+    if (!this.pose) return;
+    if (!this.pose.poseFileName) return;
+  }
+
+  private async onMyPoseListsChanged() {
+    if (!this.pose) return;
+
+    // 当該ポーズの属するポーズリストを取得
+    this.addedPoseLists = await this.poseListsService.getPoseListsByPose(
+      this.pose.poseFileName,
+      this.pose.time,
+    );
   }
 
   ngOnDestroy() {
     if (this.onAvailablePoseTagsChangedSubscription) {
       this.onAvailablePoseTagsChangedSubscription.unsubscribe();
+    }
+    if (this.onMyPoseListsChangedSubscription) {
+      this.onMyPoseListsChangedSubscription.unsubscribe();
     }
   }
 
@@ -96,6 +136,20 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
     this.pose.tags.push(tagName);
     this.tagInput.nativeElement.value = '';
     this.tagFormCtrl.setValue(null);
+  }
+
+  async onFavoriteButtonClicked() {
+    if (!this.pose) return;
+
+    const data: MyPoseListSelectorDialogData = {
+      pose: this.pose,
+      poseFileName: this.pose.poseFileName,
+      poseTime: this.pose.time,
+    };
+
+    this.matDialog.open(MyPoseListSelectorDialogComponent, {
+      data: data,
+    });
   }
 
   async openAvailableTags(event: any, trigger: any) {

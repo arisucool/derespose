@@ -6,19 +6,15 @@ import {
   Param,
   Post,
   Put,
-  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiParam,
-  ApiResponse,
-} from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from 'src/users/entities/user.entity';
+import { AddPoseToPoseListDto } from './dtos/add-pose-to-pose-list.dto';
 import { CreatePostListDto } from './dtos/create-pose-list.dto';
+import { RemovePoseFromPoseListDto } from './dtos/remove-pose-from-pose-list.dto';
 import { PoseList } from './entities/pose-list.entity';
 import { PoseListsService } from './pose-lists.service';
 
@@ -77,6 +73,48 @@ export class PoseListsController {
     @Body() dto: CreatePostListDto,
   ): Promise<PoseList> {
     return this.poseListsService.updatePoseList(id, dto, req.user.user as User);
+  }
+
+  @Post(':id/poses')
+  @ApiOperation({
+    summary: '指定されたポーズリストに対するポーズの追加',
+  })
+  @ApiResponse({
+    type: PoseList,
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  addPoseToPoseList(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: AddPoseToPoseListDto,
+  ): Promise<PoseList> {
+    return this.poseListsService.addPoseToPoseList(
+      id,
+      dto,
+      req.user.user as User,
+    );
+  }
+
+  @Delete(':id/poses')
+  @ApiOperation({
+    summary: '指定されたポーズリストからのポーズの削除',
+  })
+  @ApiResponse({
+    type: PoseList,
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  removePoseFromPoseList(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: RemovePoseFromPoseListDto,
+  ): Promise<PoseList> {
+    return this.poseListsService.removePoseFromPoseList(
+      id,
+      dto,
+      req.user.user as User,
+    );
   }
 
   @Delete(':id')

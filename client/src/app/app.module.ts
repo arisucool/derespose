@@ -27,6 +27,8 @@ import { AuthPageComponent } from './auth-page/auth-page.component';
 import { ApiIntercepter } from './shared/api.intercepter';
 import { UserPageComponent } from './user-page/user-page.component';
 import { PoseListsPageComponent } from './pose-lists/pages/pose-lists-page/pose-lists.component';
+import { MyPoseListSelectorDialogComponent } from './pose-lists/parts/my-pose-list-selector-dialog/my-pose-list-selector-dialog.component';
+import { MyPoseListCreateDialogComponent } from './pose-lists/parts/my-pose-list-create-dialog/my-pose-list-create-dialog.component';
 
 @NgModule({
   declarations: [
@@ -45,6 +47,8 @@ import { PoseListsPageComponent } from './pose-lists/pages/pose-lists-page/pose-
     AuthPageComponent,
     UserPageComponent,
     PoseListsPageComponent,
+    MyPoseListSelectorDialogComponent,
+    MyPoseListCreateDialogComponent,
   ],
   imports: [
     BrowserModule,

@@ -12,6 +12,6 @@ export class PoseListsPageComponent implements OnInit {
   constructor(private poseListsService: PoseListsService) {}
 
   async ngOnInit() {
-    this.poseLists = await this.poseListsService.getPoseLists();
+    this.poseLists = await this.poseListsService.getPublicPoseLists();
   }
 }

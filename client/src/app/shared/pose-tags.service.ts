@@ -23,7 +23,7 @@ export class PoseTagsService {
       return firstValueFrom(this.onAvailablePoseTagsChanged);
     this.isRequestingPoseTags = true;
 
-    console.log(`getPoseTags - Requesting...`);
+    console.log(`[PoseTagsService] getPoseTags - Requesting...`);
 
     const poseTags = await lastValueFrom(
       this.apiService.poseTagsControllerGetPoseTags(),
