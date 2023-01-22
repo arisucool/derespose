@@ -1,8 +1,20 @@
 <div class="page-summary">
-  <h2>ポーズリスト</h2>
+  <h2>
+    <ng-container *ngIf="!this.userId"> ポーズリスト </ng-container>
+    <ng-container *ngIf="this.userId && this.userId === 'me'">
+      マイ ポーズリスト
+    </ng-container>
+  </h2>
 </div>
 
-<p class="note">P の皆さんによって最近作成されたポーズリストの一覧です。</p>
+<p class="note">
+  <ng-container *ngIf="!this.userId">
+    P の皆さんによって最近作成されたポーズリストの一覧です
+  </ng-container>
+  <ng-container *ngIf="this.userId && this.userId === 'me'">
+    あなたの作成したポーズリストの一覧です
+  </ng-container>
+</p>
 
 <ng-container *ngIf="!this.poseLists">
   <div class="about-app simple-card bordered">読み込んでいます...</div>
@@ -15,7 +27,32 @@
         <h3>{{ poseList.title }}</h3>
         <p>
           XX 件のポーズ &nbsp;&nbsp;-&nbsp;&nbsp;
-          {{ poseList.user.displayName }} さん
+
+          <!-- 自分のポーズリストの場合 -->
+          <ng-container *ngIf="this.userId">
+            &nbsp;
+            <ng-container *ngIf="poseList.publicMode === 'public'">
+              <mat-icon
+                matTooltip="誰でも閲覧可能"
+                style="vertical-align: middle; margin-bottom: 3px"
+                >public</mat-icon
+              >
+            </ng-container>
+            <ng-container *ngIf="poseList.publicMode === 'sharedByUrl'">
+              <mat-icon
+                matTooltip="限定公開 (URLを知っている人が閲覧可能)"
+                style="vertical-align: middle; margin-bottom: 3px"
+                >link</mat-icon
+              >
+            </ng-container>
+          </ng-container>
+          <!---->
+
+          <!-- 共有されたポーズリストの場合 -->
+          <ng-container *ngIf="!this.userId">
+            {{ poseList.user?.displayName }} さん
+          </ng-container>
+          <!---->
         </p>
       </div>
     </a>
@@ -23,8 +60,16 @@
 </ng-container>
 
 <div class="bottom-navigation">
-  <a routerLink="/">
-    <mat-icon>navigate_before</mat-icon>
-    &nbsp; トップページへ</a
-  >
+  <ng-container *ngIf="!this.userId">
+    <a routerLink="/">
+      <mat-icon>navigate_before</mat-icon>
+      &nbsp; トップページへ</a
+    >
+  </ng-container>
+  <ng-container *ngIf="this.userId && this.userId === 'me'">
+    <a routerLink="/users/me">
+      <mat-icon>navigate_before</mat-icon>
+      &nbsp; マイページへ</a
+    >
+  </ng-container>
 </div>

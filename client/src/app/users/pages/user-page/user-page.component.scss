@@ -7,6 +7,14 @@
   gap: 2rem;
 }
 
+.user-menu {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 1rem;
+}
+
 .simple-card {
   padding: 1rem 1rem 0.75rem 1rem;
   width: 80vw;

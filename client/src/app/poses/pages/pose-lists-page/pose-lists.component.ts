@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { PoseListsService } from '../../services/pose-lists.service';
 
 @Component({
@@ -8,10 +9,24 @@ import { PoseListsService } from '../../services/pose-lists.service';
 })
 export class PoseListsPageComponent implements OnInit {
   public poseLists: any[] = [];
+  public userId?: string;
 
-  constructor(private poseListsService: PoseListsService) {}
+  constructor(
+    private activatedRoute: ActivatedRoute,
+    private poseListsService: PoseListsService,
+  ) {}
 
   async ngOnInit() {
-    this.poseLists = await this.poseListsService.getPublicPoseLists();
+    this.userId =
+      this.activatedRoute.snapshot.queryParams['userId'] &&
+      this.activatedRoute.snapshot.queryParams['userId'] === 'me'
+        ? 'me'
+        : undefined;
+
+    if (this.userId === 'me') {
+      this.poseLists = await this.poseListsService.getMyPoseLists();
+    } else {
+      this.poseLists = await this.poseListsService.getPublicPoseLists();
+    }
   }
 }

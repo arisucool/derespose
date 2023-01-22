@@ -5,16 +5,20 @@
 
   <div class="about-app simple-card bordered">
     <h3>{{ currentUser.displayName }} さん</h3>
-    <p style="text-align: right">
-      <button mat-stroked-button (click)="this.logout()">ログアウト</button>
+    <p class="user-menu">
+      <button
+        mat-stroked-button
+        routerLink="/poses/pose-lists"
+        [queryParams]="{ userId: 'me' }"
+      >
+        <mat-icon>list</mat-icon>
+        &nbsp;マイリストの一覧
+      </button>
+      <button mat-stroked-button (click)="this.logout()">
+        <mat-icon>logout</mat-icon>
+        &nbsp;ログアウト
+      </button>
     </p>
-  </div>
-
-  <div class="about-app simple-card bordered">
-    <h3>あなたのマイリスト</h3>
-    <ul>
-      <li></li>
-    </ul>
   </div>
 
   <div class="about-app simple-card bordered">

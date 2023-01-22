@@ -19,20 +19,24 @@ const routes: Routes = [
     path: 'pose-sets',
     component: PoseSetsPageComponent,
     title: 'ポーズの一覧',
-  },
-  {
-    path: 'pose-sets/:poseFileName',
-    component: SearchPageComponent,
-    title: 'ポーズの一覧',
+    children: [
+      {
+        path: ':poseFileName',
+        component: SearchPageComponent,
+        title: 'ポーズの一覧',
+      },
+    ],
   },
   {
     path: 'pose-lists',
     component: PoseListsPageComponent,
-  },
-  {
-    path: 'pose-lists/:poseListId',
-    component: SearchPageComponent,
-    title: 'ポーズリスト',
+    children: [
+      {
+        path: ':poseListId',
+        component: SearchPageComponent,
+        title: 'ポーズリスト',
+      },
+    ],
   },
 ];
 

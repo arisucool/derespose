@@ -31,7 +31,10 @@ export class PoseListsService {
 
   async getMyPoseLists() {
     if (this.myPoseLists) return this.myPoseLists;
-    if (!this.authService.isLoggedIn()) return [];
+    if (!this.authService.getAccessToken()) {
+      console.log(`[PoseTagsService] getMyPoseLists - Not logged in`);
+      return [];
+    }
 
     if (this.isRequestingMyPoseLists)
       return lastValueFrom(this.onMyPoseListsChanged);
