@@ -1,14 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes, TitleStrategy } from '@angular/router';
-import { HomePageComponent } from './home-page/home-page.component';
-import { AboutPageComponent } from './about-page/about-page.component';
-import { SearchPageComponent } from './search-page/search-page.component';
-import { SupportedPosesComponent } from './about-page/supported-poses/supported-poses.component';
-import { FaqComponent } from './about-page/faq/faq.component';
+import { HomePageComponent } from './home/pages/home-page/home-page.component';
+import { AboutPageComponent } from './about/pages/about-page/about-page.component';
+import { SearchPageComponent } from './poses/pages/search-page/search-page.component';
+import { SupportedPosesPageComponent } from './about/pages/supported-poses-page/supported-poses-page.component';
+import { FaqPageComponent } from './about/pages/faq-page/faq-page.component';
 import { AppTitleStrategy } from './app.title-strategy';
-import { PoseSetsPageComponent } from './pose-sets-page/pose-sets-page.component';
-import { AuthPageComponent } from './auth-page/auth-page.component';
-import { UserPageComponent } from './user-page/user-page.component';
+import { PoseSetsPageComponent } from './pose-sets/pages/pose-sets-page/pose-sets-page.component';
+import { AuthPageComponent } from './auth/pages/auth-page/auth-page.component';
+import { UserPageComponent } from './users/pages/user-page/user-page.component';
 import { PoseListsPageComponent } from './pose-lists/pages/pose-lists-page/pose-lists.component';
 
 const routes: Routes = [
@@ -44,12 +44,12 @@ const routes: Routes = [
   },
   {
     path: 'about/supported-poses',
-    component: SupportedPosesComponent,
+    component: SupportedPosesPageComponent,
     title: 'ポーズの対応状況',
   },
   {
     path: 'about/faq',
-    component: FaqComponent,
+    component: FaqPageComponent,
     title: 'FAQ',
   },
   {

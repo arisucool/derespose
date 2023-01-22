@@ -4,7 +4,7 @@ import { PoseListsService } from '../../pose-lists.service';
 @Component({
   selector: 'app-pose-lists-page',
   templateUrl: './pose-lists-page.component.html',
-  styleUrls: ['../../../shared/style.scss', './pose-lists-page.component.scss'],
+  styleUrls: ['../../../common/style.scss', './pose-lists-page.component.scss'],
 })
 export class PoseListsPageComponent implements OnInit {
   public poseLists: any[] = [];

@@ -2,7 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { lastValueFrom } from 'rxjs';
 import { PoseList } from 'src/.api-client/models/pose-list';
 import { ApiService } from 'src/.api-client/services/api.service';
-import { AuthService } from '../shared/auth.service';
+import { AuthService } from '../auth/services/auth.service';
 
 @Injectable({
   providedIn: 'root',
