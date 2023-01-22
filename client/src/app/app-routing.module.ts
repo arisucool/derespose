@@ -9,6 +9,7 @@ import { AppTitleStrategy } from './app.title-strategy';
 import { PoseSetsPageComponent } from './pose-sets-page/pose-sets-page.component';
 import { AuthPageComponent } from './auth-page/auth-page.component';
 import { UserPageComponent } from './user-page/user-page.component';
+import { PoseListsPageComponent } from './pose-lists/pages/pose-lists-page/pose-lists.component';
 
 const routes: Routes = [
   {
@@ -65,6 +66,15 @@ const routes: Routes = [
     path: 'users/me',
     component: UserPageComponent,
     title: 'ユーザ',
+  },
+  {
+    path: 'pose-lists',
+    component: PoseListsPageComponent,
+  },
+  {
+    path: 'pose-lists/:poseListId',
+    component: SearchPageComponent,
+    title: 'ポーズリスト',
   },
   {
     path: '**',

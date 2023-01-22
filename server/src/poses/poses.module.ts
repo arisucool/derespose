@@ -11,5 +11,6 @@ import { PosesService } from './poses.service';
   imports: [TypeOrmModule.forFeature([BlockedPoseTag, Pose, PoseTag])],
   controllers: [PosesController],
   providers: [PosesService, PoseTagsService],
+  exports: [TypeOrmModule],
 })
 export class PosesModule {}

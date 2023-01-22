@@ -17,13 +17,23 @@ export class PosesService {
     return;
   }
 
-  getPose(poseFileName: string, poseTime: number): Promise<Pose> {
-    return this.poseRepository.findOne({
+  async getPose(
+    poseFileName: string,
+    poseTime: number,
+    shouldCreate = false,
+  ): Promise<Pose> {
+    let pose = await this.poseRepository.findOne({
       where: {
         poseFileName: poseFileName,
         time: poseTime,
       },
     });
+
+    if (!pose && shouldCreate) {
+      pose = await this.registerPose(poseFileName, poseTime);
+    }
+
+    return pose;
   }
 
   getPosesByPoseTag(poseTagName: string) {

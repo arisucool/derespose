@@ -10,6 +10,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ForceHttpsMiddleware } from './shared/force-https/force-https.middleware';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
+import { PoseListsModule } from './pose-lists/pose-lists.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { AuthModule } from './auth/auth.module';
     PoseTagsModule,
     UsersModule,
     AuthModule,
+    PoseListsModule,
   ],
   controllers: [AppController],
   providers: [],

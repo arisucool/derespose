@@ -1,0 +1,30 @@
+<div class="page-summary">
+  <h2>ポーズリスト</h2>
+</div>
+
+<p class="note">P の皆さんによって最近作成されたポーズリストの一覧です。</p>
+
+<ng-container *ngIf="!this.poseLists">
+  <div class="about-app simple-card bordered">読み込んでいます...</div>
+</ng-container>
+
+<ng-container *ngIf="this.poseLists">
+  <ng-container *ngFor="let poseList of this.poseLists">
+    <a class="pose-set" routerLink="/pose-lists/{{ poseList.id }}">
+      <div class="about-app simple-card bordered">
+        <h3>{{ poseList.title }}</h3>
+        <p>
+          XX 件のポーズ &nbsp;&nbsp;-&nbsp;&nbsp;
+          {{ poseList.user.displayName }} さん
+        </p>
+      </div>
+    </a>
+  </ng-container>
+</ng-container>
+
+<div class="bottom-navigation">
+  <a routerLink="/">
+    <mat-icon>navigate_before</mat-icon>
+    &nbsp; トップページへ</a
+  >
+</div>

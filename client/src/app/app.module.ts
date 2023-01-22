@@ -26,6 +26,7 @@ import { LoginFormComponent } from './auth-page/login-form/login-form.component'
 import { AuthPageComponent } from './auth-page/auth-page.component';
 import { ApiIntercepter } from './shared/api.intercepter';
 import { UserPageComponent } from './user-page/user-page.component';
+import { PoseListsPageComponent } from './pose-lists/pages/pose-lists-page/pose-lists.component';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { UserPageComponent } from './user-page/user-page.component';
     LoginFormComponent,
     AuthPageComponent,
     UserPageComponent,
+    PoseListsPageComponent,
   ],
   imports: [
     BrowserModule,

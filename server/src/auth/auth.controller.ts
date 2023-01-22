@@ -6,6 +6,7 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBearerAuth } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { Session } from './entities/session.entity';
@@ -36,6 +37,7 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('logout')
   async logout(@Req() req: any) {
     const session: Session = req.user;

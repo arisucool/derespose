@@ -33,7 +33,9 @@ export class User extends BaseEntity {
   twitterUserName: string;
 
   // Twitter アクセストークン
-  @Column()
+  @Column({
+    select: false,
+  })
   twitterAccessToken?: string;
 
   // 利用開始日時
@@ -47,6 +49,7 @@ export class User extends BaseEntity {
   // 最終ログイン時のIPアドレス
   @Column({
     type: String,
+    select: false,
   })
   lastLoggedIpAddress?: string;
 
