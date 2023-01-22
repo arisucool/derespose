@@ -1,13 +1,9 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes, TitleStrategy } from '@angular/router';
 import { HomePageComponent } from './home/pages/home-page/home-page.component';
-import { AboutPageComponent } from './about/pages/about-page/about-page.component';
 import { SearchPageComponent } from './poses/pages/search-page/search-page.component';
-import { SupportedPosesPageComponent } from './about/pages/supported-poses-page/supported-poses-page.component';
-import { FaqPageComponent } from './about/pages/faq-page/faq-page.component';
 import { AppTitleStrategy } from './app.title-strategy';
 import { PoseSetsPageComponent } from './pose-sets/pages/pose-sets-page/pose-sets-page.component';
-import { AuthPageComponent } from './auth/pages/auth-page/auth-page.component';
 import { UserPageComponent } from './users/pages/user-page/user-page.component';
 import { PoseListsPageComponent } from './pose-lists/pages/pose-lists-page/pose-lists.component';
 
@@ -38,36 +34,6 @@ const routes: Routes = [
     title: 'ポーズの一覧',
   },
   {
-    path: 'about',
-    component: AboutPageComponent,
-    title: 'Derespose について',
-  },
-  {
-    path: 'about/supported-poses',
-    component: SupportedPosesPageComponent,
-    title: 'ポーズの対応状況',
-  },
-  {
-    path: 'about/faq',
-    component: FaqPageComponent,
-    title: 'FAQ',
-  },
-  {
-    path: 'auth/login',
-    component: AuthPageComponent,
-    title: 'ログイン',
-  },
-  {
-    path: 'auth/callback',
-    component: AuthPageComponent,
-    title: 'ログイン',
-  },
-  {
-    path: 'users/me',
-    component: UserPageComponent,
-    title: 'ユーザ',
-  },
-  {
     path: 'pose-lists',
     component: PoseListsPageComponent,
   },
@@ -75,6 +41,20 @@ const routes: Routes = [
     path: 'pose-lists/:poseListId',
     component: SearchPageComponent,
     title: 'ポーズリスト',
+  },
+  {
+    path: 'users/me',
+    component: UserPageComponent,
+    title: 'ユーザ',
+  },
+  {
+    path: 'about',
+    loadChildren: () =>
+      import('./about/about.module').then((m) => m.AboutModule),
+  },
+  {
+    path: 'auth',
+    loadChildren: () => import('./auth/auth.module').then((m) => m.AuthModule),
   },
   {
     path: '**',

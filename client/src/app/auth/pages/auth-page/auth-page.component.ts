@@ -11,7 +11,6 @@ import { AuthService } from '../../services/auth.service';
 export class AuthPageComponent implements OnInit {
   constructor(
     private activatedRoute: ActivatedRoute,
-    private router: Router,
     private authService: AuthService,
   ) {}
 
