@@ -17,11 +17,11 @@ import { UserPageComponent } from './users/pages/user-page/user-page.component';
 import { PoseListsPageComponent } from './poses/pages/pose-lists-page/pose-lists.component';
 import { MyPoseListSelectorDialogComponent } from './poses/widgets/my-pose-list-selector-dialog/my-pose-list-selector-dialog.component';
 import { MyPoseListCreateDialogComponent } from './poses/widgets/my-pose-list-create-dialog/my-pose-list-create-dialog.component';
-import { SharedModule } from './shared.module';
+import { SharedModule } from './shared/shared.module';
 import { AuthModule } from './auth/auth.module';
 
 import { ApiModule } from '../.api-client/api.module';
-import { ApiIntercepter } from './common/api.intercepter';
+import { ApiIntercepter } from './shared/api.intercepter';
 
 @NgModule({
   declarations: [AppComponent, HomePageComponent, UserPageComponent],

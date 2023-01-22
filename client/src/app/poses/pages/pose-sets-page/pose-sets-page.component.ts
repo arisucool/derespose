@@ -6,7 +6,7 @@ import { PoseSearchService } from '../../services/pose-search.service';
 @Component({
   selector: 'app-pose-sets-page',
   templateUrl: './pose-sets-page.component.html',
-  styleUrls: ['../../../common/style.scss', './pose-sets-page.component.scss'],
+  styleUrls: ['../../../shared/style.scss', './pose-sets-page.component.scss'],
 })
 export class PoseSetsPageComponent implements OnInit {
   // ポーズセットの種別

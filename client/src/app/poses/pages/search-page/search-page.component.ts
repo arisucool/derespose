@@ -14,7 +14,7 @@ import { CameraSearchFormComponent } from '../../widgets/camera-search-form/came
 @Component({
   selector: 'app-search-page',
   templateUrl: './search-page.component.html',
-  styleUrls: ['../../../common/style.scss', './search-page.component.scss'],
+  styleUrls: ['../../../shared/style.scss', './search-page.component.scss'],
 })
 export class SearchPageComponent implements OnInit {
   // 検索モード

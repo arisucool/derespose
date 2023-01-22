@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { SharedModule } from '../shared.module';
+import { SharedModule } from '../shared/shared.module';
 import { AuthModule } from '../auth/auth.module';
 import { PosesRoutingModule } from './poses-routing.module';
 import { MatchedPoseComponent } from './widgets/matched-pose/matched-pose.component';

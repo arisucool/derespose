@@ -16,15 +16,18 @@ export class AppTitleStrategy extends TitleStrategy {
       return;
     }
 
-    const routeChildren = route.root.children;
+    let routeChildren = route?.root.children;
     if (1 <= routeChildren.length) {
-      const tagName = routeChildren[0].params['tagName'];
-      if (tagName) {
-        // ページ別のタイトルを設定
-        this.title.setTitle(
-          `${routeChildren[0]?.routeConfig?.title} > ${tagName} | Derespose`,
-        );
-        return;
+      let routeChildren_ = routeChildren[0].children;
+      if (1 <= routeChildren_.length) {
+        const tagName = routeChildren_[0].params['tagName'];
+        if (tagName) {
+          // ページ別のタイトルを設定
+          this.title.setTitle(
+            `${routeChildren_[0]?.routeConfig?.title} > ${tagName} | Derespose`,
+          );
+          return;
+        }
       }
     }
 

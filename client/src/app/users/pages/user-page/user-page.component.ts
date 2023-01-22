@@ -6,7 +6,7 @@ import { AuthService } from '../../../auth/services/auth.service';
 @Component({
   selector: 'app-user-page',
   templateUrl: './user-page.component.html',
-  styleUrls: ['../../../common/style.scss', './user-page.component.scss'],
+  styleUrls: ['../../../shared/style.scss', './user-page.component.scss'],
 })
 export class UserPageComponent implements OnInit {
   $currentUser!: Observable<User | undefined>;

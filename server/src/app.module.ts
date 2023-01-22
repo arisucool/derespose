@@ -7,7 +7,7 @@ import { Helper } from './helper';
 import { PosesModule } from './poses/poses.module';
 import { PoseTagsModule } from './pose-tags/pose-tags.module';
 import { ConfigModule } from '@nestjs/config';
-import { ForceHttpsMiddleware } from './common/force-https/force-https.middleware';
+import { ForceHttpsMiddleware } from './shared/force-https/force-https.middleware';
 import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { PoseListsModule } from './pose-lists/pose-lists.module';

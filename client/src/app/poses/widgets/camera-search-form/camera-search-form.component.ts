@@ -13,14 +13,14 @@ import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PoseExtractorService } from 'ngx-mp-pose-extractor';
 import { interval, Subscription, timer } from 'rxjs';
-import { ConfigService } from 'src/app/common/config.service';
+import { ConfigService } from 'src/app/shared/config.service';
 import { DetectedPose } from 'src/app/poses/interfaces/detected-pose';
 
 @Component({
   selector: 'app-camera-search-form',
   templateUrl: './camera-search-form.component.html',
   styleUrls: [
-    '../../../common/style.scss',
+    '../../../shared/style.scss',
     './camera-search-form.component.scss',
   ],
   providers: [PoseExtractorService],

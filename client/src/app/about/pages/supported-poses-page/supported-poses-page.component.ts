@@ -6,7 +6,7 @@ import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
   selector: 'app-supported-poses-page',
   templateUrl: './supported-poses-page.component.html',
   styleUrls: [
-    '../../../common/style.scss',
+    '../../../shared/style.scss',
     '../../about.scss',
     './supported-poses-page.component.scss',
   ],

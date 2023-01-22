@@ -33,7 +33,7 @@ import {
 @Component({
   selector: 'app-matched-pose',
   templateUrl: './matched-pose.component.html',
-  styleUrls: ['../../../common/style.scss', './matched-pose.component.scss'],
+  styleUrls: ['../../../shared/style.scss', './matched-pose.component.scss'],
 })
 export class MatchedPoseComponent implements OnInit, OnDestroy {
   // ポーズ
