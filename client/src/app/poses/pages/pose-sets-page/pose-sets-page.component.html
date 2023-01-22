@@ -26,7 +26,7 @@
 <ng-container *ngIf="this.poseSets">
   <a
     class="pose-set"
-    routerLink="/pose-sets/{{ poseSetName }}"
+    routerLink="/poses/pose-sets/{{ poseSetName }}"
     *ngFor="let poseSetName of this.objectKeys(this.poseSets)"
   >
     <div class="about-app simple-card bordered">

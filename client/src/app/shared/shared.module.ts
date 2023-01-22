@@ -15,6 +15,7 @@ import { NgxMpPoseExtractorModule } from 'ngx-mp-pose-extractor';
   ],
   providers: [],
   exports: [
+    CommonModule,
     MaterialModule,
     FormsModule,
     ReactiveFormsModule,
