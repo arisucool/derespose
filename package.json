@@ -13,12 +13,15 @@
     "test:ci": "concurrently --max-processes=1 --raw --success=all \"npm run test:ci --workspace=server\" \"npm run build-api-client && npm run test:ci --workspace=client\"",
     "ng": "npx --workspace=client ng",
     "nest": "npx --workspace=server nest",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "commit": "cz"
   },
   "devDependencies": {
     "@commitlint/cli": "^17.4.2",
     "@commitlint/config-conventional": "^17.4.2",
+    "commitizen": "^4.3.0",
     "concurrently": "^7.1.0",
+    "cz-conventional-changelog": "^3.3.0",
     "husky": "^8.0.3",
     "nodemon": "^2.0.15",
     "prettier": "^2.3.2"
@@ -41,6 +44,12 @@
       "subject-case": [
         0
       ]
+    }
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog",
+      "disableSubjectLowerCase": true
     }
   }
 }
