@@ -23,12 +23,12 @@ import { PoseTagsService } from '../../services/pose-tags.service';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog } from '@angular/material/dialog';
+import { PoseList } from 'src/.api-client/models/pose-list';
+import { PoseListsService } from '../../services/pose-lists.service';
 import {
   MyPoseListSelectorDialogComponent,
   MyPoseListSelectorDialogData,
-} from 'src/app/pose-lists/widgets/my-pose-list-selector-dialog/my-pose-list-selector-dialog.component';
-import { PoseListsService } from 'src/app/pose-lists/pose-lists.service';
-import { PoseList } from 'src/.api-client/models/pose-list';
+} from '../my-pose-list-selector-dialog/my-pose-list-selector-dialog.component';
 
 @Component({
   selector: 'app-matched-pose',

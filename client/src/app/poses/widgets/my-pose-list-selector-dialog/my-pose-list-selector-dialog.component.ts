@@ -7,7 +7,7 @@ import { PoseList } from 'src/.api-client/models/pose-list';
 import { User } from 'src/.api-client/models/user';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { MatchedPose } from 'src/app/poses/interfaces/matched-pose';
-import { PoseListsService } from '../../pose-lists.service';
+import { PoseListsService } from '../../services/pose-lists.service';
 import { MyPoseListCreateDialogComponent } from '../my-pose-list-create-dialog/my-pose-list-create-dialog.component';
 
 export interface MyPoseListSelectorDialogData {

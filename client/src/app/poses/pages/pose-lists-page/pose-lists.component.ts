@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { PoseListsService } from '../../pose-lists.service';
+import { PoseListsService } from '../../services/pose-lists.service';
 
 @Component({
   selector: 'app-pose-lists-page',

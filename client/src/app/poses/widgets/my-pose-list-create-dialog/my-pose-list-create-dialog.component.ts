@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialogRef } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PoseList } from 'src/.api-client/models/pose-list';
-import { PoseListsService } from '../../pose-lists.service';
+import { PoseListsService } from '../../services/pose-lists.service';
 
 @Component({
   selector: 'app-my-pose-list-create-dialog',

@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PoseFile } from '../../../poses/interfaces/pose-file';
-import { PoseSearchService } from '../../../poses/services/pose-search.service';
+import { PoseFile } from '../../interfaces/pose-file';
+import { PoseSearchService } from '../../services/pose-search.service';
 
 @Component({
   selector: 'app-pose-sets-page',

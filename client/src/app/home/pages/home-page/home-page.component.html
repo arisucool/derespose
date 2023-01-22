@@ -15,7 +15,7 @@
         mat-stroked-button
         color="primary"
         matTooltip="例えば、あなたが両手をあげると、デレスポARから、そのポーズのある曲を探します"
-        routerLink="search/camera"
+        routerLink="poses/search/camera"
       >
         <mat-icon style="margin-bottom: 1px">photo_camera</mat-icon>
         カメラを起動
@@ -50,7 +50,7 @@
         <button
           mat-stroked-button
           *ngFor="let tag of this.poseTags"
-          routerLink="search/tag/{{ tag.name }}"
+          routerLink="poses/search/tag/{{ tag.name }}"
         >
           <mat-icon style="margin-bottom: 1px">tag</mat-icon>
           {{ tag.name }}
@@ -83,7 +83,7 @@
       <div class="buttons">
         <button
           mat-stroked-button
-          routerLink="pose-sets"
+          routerLink="poses/pose-sets"
           [queryParams]="{ type: 'song' }"
         >
           <mat-icon style="margin-bottom: 1px">music_note</mat-icon>
@@ -92,7 +92,7 @@
 
         <button
           mat-stroked-button
-          routerLink="pose-sets"
+          routerLink="poses/pose-sets"
           [queryParams]="{ type: 'commonPose' }"
           [disabled]="true"
         >
@@ -102,7 +102,7 @@
 
         <button
           mat-stroked-button
-          routerLink="pose-sets"
+          routerLink="poses/pose-sets"
           [queryParams]="{ type: 'chanpokuPose' }"
           [disabled]="true"
           matTooltip="aaa"

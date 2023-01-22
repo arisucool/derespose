@@ -12,11 +12,11 @@ import { CameraSearchFormComponent } from './poses/widgets/camera-search-form/ca
 import { MatchedPoseComponent } from './poses/widgets/matched-pose/matched-pose.component';
 import { TagSearchFormComponent } from './poses/widgets/tag-search-form/tag-search-form.component';
 import { FileSearchFormComponent } from './poses/widgets/file-search-form/file-search-form.component';
-import { PoseSetsPageComponent } from './pose-sets/pages/pose-sets-page/pose-sets-page.component';
+import { PoseSetsPageComponent } from './poses/pages/pose-sets-page/pose-sets-page.component';
 import { UserPageComponent } from './users/pages/user-page/user-page.component';
-import { PoseListsPageComponent } from './pose-lists/pages/pose-lists-page/pose-lists.component';
-import { MyPoseListSelectorDialogComponent } from './pose-lists/widgets/my-pose-list-selector-dialog/my-pose-list-selector-dialog.component';
-import { MyPoseListCreateDialogComponent } from './pose-lists/widgets/my-pose-list-create-dialog/my-pose-list-create-dialog.component';
+import { PoseListsPageComponent } from './poses/pages/pose-lists-page/pose-lists.component';
+import { MyPoseListSelectorDialogComponent } from './poses/widgets/my-pose-list-selector-dialog/my-pose-list-selector-dialog.component';
+import { MyPoseListCreateDialogComponent } from './poses/widgets/my-pose-list-create-dialog/my-pose-list-create-dialog.component';
 import { SharedModule } from './shared.module';
 import { AuthModule } from './auth/auth.module';
 
@@ -24,20 +24,7 @@ import { ApiModule } from '../.api-client/api.module';
 import { ApiIntercepter } from './common/api.intercepter';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    SearchPageComponent,
-    HomePageComponent,
-    CameraSearchFormComponent,
-    MatchedPoseComponent,
-    TagSearchFormComponent,
-    FileSearchFormComponent,
-    PoseSetsPageComponent,
-    UserPageComponent,
-    PoseListsPageComponent,
-    MyPoseListSelectorDialogComponent,
-    MyPoseListCreateDialogComponent,
-  ],
+  declarations: [AppComponent, HomePageComponent, UserPageComponent],
   imports: [
     BrowserModule,
     BrowserAnimationsModule,
@@ -47,7 +34,6 @@ import { ApiIntercepter } from './common/api.intercepter';
       rootUrl: '',
     }),
     SharedModule,
-    AuthModule,
   ],
   providers: [
     ApiIntercepter,
