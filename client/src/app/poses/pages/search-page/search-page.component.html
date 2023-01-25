@@ -18,43 +18,45 @@
       'pose-list-search': this.searchMode && this.searchMode === 'poseList'
     }"
   >
-    <!-- カメラによる検索 -->
-    <app-camera-search-ctrl
-      *ngIf="this.searchMode && this.searchMode === 'camera'"
-      #cameraSearchCtrl
-      (onPoseSearchInitialized)="this.onPoseSearchInitialized()"
-      (onPoseSearchStarted)="this.onPoseSearchStarted()"
-      (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
-    ></app-camera-search-ctrl>
-    <!---->
+    <ng-container *ngIf="this.searchMode">
+      <!-- カメラによる検索 -->
+      <app-camera-search-ctrl
+        *ngIf="this.searchMode === 'camera'"
+        #cameraSearchCtrl
+        (onPoseSearchInitialized)="this.onPoseSearchInitialized()"
+        (onPoseSearchStarted)="this.onPoseSearchStarted()"
+        (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
+      ></app-camera-search-ctrl>
+      <!---->
 
-    <!-- タグによる検索 -->
-    <app-tag-search-ctrl
-      *ngIf="this.searchMode && this.searchMode === 'tag'"
-      [tagName]="this.searchTarget?.tag"
-      (onPoseSearchStarted)="this.onPoseSearchStarted()"
-      (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
-    ></app-tag-search-ctrl>
-    <!---->
+      <!-- タグによる検索 -->
+      <app-pose-tag-search-ctrl
+        *ngIf="this.searchMode === 'tag'"
+        [tagName]="this.searchTarget?.tag"
+        (onPoseSearchStarted)="this.onPoseSearchStarted()"
+        (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
+      ></app-pose-tag-search-ctrl>
+      <!---->
 
-    <!-- ポーズリストによる検索 -->
-    <app-pose-list-search-ctrl
-      *ngIf="this.searchMode && this.searchMode === 'poseList'"
-      [poseListId]="this.searchTarget?.poseListId"
-      (onPoseSearchStarted)="this.onPoseSearchStarted()"
-      (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
-    >
-    </app-pose-list-search-ctrl>
-    <!---->
+      <!-- ポーズリストによる検索 -->
+      <app-pose-list-search-ctrl
+        *ngIf="this.searchMode === 'poseList'"
+        [poseListId]="this.searchTarget?.poseListId"
+        (onPoseSearchStarted)="this.onPoseSearchStarted()"
+        (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
+      >
+      </app-pose-list-search-ctrl>
+      <!---->
 
-    <!-- ポーズセット (ポーズファイル) による検索 -->
-    <app-pose-set-search-ctrl
-      *ngIf="this.searchMode && this.searchMode === 'poseSet'"
-      [poseSetName]="this.searchTarget?.poseSetName"
-      (onPoseSearchStarted)="this.onPoseSearchStarted()"
-      (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
-    ></app-pose-set-search-ctrl>
-    <!---->
+      <!-- ポーズセット (ポーズファイル) による検索 -->
+      <app-pose-set-search-ctrl
+        *ngIf="this.searchMode === 'poseSet'"
+        [poseSetName]="this.searchTarget?.poseSetName"
+        (onPoseSearchStarted)="this.onPoseSearchStarted()"
+        (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
+      ></app-pose-set-search-ctrl>
+      <!---->
+    </ng-container>
 
     <!-- ローディングスピナー -->
     <div class="spinner-container" *ngIf="this.state === 'searching'">

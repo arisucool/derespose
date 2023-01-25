@@ -1,18 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { TagSearchCtrlComponent } from './tag-search-ctrl.component';
+import { PoseTagSearchCtrlComponent } from './pose-tag-search-ctrl.component';
 
 describe('TagSearchCtrlComponent', () => {
-  let component: TagSearchCtrlComponent;
-  let fixture: ComponentFixture<TagSearchCtrlComponent>;
+  let component: PoseTagSearchCtrlComponent;
+  let fixture: ComponentFixture<PoseTagSearchCtrlComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ TagSearchCtrlComponent ]
-    })
-    .compileComponents();
+      declarations: [PoseTagSearchCtrlComponent],
+    }).compileComponents();
 
-    fixture = TestBed.createComponent(TagSearchCtrlComponent);
+    fixture = TestBed.createComponent(PoseTagSearchCtrlComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

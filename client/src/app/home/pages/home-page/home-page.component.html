@@ -50,7 +50,7 @@
         <button
           mat-stroked-button
           *ngFor="let tag of this.poseTags"
-          routerLink="poses/search/tag/{{ tag.name }}"
+          routerLink="poses/pose-tags/{{ tag.name }}"
         >
           <mat-icon style="margin-bottom: 1px">tag</mat-icon>
           {{ tag.name }}

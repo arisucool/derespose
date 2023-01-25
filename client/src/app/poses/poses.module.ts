@@ -15,9 +15,9 @@ import { MyPoseListCreateDialogComponent } from './widgets/my-pose-list-create-d
 import { MyPoseListSelectorDialogComponent } from './widgets/my-pose-list-selector-dialog/my-pose-list-selector-dialog.component';
 import { PoseListsPageComponent } from './pages/pose-lists-page/pose-lists.component';
 import { PoseSetsPageComponent } from './pages/pose-sets-page/pose-sets-page.component';
-import { PoseListSearchCtrlComponent } from './widgets/search-ctrls/pose-list-search-ctrl/pose-list-search-ctrl.component';
-import { TagSearchCtrlComponent } from './widgets/search-ctrls/tag-search-ctrl/tag-search-ctrl.component';
 import { CameraSearchCtrlComponent } from './widgets/search-ctrls/camera-search-ctrl/camera-search-ctrl.component';
+import { PoseListSearchCtrlComponent } from './widgets/search-ctrls/pose-list-search-ctrl/pose-list-search-ctrl.component';
+import { PoseTagSearchCtrlComponent } from './widgets/search-ctrls/pose-tag-search-ctrl/pose-tag-search-ctrl.component';
 import { PoseSetSearchCtrlComponent } from './widgets/search-ctrls/pose-set-search-ctrl/pose-set-search-ctrl.component';
 
 @NgModule({
@@ -28,9 +28,9 @@ import { PoseSetSearchCtrlComponent } from './widgets/search-ctrls/pose-set-sear
     MyPoseListSelectorDialogComponent,
     PoseListsPageComponent,
     PoseSetsPageComponent,
-    PoseListSearchCtrlComponent,
-    TagSearchCtrlComponent,
     CameraSearchCtrlComponent,
+    PoseListSearchCtrlComponent,
+    PoseTagSearchCtrlComponent,
     PoseSetSearchCtrlComponent,
   ],
   imports: [

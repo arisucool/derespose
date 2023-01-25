@@ -5,7 +5,6 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { lastValueFrom, timer } from 'rxjs';
 import { PoseFile } from 'src/app/poses/interfaces/pose-file';
 import { OnPoseSearchCompleted } from 'src/app/poses/interfaces/pose-search-event';
@@ -13,11 +12,11 @@ import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
 
 @Component({
-  selector: 'app-tag-search-ctrl',
-  templateUrl: './tag-search-ctrl.component.html',
-  styleUrls: ['./tag-search-ctrl.component.scss'],
+  selector: 'app-pose-tag-search-ctrl',
+  templateUrl: './pose-tag-search-ctrl.component.html',
+  styleUrls: ['./pose-tag-search-ctrl.component.scss'],
 })
-export class TagSearchCtrlComponent {
+export class PoseTagSearchCtrlComponent {
   @Input()
   public tagName?: string = '';
 
@@ -33,7 +32,6 @@ export class TagSearchCtrlComponent {
   constructor(
     private poseSearchService: PoseSearchService,
     private poseTagsService: PoseTagsService,
-    private snackBar: MatSnackBar,
   ) {}
 
   async ngOnInit() {
@@ -51,7 +49,7 @@ export class TagSearchCtrlComponent {
       return;
     }
 
-    console.log(`[TagSearchCtrl] poseSearch`, this.tagName);
+    console.log(`[PoseTagSearchCtrl] poseSearch`, this.tagName);
     this.onPoseSearchStarted.emit();
 
     // 少し待つ

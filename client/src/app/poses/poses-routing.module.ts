@@ -13,7 +13,7 @@ const routes: Routes = [
   },
   // タグでポーズを探す (タグ検索)
   {
-    path: 'search/tag/:tagName',
+    path: 'pose-tags/:tagName',
     component: SearchPageComponent,
     title: 'タグでポーズを探す',
   },
