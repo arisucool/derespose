@@ -2,11 +2,13 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { Pose, PoseItem } from 'ngx-mp-pose-extractor';
 import { SimilarPoseItem } from 'ngx-mp-pose-extractor/lib/interfaces/matched-pose-item';
 import { lastValueFrom } from 'rxjs';
+import { PoseList } from 'src/.api-client/models/pose-list';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { ApiService } from 'src/.api-client/services/api.service';
 import { DetectedPose } from '../interfaces/detected-pose';
 import { MatchedPose } from '../interfaces/matched-pose';
 import { PoseFile } from '../interfaces/pose-file';
+import { PoseListsService } from './pose-lists.service';
 
 @Injectable({
   providedIn: 'root',
@@ -36,7 +38,10 @@ export class PoseSearchService {
     [key: string]: PoseFile;
   };
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,
+    private poseListsService: PoseListsService,
+  ) {}
 
   async loadPoseFiles() {
     if (this.poseFiles) {
@@ -143,6 +148,57 @@ export class PoseSearchService {
         isFavorite: false,
         tags: [],
         imageUrl: `${PoseSearchService.POSE_FILE_BASE_URL}${poseFileName}/frame-${poseItem.timeMiliseconds}.jpg`,
+      };
+      matchedPoses.push(matchedPose);
+    }
+
+    return matchedPoses;
+  }
+
+  async getPosesByPoseListId(poseListId: string): Promise<MatchedPose[]> {
+    console.log(
+      `[PoseSearchService] getPosesByPoseListId - Finding...`,
+      poseListId,
+    );
+    const poseList = await this.poseListsService.getPoseList(poseListId);
+    console.log(`[PoseSearchService] getPosesByPoseListId - Found`, poseList);
+
+    if (
+      poseList === undefined ||
+      poseList.poses === undefined ||
+      poseList.poses.length === 0
+    ) {
+      return [];
+    }
+
+    let matchedPoses: MatchedPose[] = [];
+    for (const pose of poseList?.poses) {
+      const poseFile = await this.getPoseFile(pose.poseFileName);
+      if (!poseFile) continue;
+
+      const poseItem = poseFile.pose.getPoseByTime(pose.time);
+      if (!poseItem) continue;
+
+      // 整形して配列へ追加
+      const matchedPose: MatchedPose = {
+        id: poseItem.timeMiliseconds,
+        title: poseFile.title,
+        poseFileName: pose.poseFileName,
+        time: poseItem.timeMiliseconds,
+        timeSeconds: Math.floor(poseItem.timeMiliseconds / 1000),
+        durationSeconds:
+          Math.floor((poseItem.durationMiliseconds / 1000) * 10) / 10,
+        score: 0,
+        scoreString: 'N/A',
+        scoreDetails: {
+          similarity: 0,
+          foundTargetPoseIndex: 0,
+          duration: 0,
+          time: 0,
+        },
+        isFavorite: false,
+        tags: [],
+        imageUrl: `${PoseSearchService.POSE_FILE_BASE_URL}${pose.poseFileName}/frame-${poseItem.timeMiliseconds}.jpg`,
       };
       matchedPoses.push(matchedPose);
     }

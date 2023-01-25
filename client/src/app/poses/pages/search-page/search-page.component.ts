@@ -6,6 +6,7 @@ import { lastValueFrom, timer } from 'rxjs';
 import { DetectedPose } from '../../interfaces/detected-pose';
 import { MatchedPose } from '../../interfaces/matched-pose';
 import { PoseFile } from '../../interfaces/pose-file';
+import { PoseListsService } from '../../services/pose-lists.service';
 import { PoseSearchService } from '../../services/pose-search.service';
 import { PoseTagsService } from '../../services/pose-tags.service';
 import { CameraSearchCtrlComponent } from '../../widgets/search-ctrls/camera-search-ctrl/camera-search-ctrl.component';
@@ -42,6 +43,7 @@ export class SearchPageComponent implements OnInit {
     private activatedRoute: ActivatedRoute,
     private poseSearchService: PoseSearchService,
     private poseTagsService: PoseTagsService,
+    private poseListsService: PoseListsService,
     private spinner: NgxSpinnerService,
     private snackBar: MatSnackBar,
   ) {}
@@ -62,12 +64,13 @@ export class SearchPageComponent implements OnInit {
           routeParams['poseSetName'],
         ),
       };
-      this.onSearchTargetFileDecided(routeParams['poseSetName']);
+      this.onSearchTargetPoseSetDecided(routeParams['poseSetName']);
     } else if (routeParams['poseListId']) {
       this.searchMode = 'poseList';
       this.searchTarget = {
         poseListId: routeParams['poseListId'],
       };
+      this.onSearchTargetPoseListDecided(routeParams['poseListId']);
     } else {
       this.searchMode = 'camera';
       this.state = 'initializing';
@@ -144,7 +147,7 @@ export class SearchPageComponent implements OnInit {
     this.matchedPoses = matchedPoses;
   }
 
-  public async onSearchTargetFileDecided(poseFileName: string) {
+  public async onSearchTargetPoseSetDecided(poseFileName: string) {
     this.state = 'searching';
     this.spinner.show();
 
@@ -156,6 +159,34 @@ export class SearchPageComponent implements OnInit {
     try {
       matchedPoses = await this.poseSearchService.getPosesByFileName(
         poseFileName,
+      );
+    } catch (e: any) {
+      this.snackBar.open('エラー: ポーズの取得に失敗しました', 'OK');
+      console.error(e);
+    }
+
+    // 各ポーズのタグを取得
+    matchedPoses = await this.setTagsToPoses(matchedPoses);
+
+    this.state = 'completed';
+    this.spinner.hide();
+
+    // ポーズのリストを反映
+    this.matchedPoses = matchedPoses;
+  }
+
+  public async onSearchTargetPoseListDecided(poseListId: string) {
+    this.state = 'searching';
+    this.spinner.show();
+
+    // 少し待つ
+    await lastValueFrom(timer(200));
+
+    // ポーズを検索
+    let matchedPoses: MatchedPose[] = [];
+    try {
+      matchedPoses = await this.poseSearchService.getPosesByPoseListId(
+        poseListId,
       );
     } catch (e: any) {
       this.snackBar.open('エラー: ポーズの取得に失敗しました', 'OK');

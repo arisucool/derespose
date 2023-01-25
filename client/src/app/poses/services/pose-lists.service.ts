@@ -1,5 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { lastValueFrom } from 'rxjs';
+import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { PoseList } from 'src/.api-client/models/pose-list';
 import { ApiService } from 'src/.api-client/services/api.service';
 import { AuthService } from '../../auth/services/auth.service';
@@ -30,23 +30,27 @@ export class PoseListsService {
   }
 
   async getMyPoseLists() {
-    if (this.myPoseLists) return this.myPoseLists;
+    if (this.myPoseLists) {
+      return this.myPoseLists;
+    }
     if (!this.authService.getAccessToken()) {
-      console.log(`[PoseTagsService] getMyPoseLists - Not logged in`);
       return [];
     }
 
-    if (this.isRequestingMyPoseLists)
-      return lastValueFrom(this.onMyPoseListsChanged);
+    if (this.isRequestingMyPoseLists) {
+      return await firstValueFrom(this.onMyPoseListsChanged);
+    }
     this.isRequestingMyPoseLists = true;
 
-    console.log(`[PoseTagsService] getMyPoseLists - Requesting...`);
+    console.log(`[PoseListsService] getMyPoseLists - Requesting...`);
 
     const poseLists = await lastValueFrom(
       this.apiService.usersControllerGetMyPoseLists(),
     );
     this.myPoseLists = poseLists;
     this.onMyPoseListsChanged.emit(poseLists);
+    this.isRequestingMyPoseLists = false;
+    console.log(`[PoseListsService] getMyPoseLists - Done`, poseLists);
     return poseLists;
   }
 
@@ -71,6 +75,15 @@ export class PoseListsService {
     }
 
     return poseLists;
+  }
+
+  async getPoseList(poseListId: string): Promise<PoseList | undefined> {
+    this.myPoseLists = await this.getMyPoseLists();
+    const poseList = this.myPoseLists.find(
+      (poseList) => poseList.id === poseListId,
+    );
+    console.log(`[PoseListsService] getPoseList - Found`, poseListId, poseList);
+    return poseList;
   }
 
   getLastAddedPoseListId() {
