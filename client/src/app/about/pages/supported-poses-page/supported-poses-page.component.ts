@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PoseFile } from 'src/app/poses/interfaces/pose-file';
+import { PoseSet } from 'src/app/poses/interfaces/pose-set';
 import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 
 @Component({
@@ -12,41 +12,41 @@ import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
   ],
 })
 export class SupportedPosesPageComponent {
-  public poseFiles?: {
-    songs: PoseFile[];
-    commonPoses: PoseFile[];
-    chanpokuPoses: PoseFile[];
+  public poseSets?: {
+    songs: PoseSet[];
+    commonPoses: PoseSet[];
+    chanpokuPoses: PoseSet[];
   };
 
   constructor(private poseSearchService: PoseSearchService) {
-    this.poseSearchService.getPoseFiles();
+    this.poseSearchService.getPoseSets();
   }
 
   async ngOnInit() {
-    const poseFiles = await this.poseSearchService.getPoseFiles();
-    if (poseFiles === undefined) {
+    const poseSets = await this.poseSearchService.getPoseSets();
+    if (poseSets === undefined) {
       return;
     }
 
-    if (this.poseFiles === undefined) {
-      this.poseFiles = {
+    if (this.poseSets === undefined) {
+      this.poseSets = {
         songs: [],
         commonPoses: [],
         chanpokuPoses: [],
       };
     }
 
-    for (const poseFileName of Object.keys(poseFiles)) {
-      const poseFile = poseFiles[poseFileName];
-      switch (poseFile.type) {
+    for (const poseSetName of Object.keys(poseSets)) {
+      const poseSet = poseSets[poseSetName];
+      switch (poseSet.type) {
         case 'song':
-          this.poseFiles.songs.push(poseFile);
+          this.poseSets.songs.push(poseSet);
           break;
         case 'commonPose':
-          this.poseFiles.commonPoses.push(poseFile);
+          this.poseSets.commonPoses.push(poseSet);
           break;
         case 'chanpokuPose':
-          this.poseFiles.chanpokuPoses.push(poseFile);
+          this.poseSets.chanpokuPoses.push(poseSet);
           break;
       }
     }

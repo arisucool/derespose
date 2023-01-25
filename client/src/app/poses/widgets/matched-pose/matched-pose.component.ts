@@ -92,7 +92,7 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
       );
 
     if (!this.pose) return;
-    if (!this.pose.poseFileName) return;
+    if (!this.pose.poseSetName) return;
   }
 
   private async onMyPoseListsChanged() {
@@ -100,7 +100,7 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
 
     // 当該ポーズの属するポーズリストを取得
     this.addedPoseLists = await this.poseListsService.getPoseListsByPose(
-      this.pose.poseFileName,
+      this.pose.poseSetName,
       this.pose.time,
     );
   }
@@ -143,7 +143,7 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
 
     const data: MyPoseListSelectorDialogData = {
       pose: this.pose,
-      poseFileName: this.pose.poseFileName,
+      poseSetName: this.pose.poseSetName,
       poseTime: this.pose.time,
     };
 
@@ -197,7 +197,7 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
     this.pose.tags.splice(index, 1);
 
     await this.poseTagsService.removePoseTag(
-      this.pose.poseFileName,
+      this.pose.poseSetName,
       this.pose.time,
       tagName,
     );
@@ -225,7 +225,7 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
 
     try {
       await this.poseTagsService.addPoseTag(
-        this.pose.poseFileName,
+        this.pose.poseSetName,
         this.pose.time,
         tagName,
       );

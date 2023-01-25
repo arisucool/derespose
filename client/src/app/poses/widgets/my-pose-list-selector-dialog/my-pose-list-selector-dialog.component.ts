@@ -11,7 +11,7 @@ import { PoseListsService } from '../../services/pose-lists.service';
 import { MyPoseListCreateDialogComponent } from '../my-pose-list-create-dialog/my-pose-list-create-dialog.component';
 
 export interface MyPoseListSelectorDialogData {
-  poseFileName: string;
+  poseSetName: string;
   poseTime: number;
   pose: MatchedPose;
 }
@@ -74,7 +74,7 @@ export class MyPoseListSelectorDialogComponent implements OnInit, OnDestroy {
     for (const poseList of poseLists) {
       const p = poseList.poses?.find((pose) => {
         if (
-          pose.poseFileName === this.data.poseFileName &&
+          pose.poseSetName === this.data.poseSetName &&
           pose.time === this.pose?.time
         ) {
           return true;
@@ -102,7 +102,7 @@ export class MyPoseListSelectorDialogComponent implements OnInit, OnDestroy {
     try {
       await this.poseListsService.addPoseFromList(
         result.data.poseList.id,
-        this.pose?.poseFileName,
+        this.pose?.poseSetName,
         this.pose?.time,
       );
     } catch (e: any) {
@@ -137,13 +137,13 @@ export class MyPoseListSelectorDialogComponent implements OnInit, OnDestroy {
       if (value) {
         await this.poseListsService.addPoseFromList(
           poseListId,
-          this.pose.poseFileName,
+          this.pose.poseSetName,
           this.pose.time,
         );
       } else {
         await this.poseListsService.removePoseFromList(
           poseListId,
-          this.pose.poseFileName,
+          this.pose.poseSetName,
           this.pose.time,
         );
       }

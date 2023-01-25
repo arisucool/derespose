@@ -1,6 +1,7 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { lastValueFrom, timer } from 'rxjs';
 import { MatchedPose } from '../../interfaces/matched-pose';
 import { OnPoseSearchCompleted } from '../../interfaces/pose-search-event';
 
@@ -28,6 +29,7 @@ export class SearchPageComponent implements OnInit {
   public matchedPoses?: MatchedPose[] = [];
 
   constructor(
+    private changeDetectionRef: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private spinner: NgxSpinnerService,
   ) {}
@@ -55,6 +57,7 @@ export class SearchPageComponent implements OnInit {
       this.searchMode = 'camera';
       this.searchTarget = {};
     }
+    this.changeDetectionRef.detectChanges();
   }
 
   /**

@@ -3,6 +3,8 @@ import {
   ElementRef,
   EventEmitter,
   NgZone,
+  OnDestroy,
+  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -24,7 +26,7 @@ import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
     './camera-search-ctrl.component.scss',
   ],
 })
-export class CameraSearchCtrlComponent {
+export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
   // カメラ映像を再生するための Video 要素
   @ViewChild('cameraVideo')
   cameraVideoElement!: ElementRef<HTMLVideoElement>;

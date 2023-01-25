@@ -31,12 +31,12 @@ export class PoseTagsController {
       throw new HttpException('Invalid pose identifier', 400);
     }
 
-    const requestedPoses: { poseFileName: string; poseTime: number }[] = [];
+    const requestedPoses: { poseSetName: string; poseTime: number }[] = [];
     const poseIdentifiers = poseIdentifier.split(',');
     for (const poseIdentifier of poseIdentifiers) {
-      const [poseFileName, poseTime] = poseIdentifier.split(':');
+      const [poseSetName, poseTime] = poseIdentifier.split(':');
       requestedPoses.push({
-        poseFileName: poseFileName,
+        poseSetName: poseSetName,
         poseTime: Number(poseTime),
       });
     }

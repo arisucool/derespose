@@ -42,11 +42,11 @@ export class PoseTagsService {
   }
 
   async getPosesWithPoseTags(
-    requestedPoses: { poseFileName: string; poseTime: number }[],
+    requestedPoses: { poseSetName: string; poseTime: number }[],
   ): Promise<Pose[]> {
     const wheres = requestedPoses.map((pose) => {
       return {
-        poseFileName: pose.poseFileName,
+        poseSetName: pose.poseSetName,
         time: pose.poseTime,
       };
     });

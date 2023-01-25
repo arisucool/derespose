@@ -129,7 +129,7 @@ export class PoseListsService {
     user: User,
   ): Promise<PoseList> {
     const pose = await this.posesService.getPose(
-      dto.poseFileName,
+      dto.poseSetName,
       dto.poseTime,
       true,
     );
@@ -161,7 +161,7 @@ export class PoseListsService {
     user: User,
   ): Promise<PoseList> {
     const pose = await this.posesService.getPose(
-      dto.poseFileName,
+      dto.poseSetName,
       dto.poseTime,
       true,
     );
@@ -205,13 +205,9 @@ export class PoseListsService {
       if (arr.length !== 2) {
         continue;
       }
-      const poseFileName = arr[0];
+      const poseSetName = arr[0];
       const poseTime = parseInt(arr[1], 10);
-      const pose = await this.posesService.getPose(
-        poseFileName,
-        poseTime,
-        true,
-      );
+      const pose = await this.posesService.getPose(poseSetName, poseTime, true);
       if (!pose) continue;
       poses.push(pose);
     }

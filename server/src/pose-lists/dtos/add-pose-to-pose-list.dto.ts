@@ -4,7 +4,7 @@ export class AddPoseToPoseListDto {
   @ApiProperty({
     description: 'ポーズファイル名',
   })
-  poseFileName: string;
+  poseSetName: string;
 
   @ApiProperty({
     description: 'ポーズの時間',

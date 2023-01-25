@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PoseFile } from '../../interfaces/pose-file';
+import { PoseSet } from '../../interfaces/pose-set';
 import { PoseSearchService } from '../../services/pose-search.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class PoseSetsPageComponent implements OnInit {
   public poseSetsType?: 'song' | 'commonPose' | 'chanpokuPose' = undefined;
 
   // ポーズセットのリスト
-  public poseSets?: { [key: string]: PoseFile } = undefined;
+  public poseSets?: { [key: string]: PoseSet } = undefined;
 
   // テンプレートで使用する関数
   public objectKeys = Object.keys;
@@ -35,7 +35,7 @@ export class PoseSetsPageComponent implements OnInit {
   }
 
   async load() {
-    const allPoseSets = await this.poseSearchService.getPoseFiles();
+    const allPoseSets = await this.poseSearchService.getPoseSets();
     if (!allPoseSets) return;
 
     if (this.poseSetsType === undefined) {
@@ -43,7 +43,7 @@ export class PoseSetsPageComponent implements OnInit {
       return;
     }
 
-    const poseSets: { [key: string]: PoseFile } = {};
+    const poseSets: { [key: string]: PoseSet } = {};
     for (const poseSetName of Object.keys(allPoseSets)) {
       if (allPoseSets[poseSetName].type === this.poseSetsType) {
         poseSets[poseSetName] = allPoseSets[poseSetName];

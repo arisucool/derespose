@@ -5,7 +5,7 @@ export interface MatchedPose {
   title: string;
 
   // ポーズデータ名
-  poseFileName: string;
+  poseSetName: string;
 
   // ポーズの登場する再生位置 (秒数)
   timeSeconds: number;

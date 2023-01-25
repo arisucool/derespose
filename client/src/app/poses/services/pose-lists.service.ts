@@ -54,7 +54,7 @@ export class PoseListsService {
     return poseLists;
   }
 
-  async getPoseListsByPose(poseFileName: string, poseTime: number) {
+  async getPoseListsByPose(poseSetName: string, poseTime: number) {
     if (!this.myPoseLists) {
       await this.getMyPoseLists();
     }
@@ -64,7 +64,7 @@ export class PoseListsService {
     const poseLists: PoseList[] = [];
     for (const poseList of this.myPoseLists) {
       const p = poseList.poses?.find((pose) => {
-        if (pose.poseFileName === poseFileName && pose.time === poseTime) {
+        if (pose.poseSetName === poseSetName && pose.time === poseTime) {
           return true;
         }
         return false;
@@ -112,7 +112,7 @@ export class PoseListsService {
 
   async addPoseFromList(
     poseListId: string,
-    poseFileName: string,
+    poseSetName: string,
     poseTime: number,
   ) {
     this.lastAddedPoseListId = poseListId;
@@ -121,7 +121,7 @@ export class PoseListsService {
       this.apiService.poseListsControllerAddPoseToPoseList({
         id: poseListId,
         body: {
-          poseFileName: poseFileName,
+          poseSetName: poseSetName,
           poseTime: poseTime,
         },
       }),
@@ -140,14 +140,14 @@ export class PoseListsService {
 
   async removePoseFromList(
     poseListId: string,
-    poseFileName: string,
+    poseSetName: string,
     poseTime: number,
   ) {
     const poseList = await lastValueFrom(
       this.apiService.poseListsControllerRemovePoseFromPoseList({
         id: poseListId,
         body: {
-          poseFileName: poseFileName,
+          poseSetName: poseSetName,
           poseTime: poseTime,
         },
       }),

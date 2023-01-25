@@ -21,7 +21,7 @@ import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
   templateUrl: './pose-list-search-ctrl.component.html',
   styleUrls: ['./pose-list-search-ctrl.component.scss'],
 })
-export class PoseListSearchCtrlComponent implements OnInit, OnChanges {
+export class PoseListSearchCtrlComponent implements OnInit {
   @Input()
   public poseListId?: string;
 
@@ -45,18 +45,12 @@ export class PoseListSearchCtrlComponent implements OnInit, OnChanges {
     this.poseSearch();
   }
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes['poseListId']) {
-      await this.poseSearch();
-    }
-  }
-
   async poseSearch() {
+    console.log(`[PoseListSearchCtrl] poseSearch`, this.poseListId);
     if (this.poseListId === undefined) {
       return;
     }
 
-    console.log(`[PoseListSearchCtrl] poseSearch`, this.poseListId);
     this.poseList = await this.poseListsService.getPoseList(this.poseListId);
 
     this.onPoseSearchStarted.emit();

@@ -2,11 +2,12 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
 import { lastValueFrom, timer } from 'rxjs';
-import { PoseFile } from 'src/app/poses/interfaces/pose-file';
+import { PoseSet } from 'src/app/poses/interfaces/pose-set';
 import { OnPoseSearchCompleted } from 'src/app/poses/interfaces/pose-search-event';
 import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
@@ -16,7 +17,7 @@ import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
   templateUrl: './pose-tag-search-ctrl.component.html',
   styleUrls: ['./pose-tag-search-ctrl.component.scss'],
 })
-export class PoseTagSearchCtrlComponent {
+export class PoseTagSearchCtrlComponent implements OnInit {
   @Input()
   public tagName?: string = '';
 
@@ -27,7 +28,7 @@ export class PoseTagSearchCtrlComponent {
   public onPoseSearchCompleted: EventEmitter<OnPoseSearchCompleted> =
     new EventEmitter();
 
-  public poseSet?: PoseFile;
+  public poseSet?: PoseSet;
 
   constructor(
     private poseSearchService: PoseSearchService,
@@ -38,18 +39,12 @@ export class PoseTagSearchCtrlComponent {
     this.poseSearch();
   }
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes['tagName']) {
-      await this.poseSearch();
-    }
-  }
-
   async poseSearch() {
+    console.log(`[PoseTagSearchCtrl] poseSearch`, this.tagName);
     if (this.tagName === undefined) {
       return;
     }
 
-    console.log(`[PoseTagSearchCtrl] poseSearch`, this.tagName);
     this.onPoseSearchStarted.emit();
 
     // 少し待つ

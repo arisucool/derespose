@@ -18,19 +18,19 @@ export class PosesService {
   }
 
   async getPose(
-    poseFileName: string,
+    poseSetName: string,
     poseTime: number,
     shouldCreate = false,
   ): Promise<Pose> {
     let pose = await this.poseRepository.findOne({
       where: {
-        poseFileName: poseFileName,
+        poseSetName: poseSetName,
         time: poseTime,
       },
     });
 
     if (!pose && shouldCreate) {
-      pose = await this.registerPose(poseFileName, poseTime);
+      pose = await this.registerPose(poseSetName, poseTime);
     }
 
     return pose;
@@ -47,9 +47,9 @@ export class PosesService {
     });
   }
 
-  registerPose(poseFileName: string, poseTime: number): Promise<Pose> {
+  registerPose(poseSetName: string, poseTime: number): Promise<Pose> {
     return this.poseRepository.save({
-      poseFileName: poseFileName,
+      poseSetName: poseSetName,
       time: poseTime,
     });
   }

@@ -16,10 +16,10 @@ export class Pose extends BaseEntity {
   @ApiProperty()
   id: number;
 
-  // ポーズファイル名
+  // ポーズセット名
   @Column()
   @ApiProperty()
-  poseFileName: string;
+  poseSetName: string;
 
   // ポーズの時間
   @Column()

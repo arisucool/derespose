@@ -2,13 +2,14 @@ import {
   Component,
   EventEmitter,
   Input,
+  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { lastValueFrom, timer } from 'rxjs';
 import { MatchedPose } from 'src/app/poses/interfaces/matched-pose';
-import { PoseFile } from 'src/app/poses/interfaces/pose-file';
+import { PoseSet } from 'src/app/poses/interfaces/pose-set';
 import { OnPoseSearchCompleted } from 'src/app/poses/interfaces/pose-search-event';
 import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
@@ -18,7 +19,7 @@ import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
   templateUrl: './pose-set-search-ctrl.component.html',
   styleUrls: ['./pose-set-search-ctrl.component.scss'],
 })
-export class PoseSetSearchCtrlComponent {
+export class PoseSetSearchCtrlComponent implements OnInit {
   @Input()
   public poseSetName?: string;
 
@@ -29,7 +30,7 @@ export class PoseSetSearchCtrlComponent {
   public onPoseSearchCompleted: EventEmitter<OnPoseSearchCompleted> =
     new EventEmitter();
 
-  public poseSet?: PoseFile;
+  public poseSet?: PoseSet;
 
   constructor(
     private poseSearchService: PoseSearchService,
@@ -41,30 +42,24 @@ export class PoseSetSearchCtrlComponent {
     this.poseSearch();
   }
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes['poseSet']) {
-      await this.poseSearch();
-    }
-  }
-
   async poseSearch() {
+    console.log(`[PoseSetSearchCtrl] poseSearch`, this.poseSetName);
     if (this.poseSetName === undefined) {
       return;
     }
 
-    console.log(`[PoseSetSearchCtrl] poseSearch`, this.poseSetName);
     this.onPoseSearchStarted.emit();
 
     // 少し待つ
     await lastValueFrom(timer(200));
 
     // ポーズセットを取得
-    this.poseSet = await this.poseSearchService.getPoseFile(this.poseSetName);
+    this.poseSet = await this.poseSearchService.getPoseSet(this.poseSetName);
 
     // ポーズを検索
     let matchedPoses: MatchedPose[] = [];
     try {
-      matchedPoses = await this.poseSearchService.getPosesByFileName(
+      matchedPoses = await this.poseSearchService.getPosesByPoseSetName(
         this.poseSetName,
       );
     } catch (e: any) {

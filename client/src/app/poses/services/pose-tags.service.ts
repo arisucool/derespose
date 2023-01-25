@@ -37,24 +37,20 @@ export class PoseTagsService {
     return lastValueFrom(
       this.apiService.poseTagsControllerGetPoseTagsByPoses({
         poses: poses
-          .map((pose) => `${pose.poseFileName}:${pose.time}`)
+          .map((pose) => `${pose.poseSetName}:${pose.time}`)
           .join(','),
       }),
     );
   }
 
-  async addPoseTag(
-    poseFileName: string,
-    poseTime: number,
-    poseTagName: string,
-  ) {
+  async addPoseTag(poseSetName: string, poseTime: number, poseTagName: string) {
     if (this.poseTags === undefined) {
       await this.getPoseTags();
     }
 
     let poseTags = await lastValueFrom(
       this.apiService.posesControllerAddPoseTag({
-        poseFileName: poseFileName,
+        poseSetName: poseSetName,
         poseTime: poseTime.toString(),
         poseTagName: poseTagName,
       }),
@@ -74,13 +70,13 @@ export class PoseTagsService {
   }
 
   async removePoseTag(
-    poseFileName: string,
+    poseSetName: string,
     poseTime: number,
     poseTagName: string,
   ) {
     return await lastValueFrom(
       this.apiService.posesControllerRemovePoseTag({
-        poseFileName: poseFileName,
+        poseSetName: poseSetName,
         poseTime: poseTime.toString(),
         poseTagName: poseTagName,
       }),
@@ -98,7 +94,7 @@ export class PoseTagsService {
     for (const poseWithPoseTags of posesWithPoseTags) {
       const matchedPose = matchedPoses.find((matchedPose: MatchedPose) => {
         return (
-          matchedPose.poseFileName === poseWithPoseTags.poseFileName &&
+          matchedPose.poseSetName === poseWithPoseTags.poseSetName &&
           matchedPose.time === poseWithPoseTags.time
         );
       });

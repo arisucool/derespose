@@ -24,13 +24,13 @@ export class PosesController {
     return this.posesService.getPosesByPoseTag(poseTagName);
   }
 
-  @Get(':poseFileName/:poseTime/pose-tags')
+  @Get(':poseSetName/:poseTime/pose-tags')
   @ApiResponse({
     type: PoseTag,
     isArray: true,
   })
   async getPoseTags(
-    @Param('poseFileName') poseFileName,
+    @Param('poseSetName') poseSetName,
     @Param('poseTime') poseTimeString,
   ) {
     const poseTime = parseInt(poseTimeString, 10);
@@ -38,20 +38,20 @@ export class PosesController {
       throw new HttpException('Invalid pose time', 400);
     }
 
-    const pose = await this.posesService.getPose(poseFileName, poseTime);
+    const pose = await this.posesService.getPose(poseSetName, poseTime);
     if (!pose) {
       return [];
     }
     return pose.tags;
   }
 
-  @Post(':poseFileName/:poseTime/pose-tags/:poseTagName')
+  @Post(':poseSetName/:poseTime/pose-tags/:poseTagName')
   @ApiResponse({
     type: PoseTag,
     isArray: true,
   })
   async addPoseTag(
-    @Param('poseFileName') poseFileName: string,
+    @Param('poseSetName') poseSetName: string,
     @Param('poseTime') poseTimeString: string,
     @Param('poseTagName') poseTagName: string,
   ) {
@@ -60,22 +60,22 @@ export class PosesController {
       throw new HttpException('Invalid pose time', 400);
     }
 
-    let pose = await this.posesService.getPose(poseFileName, poseTime);
+    let pose = await this.posesService.getPose(poseSetName, poseTime);
 
     if (!pose) {
-      pose = await this.posesService.registerPose(poseFileName, poseTime);
+      pose = await this.posesService.registerPose(poseSetName, poseTime);
     }
 
     return this.posesService.addPoseTag(pose.id, poseTagName);
   }
 
-  @Delete(':poseFileName/:poseTime/pose-tags/:poseTagName')
+  @Delete(':poseSetName/:poseTime/pose-tags/:poseTagName')
   @ApiResponse({
     type: PoseTag,
     isArray: true,
   })
   async removePoseTag(
-    @Param('poseFileName') poseFileName: string,
+    @Param('poseSetName') poseSetName: string,
     @Param('poseTime') poseTimeString: string,
     @Param('poseTagName') poseTagName: string,
   ) {
@@ -84,10 +84,10 @@ export class PosesController {
       throw new HttpException('Invalid pose time', 400);
     }
 
-    let pose = await this.posesService.getPose(poseFileName, poseTime);
+    let pose = await this.posesService.getPose(poseSetName, poseTime);
 
     if (!pose) {
-      pose = await this.posesService.registerPose(poseFileName, poseTime);
+      pose = await this.posesService.registerPose(poseSetName, poseTime);
     }
 
     return this.posesService.removePoseTag(pose.id, poseTagName);
