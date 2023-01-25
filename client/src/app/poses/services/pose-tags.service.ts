@@ -86,4 +86,36 @@ export class PoseTagsService {
       }),
     );
   }
+
+  public async setTagsToPoses(
+    matchedPoses: MatchedPose[],
+  ): Promise<MatchedPose[]> {
+    if (0 == matchedPoses.length) {
+      return [];
+    }
+
+    const posesWithPoseTags = await this.getPosesWithPoseTags(matchedPoses);
+    for (const poseWithPoseTags of posesWithPoseTags) {
+      const matchedPose = matchedPoses.find((matchedPose: MatchedPose) => {
+        return (
+          matchedPose.poseFileName === poseWithPoseTags.poseFileName &&
+          matchedPose.time === poseWithPoseTags.time
+        );
+      });
+      if (!matchedPose) {
+        continue;
+      }
+
+      if (poseWithPoseTags.tags === undefined) {
+        continue;
+      }
+
+      const tagNames = [];
+      for (const poseTag of poseWithPoseTags.tags) {
+        tagNames.push(poseTag.name);
+      }
+      matchedPose.tags = tagNames;
+    }
+    return matchedPoses;
+  }
 }

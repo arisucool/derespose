@@ -3,7 +3,7 @@
   #container
   [ngClass]="{
     initializing: this.state === 'initializing',
-    standby: this.state === 'standby',
+    initialized: this.state === 'initialized',
     searching: this.state === 'searching',
     completed: this.state === 'completed'
   }"
@@ -22,8 +22,9 @@
     <app-camera-search-ctrl
       *ngIf="this.searchMode && this.searchMode === 'camera'"
       #cameraSearchCtrl
-      (onSearchTargetPoseDecided)="this.onSearchTargetPoseDecided($event)"
-      (onRetryPhotoShootStarted)="this.onRetryPhotoShootStarted($event)"
+      (onPoseSearchInitialized)="this.onPoseSearchInitialized()"
+      (onPoseSearchStarted)="this.onPoseSearchStarted()"
+      (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
     ></app-camera-search-ctrl>
     <!---->
 
@@ -31,6 +32,8 @@
     <app-tag-search-ctrl
       *ngIf="this.searchMode && this.searchMode === 'tag'"
       [tagName]="this.searchTarget?.tag"
+      (onPoseSearchStarted)="this.onPoseSearchStarted()"
+      (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
     ></app-tag-search-ctrl>
     <!---->
 
@@ -38,6 +41,8 @@
     <app-pose-list-search-ctrl
       *ngIf="this.searchMode && this.searchMode === 'poseList'"
       [poseListId]="this.searchTarget?.poseListId"
+      (onPoseSearchStarted)="this.onPoseSearchStarted()"
+      (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
     >
     </app-pose-list-search-ctrl>
     <!---->
@@ -45,7 +50,9 @@
     <!-- ポーズセット (ポーズファイル) による検索 -->
     <app-pose-set-search-ctrl
       *ngIf="this.searchMode && this.searchMode === 'poseSet'"
-      [poseSet]="this.searchTarget?.poseSet"
+      [poseSetName]="this.searchTarget?.poseSetName"
+      (onPoseSearchStarted)="this.onPoseSearchStarted()"
+      (onPoseSearchCompleted)="this.onPoseSearchCompleted($event)"
     ></app-pose-set-search-ctrl>
     <!---->
 
@@ -64,7 +71,10 @@
   </div>
   <!---->
 
-  <div class="matched-poses-container" [ngClass]="{ init: !searchTarget }">
+  <div
+    class="matched-poses-container"
+    [ngClass]="{ init: this.state === 'initializing' }"
+  >
     <ng-container *ngIf="searchTarget">
       <ng-container *ngIf="this.matchedPoses && 0 < this.matchedPoses.length">
         <!-- 検索結果の各ポーズ -->

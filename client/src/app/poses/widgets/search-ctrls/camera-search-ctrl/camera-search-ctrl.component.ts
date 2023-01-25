@@ -2,15 +2,19 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  NgZone,
   Output,
   ViewChild,
 } from '@angular/core';
 import { MatButton } from '@angular/material/button';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PoseExtractorService } from 'ngx-mp-pose-extractor';
-import { interval, Subscription, timer } from 'rxjs';
+import { interval, lastValueFrom, Subscription, timer } from 'rxjs';
 import { ConfigService } from 'src/app/shared/config.service';
 import { DetectedPose } from 'src/app/poses/interfaces/detected-pose';
+import { OnPoseSearchCompleted } from 'src/app/poses/interfaces/pose-search-event';
+import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
+import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
 
 @Component({
   selector: 'app-camera-search-ctrl',
@@ -25,14 +29,15 @@ export class CameraSearchCtrlComponent {
   @ViewChild('cameraVideo')
   cameraVideoElement!: ElementRef<HTMLVideoElement>;
 
-  // 撮影結果を親コンポーネントに知らせるための EventEmitter
   @Output()
-  public onSearchTargetPoseDecided: EventEmitter<DetectedPose[]> =
-    new EventEmitter();
+  public onPoseSearchInitialized: EventEmitter<void> = new EventEmitter();
 
-  // 再撮影が開始されたときに親コンポーネントに知らせるための EventEmitter
   @Output()
-  public onRetryPhotoShootStarted: EventEmitter<number> = new EventEmitter();
+  public onPoseSearchStarted: EventEmitter<void> = new EventEmitter();
+
+  @Output()
+  public onPoseSearchCompleted: EventEmitter<OnPoseSearchCompleted> =
+    new EventEmitter();
 
   // ボタン
   @ViewChild('shutterButton') shutterButtonRef?: MatButton;
@@ -78,6 +83,9 @@ export class CameraSearchCtrlComponent {
     private snackBar: MatSnackBar,
     private poseExtractorService: PoseExtractorService,
     private configService: ConfigService,
+    private poseSearchService: PoseSearchService,
+    private poseTagsService: PoseTagsService,
+    private ngZone: NgZone,
   ) {}
 
   async ngOnInit() {
@@ -125,6 +133,40 @@ export class CameraSearchCtrlComponent {
     }
   }
 
+  async searchPoses() {
+    console.log(`[CameraSearchCtrl] searchPoses`);
+    this.onPoseSearchStarted.emit();
+
+    // 少し待つ
+    await lastValueFrom(timer(200));
+
+    // ポーズを検索
+    let matchedPoses = await this.poseSearchService.searchPoseByPose(
+      this.recentlyPoses,
+    );
+    if (!matchedPoses) {
+      matchedPoses = [];
+    }
+    if (matchedPoses.length === 0) {
+      // ポーズが一件も見つからなければ、もう一度撮影
+      this.onPoseSearchInitialized.emit();
+      this.retryPhotoShootCountdown();
+      return;
+    }
+
+    // 各ポーズのタグを取得
+    matchedPoses = await this.poseTagsService.setTagsToPoses(matchedPoses);
+
+    console.log(`[CameraSearchCtrl] searchPoses - Found`, matchedPoses);
+
+    // 完了
+    this.ngZone.run(() => {
+      this.onPoseSearchCompleted.emit({
+        poses: matchedPoses,
+      });
+    });
+  }
+
   public async startPhotoShootCountdown() {
     if (!this.cameraVideoStream) return;
 
@@ -137,7 +179,7 @@ export class CameraSearchCtrlComponent {
       await this.initCamera();
     }
 
-    this.onRetryPhotoShootStarted.emit(1);
+    this.onPoseSearchInitialized.emit();
 
     this.searchTargetPoseImageDataUrl = undefined;
     this.countdownRemainSeconds = this.countdownSecondsForDecidePose;
@@ -280,9 +322,11 @@ export class CameraSearchCtrlComponent {
     this.searchTargetPoseImageDataUrl =
       this.currentPosePreviewImageDataUrl + '';
     this.state = 'completed';
-    this.onSearchTargetPoseDecided.emit(this.recentlyPoses);
 
     this.stopCamera();
+
+    // 検索
+    this.searchPoses();
 
     // シャッターボタンにフォーカスを当てる
     this.setFocusToShutterButton();

@@ -70,7 +70,7 @@
   .container {
     // 初期化中・待機中・検索中
     &.initializing,
-    &.standby,
+    &.initialized,
     &.searching {
       align-items: center;
       flex-direction: column;
