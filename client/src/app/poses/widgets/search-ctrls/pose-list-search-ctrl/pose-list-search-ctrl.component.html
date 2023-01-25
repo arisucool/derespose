@@ -35,6 +35,21 @@
 
   <!-- ポーズリストの編集 (作成者向け) -->
   <p class="edit-buttons" *ngIf="this.isMyPoseList">
+    <!-- 削除ボタン -->
+    <button
+      (click)="this.deletePoseList()"
+      class="delete-button"
+      mat-stroked-button
+      color="warn"
+      matTooltip="このポーズリストを削除"
+      [disabled]="this.isRequestingUpdatePoseList"
+    >
+      <mat-icon style="margin: 0 0 0 0">delete</mat-icon>
+    </button>
+    <!---->
+
+    &nbsp; &nbsp;
+
     <!-- 公開モードの切り替えボタン -->
     <button
       (click)="this.togglePublicModeOfPoseList()"
@@ -58,17 +73,19 @@
 
     &nbsp;&nbsp;
 
-    <!-- 削除ボタン -->
-    <button
-      (click)="this.deletePoseList()"
-      class="delete-button"
+    <!-- ツイートボタン -->
+    <a
+      [href]="this.tweetUrl"
+      class="twitter-share-button"
+      class="tweet-button"
       mat-stroked-button
-      color="warn"
-      matTooltip="このポーズリストを削除します"
-      [disabled]="this.isRequestingUpdatePoseList"
+      color="primary"
+      matTooltip="このポーズリストをシェア"
+      target="_blank"
+      rel="noopener"
     >
-      削除
-    </button>
+      <fa-icon [icon]="twitterIcon"></fa-icon>
+    </a>
     <!---->
   </p>
   <!---->

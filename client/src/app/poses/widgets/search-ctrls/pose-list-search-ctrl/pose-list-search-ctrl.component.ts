@@ -10,6 +10,8 @@ import { PoseListsService } from 'src/app/poses/services/pose-lists.service';
 import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
 import { AppDialogService } from 'src/app/shared/services/app-dialog.service';
+import { faTwitter } from '@fortawesome/free-brands-svg-icons';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-pose-list-search-ctrl',
@@ -39,6 +41,12 @@ export class PoseListSearchCtrlComponent implements OnInit {
   // ポーズリストを変更中かどうか
   public isRequestingUpdatePoseList: boolean = false;
 
+  // シェアするためのブランドアイコン
+  public twitterIcon = faTwitter;
+
+  // シェアするためのURL
+  public tweetUrl?: SafeUrl;
+
   constructor(
     private poseSearchService: PoseSearchService,
     private poseTagsService: PoseTagsService,
@@ -47,6 +55,7 @@ export class PoseListSearchCtrlComponent implements OnInit {
     private snackBar: MatSnackBar,
     private authService: AuthService,
     private router: Router,
+    private domSanitizer: DomSanitizer,
   ) {}
 
   async ngOnInit() {
@@ -89,6 +98,22 @@ export class PoseListSearchCtrlComponent implements OnInit {
     } else {
       this.isMyPoseList = false;
     }
+
+    // シェアするためのURLを設定
+    const tweetUrlParams = new URLSearchParams();
+    tweetUrlParams.append(
+      'text',
+      `${this.poseList?.title} - デレスポAR ポーズ検索`,
+    );
+    tweetUrlParams.append('hashtags', 'Derespose,デレスポAR,デレステAR');
+    tweetUrlParams.append(
+      'url',
+      `${location.origin}/poses/pose-lists/${this.poseListId}`,
+    );
+    tweetUrlParams.append('related', 'arisucool');
+    this.tweetUrl = this.domSanitizer.bypassSecurityTrustUrl(
+      `https://twitter.com/intent/tweet?${tweetUrlParams.toString()}`,
+    );
 
     // ポーズを検索
     let matchedPoses: MatchedPose[] = [];

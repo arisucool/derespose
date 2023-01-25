@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MaterialModule } from 'src/material.module';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ConfirmDialogComponent } from './widgets/dialogs/confirm-dialog/confirm-dialog.component';
 
 @NgModule({
@@ -18,6 +19,7 @@ import { ConfirmDialogComponent } from './widgets/dialogs/confirm-dialog/confirm
   exports: [
     CommonModule,
     MaterialModule,
+    FontAwesomeModule,
     FormsModule,
     ReactiveFormsModule,
     NgxSpinnerModule,
