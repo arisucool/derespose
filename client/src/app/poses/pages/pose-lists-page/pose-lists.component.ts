@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { PoseList } from 'src/.api-client/models/pose-list';
 import { PoseListsService } from '../../services/pose-lists.service';
 
 @Component({
@@ -8,7 +9,7 @@ import { PoseListsService } from '../../services/pose-lists.service';
   styleUrls: ['../../../shared/style.scss', './pose-lists-page.component.scss'],
 })
 export class PoseListsPageComponent implements OnInit {
-  public poseLists: any[] = [];
+  public poseLists: PoseList[] = [];
   public userId?: string;
 
   constructor(

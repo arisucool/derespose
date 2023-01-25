@@ -15,6 +15,7 @@ import { User } from 'src/users/entities/user.entity';
 import { AddPoseToPoseListDto } from './dtos/add-pose-to-pose-list.dto';
 import { CreatePostListDto } from './dtos/create-pose-list.dto';
 import { RemovePoseFromPoseListDto } from './dtos/remove-pose-from-pose-list.dto';
+import { UpdatePoseListDto } from './dtos/update-pose-list.dto';
 import { PoseList } from './entities/pose-list.entity';
 import { PoseListsService } from './pose-lists.service';
 
@@ -70,7 +71,7 @@ export class PoseListsController {
   update(
     @Req() req: any,
     @Param('id') id: string,
-    @Body() dto: CreatePostListDto,
+    @Body() dto: UpdatePoseListDto,
   ): Promise<PoseList> {
     return this.poseListsService.updatePoseList(id, dto, req.user.user as User);
   }

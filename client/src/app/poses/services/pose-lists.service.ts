@@ -1,6 +1,8 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
+import { CreatePostListDto } from 'src/.api-client/models/create-post-list-dto';
 import { PoseList } from 'src/.api-client/models/pose-list';
+import { UpdatePoseListDto } from 'src/.api-client/models/update-pose-list-dto';
 import { ApiService } from 'src/.api-client/services/api.service';
 import { AuthService } from '../../auth/services/auth.service';
 
@@ -78,11 +80,12 @@ export class PoseListsService {
   }
 
   async getPoseList(poseListId: string): Promise<PoseList | undefined> {
-    this.myPoseLists = await this.getMyPoseLists();
-    const poseList = this.myPoseLists.find(
-      (poseList) => poseList.id === poseListId,
+    const poseList = await lastValueFrom(
+      this.apiService.poseListsControllerGet({
+        id: poseListId,
+      }),
     );
-    console.log(`[PoseListsService] getPoseList - Found`, poseListId, poseList);
+    console.log(`[PoseListsService] getPoseList`, poseListId, poseList);
     return poseList;
   }
 
@@ -99,7 +102,6 @@ export class PoseListsService {
           title: title,
           publicMode: publicMode,
           description: '',
-          poseIdentifiers: [],
         },
       }),
     );
@@ -162,5 +164,44 @@ export class PoseListsService {
     this.onMyPoseListsChanged.emit(this.myPoseLists);
 
     return poseList;
+  }
+
+  async setPublicModeOfPoseList(poseList: PoseList, publicMode: string) {
+    let poseIdentifiers: string[] = [];
+    if (poseList.poses) {
+      poseIdentifiers = poseList.poses?.map((pose) => {
+        return `${pose.poseSetName}:${pose.time}`;
+      });
+    }
+
+    const dto: UpdatePoseListDto = {
+      title: poseList.title,
+      publicMode: publicMode,
+      description: poseList.description,
+      poseIdentifiers: poseIdentifiers,
+    };
+
+    return await lastValueFrom(
+      this.apiService.poseListsControllerUpdate({
+        id: poseList.id,
+        body: dto,
+      }),
+    );
+  }
+
+  async deletePoseList(poseListId: string) {
+    await lastValueFrom(
+      this.apiService.poseListsControllerDelete({
+        id: poseListId,
+      }),
+    );
+
+    if (!this.myPoseLists) return;
+
+    const index = this.myPoseLists.findIndex((p) => p.id === poseListId);
+    if (index < 0) return;
+
+    this.myPoseLists.splice(index, 1);
+    this.onMyPoseListsChanged.emit(this.myPoseLists);
   }
 }

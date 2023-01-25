@@ -1,19 +1,75 @@
-<p class="caption">
-  ポーズリスト
-  <br />
-  <small>P さんたちの作成したポーズリストからポーズを表示します</small>
-</p>
-<div class="search-ctrl simple-card">
-  <p class="pose-list-name">
-    <mat-icon
-      style="
-        color: #777777;
-        font-size: 1.3rem;
-        vertical-align: middle;
-        margin: 0 0.5rem 0 -1rem;
-      "
-      >list</mat-icon
-    >
-    {{ poseList?.title }}
+<div class="search-ctrl simple-card" *ngIf="poseList">
+  <!-- ポーズリストの作成者 -->
+  <p class="pose-list-title">
+    {{ poseList.title }}
   </p>
+  <!---->
+
+  <!-- ポーズリストの作成者 -->
+  <p class="pose-list-author" *ngIf="poseList.user">
+    {{ poseList.user.displayName }} さん<br />
+    <a
+      class="twitter-link"
+      href="https://twitter.com/{{ poseList.user.twitterUserName }}"
+      target="_blank"
+      rel="noopener noreferrer"
+      >@{{ poseList.user.twitterUserName }}</a
+    >
+  </p>
+  <!---->
+
+  <!-- ポーズリストの更新日時 -->
+  <p class="pose-list-date">
+    最終更新: &nbsp;{{ poseList.updatedAt | date : 'yyyy/MM/dd' }}
+  </p>
+  <!---->
+
+  <!-- ポーズリストについて (他のユーザ向け) -->
+  <p
+    class="about"
+    *ngIf="this.isMyPoseList !== undefined && !this.isMyPoseList"
+  >
+    <a routerLink="/about/faq" fragment="pose-list"> >このページについて </a>
+  </p>
+  <!---->
+
+  <!-- ポーズリストの編集 (作成者向け) -->
+  <p class="edit-buttons" *ngIf="this.isMyPoseList">
+    <!-- 公開モードの切り替えボタン -->
+    <button
+      (click)="this.togglePublicModeOfPoseList()"
+      class="delete-button"
+      mat-stroked-button
+      [matTooltip]="
+        this.poseList.publicMode === 'public'
+          ? 'このポーズリストは公開されています。限定公開に切り替えるにはクリックしてください。'
+          : 'このポーズリストは限定公開となっています。公開に切り替えるにはクリックしてください。'
+      "
+      [disabled]="this.isRequestingUpdatePoseList"
+    >
+      <ng-container *ngIf="this.poseList.publicMode === 'public'">
+        <mat-icon style="margin-top: 3px">public</mat-icon>
+      </ng-container>
+      <ng-container *ngIf="this.poseList.publicMode === 'sharedByUrl'">
+        <mat-icon style="margin-top: 3px">link</mat-icon>
+      </ng-container>
+    </button>
+    <!---->
+
+    &nbsp;&nbsp;
+
+    <!-- 削除ボタン -->
+    <button
+      (click)="this.deletePoseList()"
+      class="delete-button"
+      mat-stroked-button
+      color="warn"
+      matTooltip="このポーズリストを削除します"
+      [disabled]="this.isRequestingUpdatePoseList"
+    >
+      削除
+    </button>
+    <!---->
+  </p>
+  <!---->
 </div>

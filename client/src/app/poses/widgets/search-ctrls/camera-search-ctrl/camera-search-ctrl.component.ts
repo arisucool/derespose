@@ -137,10 +137,10 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
 
   async searchPoses() {
     console.log(`[CameraSearchCtrl] searchPoses`);
-    this.onPoseSearchStarted.emit();
 
-    // 少し待つ
-    await lastValueFrom(timer(200));
+    // 読み込み中表示を開始
+    this.onPoseSearchStarted.emit();
+    await lastValueFrom(timer(100));
 
     // ポーズを検索
     let matchedPoses = await this.poseSearchService.searchPoseByPose(

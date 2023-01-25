@@ -1,0 +1,19 @@
+<h1 mat-dialog-title>
+  {{ this.data.title }}
+</h1>
+<mat-dialog-content>
+  {{ this.data.text }}
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button
+    mat-button
+    mat-dialog-close="OK"
+    [color]="this.data.positiveButtonColor"
+  >
+    {{ this.data.positiveButtonLabel }}
+  </button>
+  <button mat-button mat-dialog-close>
+    {{ this.data.negativeButtonLabel }}
+  </button>
+</mat-dialog-actions>

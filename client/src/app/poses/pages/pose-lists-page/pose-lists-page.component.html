@@ -1,6 +1,8 @@
 <div class="page-summary">
   <h2>
-    <ng-container *ngIf="!this.userId"> ポーズリスト </ng-container>
+    <ng-container *ngIf="!this.userId">
+      みんなのポーズリストを眺める
+    </ng-container>
     <ng-container *ngIf="this.userId && this.userId === 'me'">
       マイ ポーズリスト
     </ng-container>
@@ -26,7 +28,10 @@
       <div class="about-app simple-card bordered">
         <h3>{{ poseList.title }}</h3>
         <p>
-          XX 件のポーズ &nbsp;&nbsp;-&nbsp;&nbsp;
+          <ng-container *ngIf="poseList.poses"
+            >{{ poseList.poses.length }} 件のポーズ
+            &nbsp;&nbsp;-&nbsp;&nbsp;</ng-container
+          >
 
           <!-- 自分のポーズリストの場合 -->
           <ng-container *ngIf="this.userId">
@@ -50,7 +55,7 @@
 
           <!-- 共有されたポーズリストの場合 -->
           <ng-container *ngIf="!this.userId">
-            {{ poseList.user?.displayName }} さん
+            作成者:&nbsp;&nbsp; {{ poseList.user.displayName }} さん
           </ng-container>
           <!---->
         </p>

@@ -15,10 +15,4 @@ export class CreatePostListDto {
     description: 'ポーズリストの公開モード',
   })
   publicMode: 'public' | 'sharedByUrl';
-
-  @ApiProperty({
-    description: 'ポーズ識別子の配列',
-    example: ['onega-cinderella:1000', 'star:1100'],
-  })
-  poseIdentifiers: string[];
 }

@@ -48,9 +48,8 @@ export class PoseSetSearchCtrlComponent implements OnInit {
       return;
     }
 
+    // 読み込み中表示を開始
     this.onPoseSearchStarted.emit();
-
-    // 少し待つ
     await lastValueFrom(timer(200));
 
     // ポーズセットを取得

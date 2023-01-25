@@ -48,11 +48,18 @@ export class PoseListsService {
   }
 
   async getPoseList(id: string): Promise<PoseList> {
-    const item = await this.poseListsRepository.findOne({
-      where: {
-        id,
-      },
-    });
+    let item: PoseList;
+    try {
+      item = await this.poseListsRepository.findOne({
+        where: {
+          id,
+        },
+        relations: ['user', 'poses'],
+      });
+    } catch (e: any) {
+      throw new HttpException(e.message, 400);
+    }
+
     if (!item) {
       throw new HttpException('Item not found', 404);
     }
@@ -79,7 +86,7 @@ export class PoseListsService {
       updatedAt: now,
       publicMode: dto.publicMode,
       description: dto.description,
-      poses: await this.getPoseByPoseIdentifiers(dto.poseIdentifiers),
+      poses: [],
       user: user,
     });
   }
@@ -89,19 +96,21 @@ export class PoseListsService {
       where: {
         id,
       },
+      relations: ['user'],
     });
     if (!item) {
       throw new HttpException('Item not found', 404);
     }
 
-    if (item.user.id !== user.id) {
+    if (!item.user || item.user.id !== user.id) {
       throw new HttpException('Forbidden', 403);
     }
 
     item.title = dto.title;
     item.description = dto.description;
     item.poses = await this.getPoseByPoseIdentifiers(dto.poseIdentifiers);
-    item.createdAt = new Date();
+    item.publicMode = dto.publicMode;
+    item.updatedAt = new Date();
 
     return this.poseListsRepository.save(item);
   }
@@ -111,12 +120,13 @@ export class PoseListsService {
       where: {
         id,
       },
+      relations: ['user'],
     });
     if (!item) {
       throw new HttpException('Item not found', 404);
     }
 
-    if (item.user.id !== user.id) {
+    if (!item.user || item.user.id !== user.id) {
       throw new HttpException('Forbidden', 403);
     }
 

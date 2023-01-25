@@ -28,8 +28,6 @@ export class PoseTagSearchCtrlComponent implements OnInit {
   public onPoseSearchCompleted: EventEmitter<OnPoseSearchCompleted> =
     new EventEmitter();
 
-  public poseSet?: PoseSet;
-
   constructor(
     private poseSearchService: PoseSearchService,
     private poseTagsService: PoseTagsService,
@@ -45,10 +43,9 @@ export class PoseTagSearchCtrlComponent implements OnInit {
       return;
     }
 
+    // 読み込み中表示を開始
     this.onPoseSearchStarted.emit();
-
-    // 少し待つ
-    await lastValueFrom(timer(200));
+    await lastValueFrom(timer(100));
 
     // ポーズを検索
     let matchedPoses = await this.poseSearchService.searchPosesByTag(
