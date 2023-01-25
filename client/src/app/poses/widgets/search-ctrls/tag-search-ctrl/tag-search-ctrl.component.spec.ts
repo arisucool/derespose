@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { FileSearchFormComponent } from './file-search-form.component';
+import { TagSearchCtrlComponent } from './tag-search-ctrl.component';
 
-describe('FileSearchFormComponent', () => {
-  let component: FileSearchFormComponent;
-  let fixture: ComponentFixture<FileSearchFormComponent>;
+describe('TagSearchCtrlComponent', () => {
+  let component: TagSearchCtrlComponent;
+  let fixture: ComponentFixture<TagSearchCtrlComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ FileSearchFormComponent ]
+      declarations: [ TagSearchCtrlComponent ]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(FileSearchFormComponent);
+    fixture = TestBed.createComponent(TagSearchCtrlComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

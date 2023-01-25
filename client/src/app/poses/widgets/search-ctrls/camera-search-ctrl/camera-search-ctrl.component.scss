@@ -13,7 +13,7 @@
   }
 }
 
-.search-form-container {
+:host {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -30,7 +30,7 @@
     }
   }
 
-  .camera-search-form {
+  .search-ctrl {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -128,7 +128,7 @@
 // レスポンシブ (モバイル)
 
 @media screen and (max-width: 799px) {
-  .search-form-container {
+  :host {
     padding: 0 0 1rem 0;
   }
 }

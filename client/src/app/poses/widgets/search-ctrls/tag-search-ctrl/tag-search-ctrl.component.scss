@@ -1,4 +1,4 @@
-.search-form-container {
+:host {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -14,7 +14,7 @@
     }
   }
 
-  .file-search-form {
+  .search-ctrl {
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
@@ -22,7 +22,7 @@
     width: fit-content;
     gap: 1rem;
 
-    .file-title {
+    .tag-name {
       font-size: 1rem;
       margin-left: -1rem;
     }

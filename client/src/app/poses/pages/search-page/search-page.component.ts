@@ -3,13 +3,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { ActivatedRoute } from '@angular/router';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { lastValueFrom, timer } from 'rxjs';
-import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { DetectedPose } from '../../interfaces/detected-pose';
 import { MatchedPose } from '../../interfaces/matched-pose';
 import { PoseFile } from '../../interfaces/pose-file';
 import { PoseSearchService } from '../../services/pose-search.service';
 import { PoseTagsService } from '../../services/pose-tags.service';
-import { CameraSearchFormComponent } from '../../widgets/camera-search-form/camera-search-form.component';
+import { CameraSearchCtrlComponent } from '../../widgets/search-ctrls/camera-search-ctrl/camera-search-ctrl.component';
 
 @Component({
   selector: 'app-search-page',
@@ -18,16 +17,19 @@ import { CameraSearchFormComponent } from '../../widgets/camera-search-form/came
 })
 export class SearchPageComponent implements OnInit {
   // 検索モード
-  public searchMode?: 'camera' | 'tag' | 'file';
+  public searchMode?: 'camera' | 'tag' | 'poseSet' | 'poseList';
 
   // カメラでポーズ検索するときの子コンポーネント
-  @ViewChild('cameraSearchForm')
-  public cameraSearchFormComponent?: CameraSearchFormComponent;
+  @ViewChild('cameraSearchCtrl')
+  public cameraSearchCtrlComponent?: CameraSearchCtrlComponent;
 
-  // 検索対象 (ポーズ・タグ・ファイル)
-  public searchTargetPose?: DetectedPose;
-  public searchTargetTag?: string;
-  public searchTargetFile?: PoseFile;
+  // 検索対象 (ポーズ・タグ・ファイル・ポーズリスト)
+  public searchTarget?: {
+    pose?: DetectedPose;
+    tag?: string;
+    poseSet?: PoseFile;
+    poseListId?: string;
+  };
 
   // 状態
   public state: 'initializing' | 'standby' | 'searching' | 'completed' =
@@ -46,16 +48,26 @@ export class SearchPageComponent implements OnInit {
 
   async ngOnInit() {
     const routeParams = this.activatedRoute.snapshot.params;
+    console.log(routeParams);
     if (routeParams['tagName']) {
       this.searchMode = 'tag';
-      this.searchTargetTag = routeParams['tagName'];
+      this.searchTarget = {
+        tag: routeParams['tagName'],
+      };
       this.onSearchTargetTagDecided(routeParams['tagName']);
-    } else if (routeParams['poseFileName']) {
-      this.searchMode = 'file';
-      this.searchTargetFile = await this.poseSearchService.getPoseFile(
-        routeParams['poseFileName'],
-      );
-      this.onSearchTargetFileDecided(routeParams['poseFileName']);
+    } else if (routeParams['poseSetName']) {
+      this.searchMode = 'poseSet';
+      this.searchTarget = {
+        poseSet: await this.poseSearchService.getPoseFile(
+          routeParams['poseSetName'],
+        ),
+      };
+      this.onSearchTargetFileDecided(routeParams['poseSetName']);
+    } else if (routeParams['poseListId']) {
+      this.searchMode = 'poseList';
+      this.searchTarget = {
+        poseListId: routeParams['poseListId'],
+      };
     } else {
       this.searchMode = 'camera';
       this.state = 'initializing';
@@ -65,7 +77,7 @@ export class SearchPageComponent implements OnInit {
 
   public async onRetryPhotoShootStarted(event: any) {
     console.log(`[SearchPageComponent] onRetryPhotoShootStarted`);
-    this.searchTargetPose = undefined;
+    this.searchTarget = undefined;
     this.matchedPoses = [];
     this.state = 'standby';
     this.spinner.hide();
@@ -76,7 +88,9 @@ export class SearchPageComponent implements OnInit {
       `[SearchPageComponent] onSearchTargetPoseDecided`,
       searchTargetPoses,
     );
-    this.searchTargetPose = searchTargetPoses[searchTargetPoses.length - 1];
+    this.searchTarget = {
+      pose: searchTargetPoses[0],
+    };
 
     this.state = 'searching';
     this.spinner.show();
@@ -94,10 +108,10 @@ export class SearchPageComponent implements OnInit {
 
     if (matchedPoses.length === 0) {
       // ポーズが一件も見つからなければ
-      this.searchTargetPose = undefined;
-      if (this.cameraSearchFormComponent) {
+      this.searchTarget = undefined;
+      if (this.cameraSearchCtrlComponent) {
         // もう一度撮影
-        this.cameraSearchFormComponent.retryPhotoShootCountdown();
+        this.cameraSearchCtrlComponent.retryPhotoShootCountdown();
         this.spinner.hide();
         return;
       }

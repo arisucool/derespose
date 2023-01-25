@@ -22,7 +22,7 @@
 
 <ng-container *ngIf="this.poseLists">
   <ng-container *ngFor="let poseList of this.poseLists">
-    <a class="pose-set" routerLink="/pose-lists/{{ poseList.id }}">
+    <a class="pose-set" routerLink="/poses/pose-lists/{{ poseList.id }}">
       <div class="about-app simple-card bordered">
         <h3>{{ poseList.title }}</h3>
         <p>

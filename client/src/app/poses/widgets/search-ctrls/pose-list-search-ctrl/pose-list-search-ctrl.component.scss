@@ -1,0 +1,30 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+
+  .caption {
+    font-size: 1rem;
+    margin: 0.1rem 0 1rem 0;
+
+    small {
+      font-size: 0.7rem;
+    }
+  }
+
+  .search-ctrl {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    padding: 1rem 0 0 0;
+    width: fit-content;
+    gap: 1rem;
+
+    .pose-list-name {
+      font-size: 1rem;
+      margin-left: -1rem;
+    }
+  }
+}

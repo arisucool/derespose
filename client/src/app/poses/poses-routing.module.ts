@@ -5,38 +5,39 @@ import { PoseSetsPageComponent } from './pages/pose-sets-page/pose-sets-page.com
 import { SearchPageComponent } from './pages/search-page/search-page.component';
 
 const routes: Routes = [
+  // 自分でポーズをとって探す
   {
     path: 'search/camera',
     component: SearchPageComponent,
-    title: '自分でポーズを取って探す',
+    title: '自分でポーズをとって探す',
   },
+  // タグでポーズを探す (タグ検索)
   {
     path: 'search/tag/:tagName',
     component: SearchPageComponent,
     title: 'タグでポーズを探す',
   },
+  // 全てのポーズをじっくり眺める (ポーズセット)
   {
     path: 'pose-sets',
     component: PoseSetsPageComponent,
-    title: 'ポーズの一覧',
-    children: [
-      {
-        path: ':poseFileName',
-        component: SearchPageComponent,
-        title: 'ポーズの一覧',
-      },
-    ],
+    title: 'ポーズセットの一覧',
   },
+  {
+    path: 'pose-sets/:poseSetName',
+    component: SearchPageComponent,
+    title: 'ポーズセット > ポーズの一覧',
+  },
+  // ポーズリスト
   {
     path: 'pose-lists',
     component: PoseListsPageComponent,
-    children: [
-      {
-        path: ':poseListId',
-        component: SearchPageComponent,
-        title: 'ポーズリスト',
-      },
-    ],
+    title: 'ポーズリストの一覧',
+  },
+  {
+    path: 'pose-lists/:poseListId',
+    component: SearchPageComponent,
+    title: 'ポーズリスト',
   },
 ];
 

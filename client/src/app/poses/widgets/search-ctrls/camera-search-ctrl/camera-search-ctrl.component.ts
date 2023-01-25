@@ -1,11 +1,7 @@
 import {
-  AfterViewInit,
-  ChangeDetectorRef,
   Component,
   ElementRef,
   EventEmitter,
-  OnDestroy,
-  OnInit,
   Output,
   ViewChild,
 } from '@angular/core';
@@ -17,15 +13,14 @@ import { ConfigService } from 'src/app/shared/config.service';
 import { DetectedPose } from 'src/app/poses/interfaces/detected-pose';
 
 @Component({
-  selector: 'app-camera-search-form',
-  templateUrl: './camera-search-form.component.html',
+  selector: 'app-camera-search-ctrl',
+  templateUrl: './camera-search-ctrl.component.html',
   styleUrls: [
-    '../../../shared/style.scss',
-    './camera-search-form.component.scss',
+    '../../../../shared/style.scss',
+    './camera-search-ctrl.component.scss',
   ],
-  providers: [PoseExtractorService],
 })
-export class CameraSearchFormComponent implements OnInit, OnDestroy {
+export class CameraSearchCtrlComponent {
   // カメラ映像を再生するための Video 要素
   @ViewChild('cameraVideo')
   cameraVideoElement!: ElementRef<HTMLVideoElement>;

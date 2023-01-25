@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { MaterialModule } from 'src/material.module';
-import { NgxMpPoseExtractorModule } from 'ngx-mp-pose-extractor';
 
 @NgModule({
   declarations: [],
@@ -20,7 +19,6 @@ import { NgxMpPoseExtractorModule } from 'ngx-mp-pose-extractor';
     FormsModule,
     ReactiveFormsModule,
     NgxSpinnerModule,
-    NgxMpPoseExtractorModule,
   ],
 })
 export class SharedModule {}

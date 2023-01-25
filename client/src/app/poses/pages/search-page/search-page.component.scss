@@ -10,7 +10,7 @@
 
   // 検索の概要
 
-  .search-summary {
+  .search-ctrl-container {
     position: relative;
     box-sizing: border-box;
     width: 20vw;
@@ -22,7 +22,8 @@
     }
 
     &.tag-search,
-    &.file-search {
+    &.pose-set-search,
+    &.pose-list-search {
       margin-top: 10rem;
     }
 
@@ -77,7 +78,7 @@
 
       // 検索の概要
 
-      .search-summary {
+      .search-ctrl-container {
         width: 50vw;
         max-width: 480px;
         margin-top: 0 !important;
@@ -90,7 +91,7 @@
   .container {
     flex-direction: column;
 
-    .search-summary {
+    .search-ctrl-container {
       width: 100%;
       margin-top: 3rem !important;
       min-width: unset;
