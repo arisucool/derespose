@@ -135,10 +135,7 @@ export class PoseListSearchCtrlComponent implements OnInit {
     });
   }
 
-  /**
-   * ポーズリストの公開モードのトグル
-   */
-  public async togglePublicModeOfPoseList() {
+  public async setPublicModeOfPoseList(publicMode: 'public' | 'sharedByUrl') {
     if (!this.poseList) {
       return;
     }
@@ -147,9 +144,6 @@ export class PoseListSearchCtrlComponent implements OnInit {
     const message = this.snackBar.open(
       `ポーズリストを変更しています... お待ちください...`,
     );
-
-    const publicMode =
-      this.poseList.publicMode === 'public' ? 'sharedByUrl' : 'public';
 
     try {
       this.poseList = await this.poseListsService.setPublicModeOfPoseList(
@@ -168,6 +162,19 @@ export class PoseListSearchCtrlComponent implements OnInit {
       duration: 2000,
     });
     this.isRequestingUpdatePoseList = false;
+  }
+
+  /**
+   * ポーズリストの公開モードのトグル
+   */
+  public async togglePublicModeOfPoseList() {
+    if (!this.poseList) {
+      return;
+    }
+    const publicMode =
+      this.poseList.publicMode === 'public' ? 'sharedByUrl' : 'public';
+
+    this.setPublicModeOfPoseList(publicMode);
   }
 
   /**

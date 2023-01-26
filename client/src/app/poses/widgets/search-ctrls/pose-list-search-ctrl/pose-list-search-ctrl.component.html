@@ -29,7 +29,7 @@
     class="about"
     *ngIf="this.isMyPoseList !== undefined && !this.isMyPoseList"
   >
-    <a routerLink="/about/faq" fragment="pose-list"> >このページについて </a>
+    <a routerLink="/about/faq" fragment="pose-list"> このページについて </a>
   </p>
   <!---->
 
@@ -52,15 +52,15 @@
 
     <!-- 公開モードの切り替えボタン -->
     <button
-      (click)="this.togglePublicModeOfPoseList()"
       class="delete-button"
       mat-stroked-button
       [matTooltip]="
         this.poseList.publicMode === 'public'
-          ? 'このポーズリストは公開されています。限定公開に切り替えるにはクリックしてください。'
-          : 'このポーズリストは限定公開となっています。公開に切り替えるにはクリックしてください。'
+          ? 'このポーズリストは公開されています。変更するにはクリックします。'
+          : 'このポーズリストは限定公開となっています。変更するにはクリックします。'
       "
       [disabled]="this.isRequestingUpdatePoseList"
+      [matMenuTriggerFor]="menuForPublicMode"
     >
       <ng-container *ngIf="this.poseList.publicMode === 'public'">
         <mat-icon style="margin-top: 3px">public</mat-icon>
@@ -68,6 +68,25 @@
       <ng-container *ngIf="this.poseList.publicMode === 'sharedByUrl'">
         <mat-icon style="margin-top: 3px">link</mat-icon>
       </ng-container>
+
+      <mat-menu #menuForPublicMode="matMenu">
+        <button
+          (click)="this.setPublicModeOfPoseList('public')"
+          mat-menu-item
+          [disabled]="this.poseList.publicMode === 'public'"
+        >
+          <mat-icon>public</mat-icon>
+          &nbsp; 公開
+        </button>
+        <button
+          (click)="this.setPublicModeOfPoseList('sharedByUrl')"
+          mat-menu-item
+          [disabled]="this.poseList.publicMode === 'sharedByUrl'"
+        >
+          <mat-icon>link</mat-icon>
+          &nbsp; 限定公開
+        </button>
+      </mat-menu>
     </button>
     <!---->
 
