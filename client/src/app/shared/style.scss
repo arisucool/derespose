@@ -37,7 +37,7 @@
 
 // リンク
 
-a {
+a:not([mat-stroked-button]) {
   word-wrap: break-word;
   color: #4d75c2;
   transition: all 0.2s ease-in-out;

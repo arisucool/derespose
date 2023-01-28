@@ -11,7 +11,7 @@
           emoji_people
         </mat-icon>
       </p>
-      <button
+      <a
         mat-stroked-button
         color="primary"
         matTooltip="例えば、あなたが両手をあげると、デレスポARから、そのポーズのある曲を探します"
@@ -19,7 +19,7 @@
       >
         <mat-icon style="margin-bottom: 1px">photo_camera</mat-icon>
         カメラを起動
-      </button>
+      </a>
       <small
         style="
           color: #666;
@@ -47,14 +47,14 @@
       </div>
 
       <div class="buttons" *ngIf="this.poseTags !== undefined">
-        <button
+        <a
           mat-stroked-button
           *ngFor="let tag of this.poseTags"
           routerLink="poses/pose-tags/{{ tag.name }}"
         >
           <mat-icon style="margin-bottom: 1px">tag</mat-icon>
           {{ tag.name }}
-        </button>
+        </a>
       </div>
     </li>
     <li>
@@ -66,10 +66,10 @@
       </p>
 
       <div class="buttons">
-        <button mat-stroked-button routerLink="poses/pose-lists">
+        <a mat-stroked-button routerLink="poses/pose-lists">
           <mat-icon style="margin-bottom: 1px">public</mat-icon>
           公開されたポーズリスト一覧
-        </button>
+        </a>
       </div>
     </li>
     <li>
@@ -81,16 +81,16 @@
       </p>
 
       <div class="buttons">
-        <button
+        <a
           mat-stroked-button
           routerLink="poses/pose-sets"
           [queryParams]="{ type: 'song' }"
         >
           <mat-icon style="margin-bottom: 1px">music_note</mat-icon>
           楽曲ポーズ一覧
-        </button>
+        </a>
 
-        <button
+        <a
           mat-stroked-button
           routerLink="poses/pose-sets"
           [queryParams]="{ type: 'commonPose' }"
@@ -98,9 +98,9 @@
         >
           <mat-icon style="margin-bottom: 1px">people</mat-icon>
           共通ポーズ一覧
-        </button>
+        </a>
 
-        <button
+        <a
           mat-stroked-button
           routerLink="poses/pose-sets"
           [queryParams]="{ type: 'chanpokuPose' }"
@@ -109,7 +109,7 @@
         >
           <mat-icon style="margin-bottom: 1px">face_4</mat-icon>
           ○○ちゃんっぽくポーズ一覧
-        </button>
+        </a>
       </div>
     </li>
   </ul>

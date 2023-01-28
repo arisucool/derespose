@@ -44,7 +44,7 @@
         }
       }
 
-      button {
+      a[mat-stroked-button] {
         padding: 1.2rem 2rem;
       }
 
@@ -65,7 +65,7 @@
         justify-content: center;
         width: 100%;
 
-        button {
+        a[mat-stroked-button] {
           margin: 0 0.5rem 0.5rem 0.5rem;
           min-width: fit-content;
           > mat-icon {
