@@ -58,7 +58,7 @@
 
 // トップページへ戻るためのナビゲーション
 
-.bottom-navigation {
+.app-bottom-navigation {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -118,7 +118,7 @@
 
   // トップページへ戻るためのナビゲーション
 
-  .bottom-navigation {
+  .app-bottom-navigation {
     margin-bottom: 1rem;
   }
 }

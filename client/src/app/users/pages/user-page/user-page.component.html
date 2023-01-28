@@ -1,9 +1,9 @@
 <ng-container *ngIf="this.$currentUser | async as currentUser; else loading">
-  <div class="page-summary">
+  <div class="app-page-summary">
     <h2>マイページ</h2>
   </div>
 
-  <div class="about-app simple-card bordered">
+  <div class="about-app app-card bordered">
     <h3>{{ currentUser.displayName }} さん</h3>
     <p class="user-menu">
       <button
@@ -21,7 +21,7 @@
     </p>
   </div>
 
-  <div class="about-app simple-card bordered">
+  <div class="about-app app-card bordered">
     <h3>ユーザ情報の削除</h3>
     <p>ユーザ情報やポーズリストを削除します。</p>
     <p>
@@ -33,7 +33,7 @@
 </ng-container>
 
 <ng-template #loading>
-  <div class="page-summary">
+  <div class="app-page-summary">
     <h2>読み込んでいます...</h2>
   </div>
 </ng-template>

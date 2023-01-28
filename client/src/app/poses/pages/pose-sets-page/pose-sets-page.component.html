@@ -1,4 +1,4 @@
-<div class="page-summary">
+<div class="app-page-summary">
   <h2 *ngIf="this.poseSetsType === undefined">ポーズ一覧</h2>
   <h2 *ngIf="this.poseSetsType === 'song'">楽曲ポーズ一覧</h2>
   <h2 *ngIf="this.poseSetsType === 'commonPose'">共通ポーズ一覧</h2>
@@ -20,7 +20,7 @@
 </p>
 
 <ng-container *ngIf="!this.poseSets">
-  <div class="about-app simple-card bordered">読み込んでいます...</div>
+  <div class="about-app app-card bordered">読み込んでいます...</div>
 </ng-container>
 
 <ng-container *ngIf="this.poseSets">
@@ -29,14 +29,14 @@
     routerLink="/poses/pose-sets/{{ poseSetName }}"
     *ngFor="let poseSetName of this.objectKeys(this.poseSets)"
   >
-    <div class="about-app simple-card bordered">
+    <div class="about-app app-card bordered">
       <h3>{{ this.poseSets[poseSetName].title }}</h3>
       <p>{{ this.poseSets[poseSetName].pose.getNumberOfPoses() }} 件のポーズ</p>
     </div>
   </a>
 </ng-container>
 
-<div class="bottom-navigation">
+<div class="app-bottom-navigation">
   <a routerLink="/"
     ><mat-icon>navigate_before</mat-icon> &nbsp; トップページへ</a
   >

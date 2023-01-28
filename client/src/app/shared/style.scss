@@ -1,38 +1,13 @@
-.content {
-  align-items: flex-start;
-  background-color: #fafafa;
-  box-sizing: border-box;
-  padding: 2rem;
-  min-height: calc(100vh - 64px);
+// 見出し
 
-  .cards {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-
-    mat-card {
-      display: relative;
-      height: auto;
-      width: 45%;
-      margin-bottom: 10%;
-    }
-
-    mat-card a {
-      color: #3f51b5;
-    }
-  }
+h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.75rem;
 }
 
-@media screen and (max-width: 640px) {
-  .content {
-    .cards {
-      flex-direction: column;
-
-      mat-card {
-        width: 90% !important;
-      }
-    }
-  }
+h4 {
+  font-size: 0.9rem;
+  margin: 0 0 0 0;
 }
 
 // リンク
@@ -49,7 +24,7 @@ a:not([mat-stroked-button]) {
 
 // カード
 
-.simple-card {
+.app-card {
   box-sizing: border-box;
   width: 60vw;
   max-width: 800px;
@@ -63,11 +38,40 @@ a:not([mat-stroked-button]) {
     border-radius: 4px;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2);
   }
+
+  // カード > 本文
+
+  p {
+    font-size: 0.85rem;
+  }
+
+  // カード > リスト
+
+  ul {
+    font-size: 0.85rem;
+    padding-left: 2rem;
+
+    > li {
+      margin: 0.5rem 0 0.8rem 0;
+
+      small {
+        display: inline-block;
+        margin-top: 0.2rem;
+      }
+
+      ul {
+        list-style: square;
+        li {
+          margin: 0.25rem 0 0.5rem 0;
+        }
+      }
+    }
+  }
 }
 
 // ページの概要
 
-.page-summary {
+.app-page-summary {
   width: 80vw;
   text-align: center;
 
@@ -81,7 +85,7 @@ a:not([mat-stroked-button]) {
 
 // ページ下部のナビゲーション
 
-.bottom-navigation {
+.app-bottom-navigation {
   a {
     color: #666666;
     font-size: 0.8rem;

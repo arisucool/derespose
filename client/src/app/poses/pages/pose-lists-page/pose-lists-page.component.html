@@ -1,4 +1,4 @@
-<div class="page-summary">
+<div class="app-page-summary">
   <h2>
     <ng-container *ngIf="!this.userId">
       みんなのポーズリストを眺める
@@ -19,13 +19,13 @@
 </p>
 
 <ng-container *ngIf="!this.poseLists">
-  <div class="about-app simple-card bordered">読み込んでいます...</div>
+  <div class="about-app app-card bordered">読み込んでいます...</div>
 </ng-container>
 
 <ng-container *ngIf="this.poseLists">
   <ng-container *ngFor="let poseList of this.poseLists">
     <a class="pose-set" routerLink="/poses/pose-lists/{{ poseList.id }}">
-      <div class="about-app simple-card bordered">
+      <div class="about-app app-card bordered">
         <h3>{{ poseList.title }}</h3>
         <p>
           <ng-container *ngIf="poseList.poses"
@@ -64,7 +64,7 @@
   </ng-container>
 </ng-container>
 
-<div class="bottom-navigation">
+<div class="app-bottom-navigation">
   <ng-container *ngIf="!this.userId">
     <a routerLink="/">
       <mat-icon>navigate_before</mat-icon>

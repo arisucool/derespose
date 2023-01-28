@@ -5,7 +5,7 @@
 
 // ポーズカード
 
-.container.simple-card {
+.container.app-card {
   border: solid 1px #dddddd;
   position: relative;
   width: 100%;
@@ -133,7 +133,7 @@ img.pose-image {
 @media screen and (max-width: 799px) {
   // ポーズカード
 
-  .container.simple-card {
+  .container.app-card {
     width: 100%;
     margin-bottom: 2rem;
   }
