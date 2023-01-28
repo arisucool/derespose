@@ -1,12 +1,15 @@
 import { HttpException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Request } from 'express';
 import { PosesService } from 'src/poses/poses.service';
 import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 import { AddPoseToPoseListDto } from './dtos/add-pose-to-pose-list.dto';
+import { AddVoteToPoseListDto } from './dtos/add-vote-to-pose-list.dto';
 import { CreatePostListDto } from './dtos/create-pose-list.dto';
 import { RemovePoseFromPoseListDto } from './dtos/remove-pose-from-pose-list.dto';
 import { UpdatePoseListDto } from './dtos/update-pose-list.dto';
+import { PoseListVote } from './entities/pose-list-vote.entity';
 import { PoseList } from './entities/pose-list.entity';
 
 @Injectable()
@@ -15,17 +18,30 @@ export class PoseListsService {
     private posesService: PosesService,
     @InjectRepository(PoseList)
     private poseListsRepository: Repository<PoseList>,
+    @InjectRepository(PoseListVote)
+    private poseListVotesRepository: Repository<PoseListVote>,
   ) {}
 
   async getMyPoseLists(user: User): Promise<PoseList[]> {
-    return this.poseListsRepository.find({
+    const items = await this.poseListsRepository.find({
       where: {
         user: {
           id: user.id,
         },
       },
-      relations: ['user'],
+      relations: ['user', 'votes'],
     });
+
+    items?.map((item) => {
+      item.votes = item.votes?.map((vote) => {
+        delete vote.ipAddress;
+        delete vote.randomUid;
+        return vote;
+      });
+      return item;
+    });
+
+    return items;
   }
 
   async getPublicPoseLists(): Promise<PoseList[]> {
@@ -34,6 +50,9 @@ export class PoseListsService {
         publicMode: 'public',
       },
       relations: ['user'],
+      order: {
+        votesCount: 'DESC',
+      },
     });
 
     items.map((item) => {
@@ -54,7 +73,7 @@ export class PoseListsService {
         where: {
           id,
         },
-        relations: ['user', 'poses'],
+        relations: ['user', 'poses', 'votes'],
       });
     } catch (e: any) {
       throw new HttpException(e.message, 400);
@@ -63,6 +82,17 @@ export class PoseListsService {
     if (!item) {
       throw new HttpException('Item not found', 404);
     }
+
+    delete item.user.createdAt;
+    delete item.user.lastLoggedAt;
+    delete item.user.lastLoggedIpAddress;
+    delete item.user.twitterUserId;
+    item.votes = item.votes?.map((vote) => {
+      delete vote.ipAddress;
+      delete vote.randomUid;
+      return vote;
+    });
+
     return item;
   }
 
@@ -195,6 +225,47 @@ export class PoseListsService {
 
     item.poses = item.poses.filter((p) => p.id !== pose.id);
     return this.poseListsRepository.save(item);
+  }
+
+  async addVoteToPoseList(
+    id: string,
+    dto: AddVoteToPoseListDto,
+    req: Request,
+  ): Promise<PoseList> {
+    const ipAddress = req.get('x-forwarded-for') || req.ip;
+
+    try {
+      await this.poseListVotesRepository.save({
+        randomUid: dto.randomUid,
+        poseList: {
+          id,
+        },
+        ipAddress: ipAddress,
+      });
+    } catch (e: any) {
+      console.warn(`[PoseListsService] addVoteToPoseList: ${e.message}`);
+    }
+
+    return await this.getPoseList(id);
+  }
+
+  async removeVoteFromPoseList(
+    id: string,
+    dto: AddVoteToPoseListDto,
+    req: Request,
+  ): Promise<PoseList> {
+    try {
+      await this.poseListVotesRepository.delete({
+        randomUid: dto.randomUid,
+        poseList: {
+          id,
+        },
+      });
+    } catch (e: any) {
+      console.warn(`[PoseListsService] deleteVoteByPoseList: ${e.message}`);
+    }
+
+    return await this.getPoseList(id);
   }
 
   getPoseListsByUserId(userId: string): Promise<PoseList[]> {

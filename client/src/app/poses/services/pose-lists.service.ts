@@ -22,10 +22,15 @@ export class PoseListsService {
   // このユーザのポーズリストが更新されたときに呼び出されるするイベント
   public onMyPoseListsChanged: EventEmitter<PoseList[]> = new EventEmitter();
 
+  // 評価したポーズリストのID
+  private votedPoseListIds: string[] = [];
+
   constructor(
     private apiService: ApiService,
     private authService: AuthService,
-  ) {}
+  ) {
+    this.loadVotedPoseListIds();
+  }
 
   getPublicPoseLists() {
     return lastValueFrom(this.apiService.poseListsControllerList());
@@ -203,5 +208,64 @@ export class PoseListsService {
 
     this.myPoseLists.splice(index, 1);
     this.onMyPoseListsChanged.emit(this.myPoseLists);
+  }
+
+  isVoted(poseListId: string) {
+    return this.votedPoseListIds.includes(poseListId);
+  }
+
+  async addVoteToPoseList(poseListId: string) {
+    if (this.votedPoseListIds.includes(poseListId)) return;
+
+    const poseList = await lastValueFrom(
+      this.apiService.poseListsControllerAddVoteToPoseList({
+        id: poseListId,
+        body: {
+          randomUid: this.authService.getRandomUserIdentifier(),
+        },
+      }),
+    );
+
+    this.votedPoseListIds.push(poseListId);
+    this.saveVotedPoseListIds();
+
+    return poseList;
+  }
+
+  async removeVoteFromPoseList(poseListId: string) {
+    if (!this.votedPoseListIds.includes(poseListId)) return;
+
+    const poseList = await lastValueFrom(
+      this.apiService.poseListsControllerRemoveVoteFromPoseList({
+        id: poseListId,
+        body: {
+          randomUid: this.authService.getRandomUserIdentifier(),
+        },
+      }),
+    );
+
+    this.votedPoseListIds = this.votedPoseListIds.filter(
+      (id) => id !== poseListId,
+    );
+    this.saveVotedPoseListIds();
+
+    return poseList;
+  }
+
+  loadVotedPoseListIds() {
+    const ids = window.localStorage.getItem('deresposeVotedPoseListIds');
+    if (!ids) return;
+    try {
+      this.votedPoseListIds = JSON.parse(ids);
+    } catch (e) {
+      console.error(`[PoseListsService] loadVotedPoseListIds`, e);
+    }
+  }
+
+  saveVotedPoseListIds() {
+    window.localStorage.setItem(
+      'deresposeVotedPoseListIds',
+      JSON.stringify(this.votedPoseListIds),
+    );
   }
 }

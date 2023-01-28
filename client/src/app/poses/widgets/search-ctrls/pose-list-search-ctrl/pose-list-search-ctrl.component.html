@@ -24,6 +24,49 @@
   </p>
   <!---->
 
+  <!-- 操作ボタン (他のユーザ向け) -->
+  <p
+    class="edit-buttons"
+    *ngIf="this.isMyPoseList !== undefined && !this.isMyPoseList"
+  >
+    <!-- 評価ボタン -->
+    <button
+      (click)="this.toggleVoteOfPoseList()"
+      class="vote-button"
+      mat-stroked-button
+      color="accent"
+      [matTooltip]="
+        this.isVoted
+          ? 'このポーズリストのいいねを取り消す'
+          : 'このポーズリストにいいね'
+      "
+    >
+      <mat-icon *ngIf="!this.isVoted" style="margin: 0 0 0 0"
+        >thumb_up_off_alt</mat-icon
+      >
+      <mat-icon *ngIf="this.isVoted" style="margin: 0 0 0 0">thumb_up</mat-icon>
+    </button>
+    <!---->
+
+    &nbsp;&nbsp;
+
+    <!-- ツイートボタン -->
+    <a
+      [href]="this.tweetUrl"
+      class="twitter-share-button"
+      class="tweet-button"
+      mat-stroked-button
+      color="primary"
+      matTooltip="このポーズリストを Twitter でシェア"
+      target="_blank"
+      rel="noopener"
+    >
+      <fa-icon [icon]="twitterIcon"></fa-icon>
+    </a>
+    <!---->
+  </p>
+  <!---->
+
   <!-- ポーズリストについて (他のユーザ向け) -->
   <p
     class="about"
@@ -33,7 +76,7 @@
   </p>
   <!---->
 
-  <!-- ポーズリストの編集 (作成者向け) -->
+  <!-- 操作ボタン (作成者向け) -->
   <p class="edit-buttons" *ngIf="this.isMyPoseList">
     <!-- 削除ボタン -->
     <button
@@ -99,7 +142,7 @@
       class="tweet-button"
       mat-stroked-button
       color="primary"
-      matTooltip="このポーズリストをシェア"
+      matTooltip="このポーズリストを Twitter でシェア"
       target="_blank"
       rel="noopener"
     >

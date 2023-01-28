@@ -6,12 +6,13 @@ import {
   Column,
   CreateDateColumn,
   Entity,
-  JoinColumn,
   JoinTable,
   ManyToMany,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
+import { PoseListVote } from './pose-list-vote.entity';
 
 @Entity()
 export class PoseList extends BaseEntity {
@@ -76,4 +77,23 @@ export class PoseList extends BaseEntity {
     description: '作成者',
   })
   user: User;
+
+  // 評価
+  @OneToMany(() => PoseListVote, (vote) => vote.poseList)
+  @ApiProperty({
+    type: () => PoseListVote,
+    isArray: true,
+    required: false,
+    description: '評価',
+  })
+  votes?: PoseListVote[];
+
+  // 評価の数
+  @Column({
+    default: 0,
+  })
+  @ApiProperty({
+    description: '評価の数',
+  })
+  votesCount: number;
 }

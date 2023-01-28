@@ -1,5 +1,6 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { lastValueFrom, Subject } from 'rxjs';
+import * as uuid from 'uuid';
 import { User } from 'src/.api-client/models/user';
 import { ApiService } from 'src/.api-client/services/api.service';
 
@@ -77,5 +78,14 @@ export class AuthService {
     window.localStorage.removeItem('deresposeLoggedInAt');
     this.currentUserSource.next(undefined);
     window.location.href = '/';
+  }
+
+  getRandomUserIdentifier() {
+    let identifier = window.localStorage.getItem('deresposeRandomUID');
+    if (identifier) return identifier;
+
+    identifier = uuid.v4();
+    window.localStorage.setItem('deresposeRandomUID', identifier);
+    return identifier;
   }
 }

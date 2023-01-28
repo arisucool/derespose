@@ -13,6 +13,7 @@ import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { User } from 'src/users/entities/user.entity';
 import { AddPoseToPoseListDto } from './dtos/add-pose-to-pose-list.dto';
+import { AddVoteToPoseListDto } from './dtos/add-vote-to-pose-list.dto';
 import { CreatePostListDto } from './dtos/create-pose-list.dto';
 import { RemovePoseFromPoseListDto } from './dtos/remove-pose-from-pose-list.dto';
 import { UpdatePoseListDto } from './dtos/update-pose-list.dto';
@@ -76,6 +77,16 @@ export class PoseListsController {
     return this.poseListsService.updatePoseList(id, dto, req.user.user as User);
   }
 
+  @Delete(':id')
+  @ApiOperation({
+    summary: '指定されたポーズリストの削除',
+  })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  delete(@Req() req: any, @Param('id') id: string) {
+    this.poseListsService.deletePoseList(id, req.user.user as User);
+  }
+
   @Post(':id/poses')
   @ApiOperation({
     summary: '指定されたポーズリストに対するポーズの追加',
@@ -118,13 +129,35 @@ export class PoseListsController {
     );
   }
 
-  @Delete(':id')
+  @Post(':id/poses/vote')
   @ApiOperation({
-    summary: '指定されたポーズリストの削除',
+    summary: '指定されたポーズリストに対する高評価の付与',
+  })
+  @ApiResponse({
+    type: PoseList,
+  })
+  addVoteToPoseList(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: AddVoteToPoseListDto,
+  ): Promise<PoseList> {
+    return this.poseListsService.addVoteToPoseList(id, dto, req);
+  }
+
+  @Delete(':id/poses/vote')
+  @ApiOperation({
+    summary: '指定されたポーズリストに対する高評価の付与',
+  })
+  @ApiResponse({
+    type: PoseList,
   })
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  delete(@Req() req: any, @Param('id') id: string) {
-    this.poseListsService.deletePoseList(id, req.user.user as User);
+  removeVoteFromPoseList(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() dto: AddVoteToPoseListDto,
+  ): Promise<PoseList> {
+    return this.poseListsService.removeVoteFromPoseList(id, dto, req);
   }
 }

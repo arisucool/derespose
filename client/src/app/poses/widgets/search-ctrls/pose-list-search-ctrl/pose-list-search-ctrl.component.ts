@@ -1,5 +1,9 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import {
+  MatSnackBar,
+  MatSnackBarRef,
+  SimpleSnackBar,
+} from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
 import { lastValueFrom, timer } from 'rxjs';
 import { PoseList } from 'src/.api-client/models/pose-list';
@@ -46,6 +50,9 @@ export class PoseListSearchCtrlComponent implements OnInit {
 
   // シェアするためのURL
   public tweetUrl?: SafeUrl;
+
+  // ポーズリストに評価をつけたかどうか
+  public isVoted = false;
 
   constructor(
     private poseSearchService: PoseSearchService,
@@ -97,6 +104,11 @@ export class PoseListSearchCtrlComponent implements OnInit {
       this.isMyPoseList = true;
     } else {
       this.isMyPoseList = false;
+    }
+
+    // ポーズリストに評価をつけたかどうかを判定
+    if (this.poseList) {
+      this.isVoted = this.poseListsService.isVoted(this.poseList.id);
     }
 
     // シェアするためのURLを設定
@@ -226,5 +238,45 @@ export class PoseListSearchCtrlComponent implements OnInit {
         userId: 'me',
       },
     });
+  }
+
+  async toggleVoteOfPoseList() {
+    if (!this.poseList) return;
+
+    let message: MatSnackBarRef<SimpleSnackBar>;
+    if (!this.isVoted) {
+      message = this.snackBar.open(`いいねをつけています... お待ちください...`);
+    } else {
+      message = this.snackBar.open(
+        `いいねを取り消しています... お待ちください...`,
+      );
+    }
+
+    try {
+      if (!this.isVoted) {
+        await this.poseListsService.addVoteToPoseList(this.poseList.id);
+      } else {
+        await this.poseListsService.removeVoteFromPoseList(this.poseList.id);
+      }
+    } catch (e: any) {
+      message.dismiss();
+      this.snackBar.open('エラー: ' + e.message, 'OK');
+      console.error(e);
+      return;
+    }
+
+    message.dismiss();
+
+    if (!this.isVoted) {
+      this.snackBar.open('いいねしました', undefined, {
+        duration: 2000,
+      });
+      this.isVoted = true;
+    } else {
+      this.snackBar.open('いいねを取り消しました', undefined, {
+        duration: 2000,
+      });
+      this.isVoted = false;
+    }
   }
 }
