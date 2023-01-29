@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { PoseSet } from '../../interfaces/pose-set';
+import { PoseSetDefinition } from '../../interfaces/pose-set-definition';
 import { PoseSearchService } from '../../services/pose-search.service';
 
 @Component({
@@ -13,7 +13,7 @@ export class PoseSetsPageComponent implements OnInit {
   public poseSetsType?: 'song' | 'commonPose' | 'chanpokuPose' = undefined;
 
   // ポーズセットのリスト
-  public poseSets?: { [key: string]: PoseSet } = undefined;
+  public poseSetDefinitions?: { [key: string]: PoseSetDefinition } = undefined;
 
   // テンプレートで使用する関数
   public objectKeys = Object.keys;
@@ -35,21 +35,21 @@ export class PoseSetsPageComponent implements OnInit {
   }
 
   async load() {
-    const allPoseSets = await this.poseSearchService.getPoseSets();
+    const allPoseSets = await this.poseSearchService.getPoseSetDefinitions();
     if (!allPoseSets) return;
 
     if (this.poseSetsType === undefined) {
-      this.poseSets = allPoseSets;
+      this.poseSetDefinitions = allPoseSets;
       return;
     }
 
-    const poseSets: { [key: string]: PoseSet } = {};
+    const poseSets: { [key: string]: PoseSetDefinition } = {};
     for (const poseSetName of Object.keys(allPoseSets)) {
       if (allPoseSets[poseSetName].type === this.poseSetsType) {
         poseSets[poseSetName] = allPoseSets[poseSetName];
       }
     }
 
-    this.poseSets = poseSets;
+    this.poseSetDefinitions = poseSets;
   }
 }

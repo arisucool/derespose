@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { PoseSet } from 'src/app/poses/interfaces/pose-set';
+import { PoseSetDefinition } from 'src/app/poses/interfaces/pose-set-definition';
 import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 
 @Component({
@@ -12,24 +12,24 @@ import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
   ],
 })
 export class SupportedPosesPageComponent {
-  public poseSets?: {
-    songs: PoseSet[];
-    commonPoses: PoseSet[];
-    chanpokuPoses: PoseSet[];
+  public poseSetDefinitions?: {
+    songs: PoseSetDefinition[];
+    commonPoses: PoseSetDefinition[];
+    chanpokuPoses: PoseSetDefinition[];
   };
 
   constructor(private poseSearchService: PoseSearchService) {
-    this.poseSearchService.getPoseSets();
+    this.poseSearchService.getPoseSetDefinitions();
   }
 
   async ngOnInit() {
-    const poseSets = await this.poseSearchService.getPoseSets();
+    const poseSets = await this.poseSearchService.getPoseSetDefinitions();
     if (poseSets === undefined) {
       return;
     }
 
-    if (this.poseSets === undefined) {
-      this.poseSets = {
+    if (this.poseSetDefinitions === undefined) {
+      this.poseSetDefinitions = {
         songs: [],
         commonPoses: [],
         chanpokuPoses: [],
@@ -37,16 +37,16 @@ export class SupportedPosesPageComponent {
     }
 
     for (const poseSetName of Object.keys(poseSets)) {
-      const poseSet = poseSets[poseSetName];
-      switch (poseSet.type) {
+      const poseSetDefinition = poseSets[poseSetName];
+      switch (poseSetDefinition.type) {
         case 'song':
-          this.poseSets.songs.push(poseSet);
+          this.poseSetDefinitions.songs.push(poseSetDefinition);
           break;
         case 'commonPose':
-          this.poseSets.commonPoses.push(poseSet);
+          this.poseSetDefinitions.commonPoses.push(poseSetDefinition);
           break;
         case 'chanpokuPose':
-          this.poseSets.chanpokuPoses.push(poseSet);
+          this.poseSetDefinitions.chanpokuPoses.push(poseSetDefinition);
           break;
       }
     }

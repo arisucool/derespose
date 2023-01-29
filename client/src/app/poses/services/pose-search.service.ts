@@ -1,13 +1,13 @@
-import { EventEmitter, Injectable } from '@angular/core';
-import { Pose, PoseItem } from 'ngx-mp-pose-extractor';
+import { Injectable } from '@angular/core';
+import { PoseSet } from 'ngx-mp-pose-extractor';
 import { SimilarPoseItem } from 'ngx-mp-pose-extractor/lib/interfaces/matched-pose-item';
 import { lastValueFrom } from 'rxjs';
-import { PoseList } from 'src/.api-client/models/pose-list';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { ApiService } from 'src/.api-client/services/api.service';
 import { DetectedPose } from '../interfaces/detected-pose';
 import { MatchedPose } from '../interfaces/matched-pose';
-import { PoseSet } from '../interfaces/pose-set';
+import { PoseSetDefinition } from '../interfaces/pose-set-definition';
+import { PoseSetDefinitionJson } from '../interfaces/pose-set-definition-json';
 import { PoseListsService } from './pose-lists.service';
 
 @Injectable({
@@ -17,7 +17,7 @@ export class PoseSearchService {
   // ポーズセットのURL
   public static readonly POSESET_BASE_URL =
     'https://arisucool.github.io/derespose-poses/';
-  public static readonly POSESET_DEFINITIONS_URL = `${PoseSearchService.POSESET_BASE_URL}poses.json`;
+  public static readonly POSESET_DEFINITIONS_URL = `${PoseSearchService.POSESET_BASE_URL}pose-sets.json`;
 
   // ポーズファイル定義のキャッシュ有効期限 (6時間)
   public static readonly POSESET_DEFINITIONS_CACHE_EXPIRES = 1000 * 60 * 60 * 6;
@@ -33,8 +33,8 @@ export class PoseSearchService {
 
   public availableTags: string[] = [];
 
-  private poseSets?: {
-    [key: string]: PoseSet;
+  private poseSetDefinitions?: {
+    [key: string]: PoseSetDefinition;
   };
 
   constructor(
@@ -43,16 +43,13 @@ export class PoseSearchService {
   ) {}
 
   async loadPoseSets() {
-    if (this.poseSets) {
+    if (this.poseSetDefinitions) {
       return;
     }
 
     // ポーズ定義ファイルを読み込む
-    let poseSetDefinitions: {
-      [key: string]: {
-        title: string;
-        type: 'song' | 'chanpoku';
-      };
+    let poseSetDefinitionJsons: {
+      [key: string]: PoseSetDefinitionJson;
     };
 
     const cache = this.getCachedJson(
@@ -61,70 +58,72 @@ export class PoseSearchService {
     );
 
     if (cache !== undefined) {
-      poseSetDefinitions = cache;
+      poseSetDefinitionJsons = cache;
     } else {
       console.log(
         `[PoseSearchService] loadPoses - Requesting poseset definitions...`,
       );
       const res = await fetch(PoseSearchService.POSESET_DEFINITIONS_URL);
-      poseSetDefinitions = await res.json();
+      poseSetDefinitionJsons = await res.json();
 
       this.setCachedJson(
         'poseSetDefinitions',
-        poseSetDefinitions,
+        poseSetDefinitionJsons,
         PoseSearchService.POSESET_DEFINITIONS_CACHE_EXPIRES,
       );
     }
     console.log(
       `[PoseSearchService] loadPoses - Loaded poseset definitions`,
-      poseSetDefinitions,
+      poseSetDefinitionJsons,
     );
 
-    const poseSets: any = {};
-    for (const poseSetName of Object.keys(poseSetDefinitions)) {
-      const pose = await this.loadPoseSet(poseSetName);
-      poseSets[poseSetName] = {
-        title: poseSetDefinitions[poseSetName].title,
-        type: poseSetDefinitions[poseSetName].type,
-        pose: pose,
+    const poseSetDefinitions: { [key: string]: PoseSetDefinition } = {};
+    for (const poseSetName of Object.keys(poseSetDefinitionJsons)) {
+      const poseSet = await this.loadPoseSet(poseSetName);
+      poseSetDefinitions[poseSetName] = {
+        title: poseSetDefinitionJsons[poseSetName].title,
+        type: poseSetDefinitionJsons[poseSetName].type,
+        poseSet: poseSet,
       };
     }
-    console.log(`[PoseSearchService] loadPoses - Loaded posesets`, poseSets);
-    this.poseSets = poseSets;
+    console.log(
+      `[PoseSearchService] loadPoses - Loaded posesets`,
+      poseSetDefinitions,
+    );
+    this.poseSetDefinitions = poseSetDefinitions;
   }
 
-  async getPoseSets() {
-    if (!this.poseSets) {
+  async getPoseSetDefinitions() {
+    if (!this.poseSetDefinitions) {
       await this.loadPoseSets();
     }
 
-    return this.poseSets;
+    return this.poseSetDefinitions;
   }
 
-  async getPoseSet(poseSetName: string) {
-    if (!this.poseSets) {
+  async getPoseSetDefinition(poseSetName: string) {
+    if (!this.poseSetDefinitions) {
       await this.loadPoseSets();
     }
 
-    if (!this.poseSets) {
+    if (!this.poseSetDefinitions) {
       throw new Error('Failed to load posesets');
     }
 
-    if (this.poseSets[poseSetName] === undefined) {
+    if (this.poseSetDefinitions[poseSetName] === undefined) {
       throw new Error(`Poseset not found: ${poseSetName}`);
     }
 
-    return this.poseSets[poseSetName];
+    return this.poseSetDefinitions[poseSetName];
   }
 
   async getPosesByPoseSetName(poseSetName: string): Promise<MatchedPose[]> {
-    const poseSet = await this.getPoseSet(poseSetName);
-
-    const pose = poseSet.pose;
-    const title = poseSet.title;
+    const poseSetDefinition = await this.getPoseSetDefinition(poseSetName);
+    const poseSet = poseSetDefinition.poseSet;
+    const title = poseSetDefinition.title;
 
     let matchedPoses: MatchedPose[] = [];
-    for (const poseItem of pose.getPoses()) {
+    for (const poseItem of poseSet.getPoses()) {
       // 整形して配列へ追加
       const matchedPose: MatchedPose = {
         id: poseItem.timeMiliseconds,
@@ -144,7 +143,7 @@ export class PoseSearchService {
         },
         isFavorite: false,
         tags: [],
-        imageUrl: `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/frame-${poseItem.timeMiliseconds}.jpg`,
+        imageUrl: `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/frame-${poseItem.timeMiliseconds}.webp`,
       };
       matchedPoses.push(matchedPose);
     }
@@ -170,10 +169,10 @@ export class PoseSearchService {
 
     let matchedPoses: MatchedPose[] = [];
     for (const pose of poseList?.poses) {
-      const poseSet = await this.getPoseSet(pose.poseSetName);
+      const poseSet = await this.getPoseSetDefinition(pose.poseSetName);
       if (!poseSet) continue;
 
-      const poseItem = poseSet.pose.getPoseByTime(pose.time);
+      const poseItem = poseSet.poseSet.getPoseByTime(pose.time);
       if (!poseItem) continue;
 
       // 整形して配列へ追加
@@ -195,7 +194,7 @@ export class PoseSearchService {
         },
         isFavorite: false,
         tags: [],
-        imageUrl: `${PoseSearchService.POSESET_BASE_URL}${pose.poseSetName}/frame-${poseItem.timeMiliseconds}.jpg`,
+        imageUrl: `${PoseSearchService.POSESET_BASE_URL}${pose.poseSetName}/frame-${poseItem.timeMiliseconds}.webp`,
       };
       matchedPoses.push(matchedPose);
     }
@@ -204,11 +203,11 @@ export class PoseSearchService {
   }
 
   async searchPoseByPose(targetPoses: DetectedPose[]): Promise<MatchedPose[]> {
-    if (!this.poseSets) {
+    if (!this.poseSetDefinitions) {
       await this.loadPoseSets();
     }
 
-    if (!this.poseSets) {
+    if (!this.poseSetDefinitions) {
       throw new Error('Failed to load poses');
     }
 
@@ -217,9 +216,9 @@ export class PoseSearchService {
 
     // 各ポーズファイルを反復
     let matchedPoses: MatchedPose[] = [];
-    for (const poseSetName of Object.keys(this.poseSets)) {
-      const pose = this.poseSets[poseSetName].pose;
-      const title = this.poseSets[poseSetName].title;
+    for (const poseSetName of Object.keys(this.poseSetDefinitions)) {
+      const pose = this.poseSetDefinitions[poseSetName].poseSet;
+      const title = this.poseSetDefinitions[poseSetName].title;
 
       let usedFrames = new Set();
       let poseItems: {
@@ -301,7 +300,7 @@ export class PoseSearchService {
           },
           isFavorite: false,
           tags: [],
-          imageUrl: `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/frame-${item.poseItem.timeMiliseconds}.jpg`,
+          imageUrl: `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/frame-${item.poseItem.timeMiliseconds}.webp`,
         };
         matchedPoses.push(matchedPose);
       }
@@ -319,7 +318,7 @@ export class PoseSearchService {
   }
 
   async searchPosesByTag(tagName: string) {
-    if (!this.poseSets) {
+    if (!this.poseSetDefinitions) {
       await this.loadPoseSets();
     }
 
@@ -340,8 +339,11 @@ export class PoseSearchService {
       if (!poseItem) continue;
 
       let poseSetTitle = 'Unknown';
-      if (this.poseSets && this.poseSets[receivedPose.poseSetName]) {
-        poseSetTitle = this.poseSets[receivedPose.poseSetName].title;
+      if (
+        this.poseSetDefinitions &&
+        this.poseSetDefinitions[receivedPose.poseSetName]
+      ) {
+        poseSetTitle = this.poseSetDefinitions[receivedPose.poseSetName].title;
       }
 
       // スコア算出 - ポーズの長さ
@@ -380,7 +382,7 @@ export class PoseSearchService {
         tags: receivedPose?.tags?.map((tag: PoseTag) => {
           return tag.name;
         }),
-        imageUrl: `${PoseSearchService.POSESET_BASE_URL}${receivedPose.poseSetName}/frame-${receivedPose.time}.jpg`,
+        imageUrl: `${PoseSearchService.POSESET_BASE_URL}${receivedPose.poseSetName}/frame-${receivedPose.time}.webp`,
       };
       matchedPoses.push(matchedPose);
     }
@@ -397,24 +399,24 @@ export class PoseSearchService {
     poseSetName: string,
     timeMiliseconds: number,
   ) {
-    if (!this.poseSets) return;
+    if (!this.poseSetDefinitions) return;
 
-    const poseSet = this.poseSets[poseSetName];
+    const poseSet = this.poseSetDefinitions[poseSetName];
     if (!poseSet) return;
 
-    const pose = poseSet.pose.getPoseByTime(timeMiliseconds);
+    const pose = poseSet.poseSet.getPoseByTime(timeMiliseconds);
     return pose;
   }
 
   private async loadPoseSet(poseSetName: string) {
-    let pose: Pose;
+    let pose: PoseSet;
     try {
       let cache = this.getCachedJson(
         poseSetName,
         PoseSearchService.POSESET_CACHE_EXPIRES,
       );
 
-      pose = new Pose();
+      pose = new PoseSet();
       if (cache !== undefined) {
         pose.loadJson(JSON.stringify(cache));
       } else {

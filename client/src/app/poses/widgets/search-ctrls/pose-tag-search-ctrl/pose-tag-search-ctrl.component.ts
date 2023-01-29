@@ -7,7 +7,6 @@ import {
   SimpleChanges,
 } from '@angular/core';
 import { lastValueFrom, timer } from 'rxjs';
-import { PoseSet } from 'src/app/poses/interfaces/pose-set';
 import { OnPoseSearchCompleted } from 'src/app/poses/interfaces/pose-search-event';
 import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';

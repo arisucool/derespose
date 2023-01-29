@@ -8,7 +8,7 @@
 </p>
 <div class="search-ctrl app-card">
   <p class="pose-set-name">
-    <ng-container *ngIf="this.poseSet?.type === 'song'">
+    <ng-container *ngIf="this.poseSetDefinition?.type === 'song'">
       <mat-icon
         style="
           color: #777777;
@@ -19,6 +19,6 @@
         >music_note</mat-icon
       >
     </ng-container>
-    {{ this.poseSet?.title }}
+    {{ this.poseSetDefinition?.title }}
   </p>
 </div>

@@ -27,7 +27,7 @@
   background-color: #777777aa;
   backdrop-filter: blur(8px);
   color: #fefefe;
-  position: absolute;
+  position: relative;
   top: 0;
   left: 0;
   right: 0;
@@ -69,6 +69,8 @@
 // ポーズカード > ポーズ画像
 
 img.pose-image {
+  background-color: #dcedff;
+  object-position: bottom;
   object-fit: cover;
   aspect-ratio: 9/16;
   width: 12vw;

@@ -7,15 +7,16 @@
     現在、Derespose では、以下のポーズのみに対応しております。<br />
     ポーズ検索の速度・精度・UIなどの改善をしながら、順次追加してまいります。
   </p>
-  <ul *ngIf="this.poseSets !== undefined">
+  <ul *ngIf="this.poseSetDefinitions !== undefined">
     <li>
       楽曲ポーズ:
       <ul
         *ngIf="
-          this.poseSets.songs !== undefined && 1 <= this.poseSets.songs.length
+          this.poseSetDefinitions.songs !== undefined &&
+          1 <= this.poseSetDefinitions.songs.length
         "
       >
-        <li *ngFor="let poseSet of this.poseSets?.songs">
+        <li *ngFor="let poseSet of this.poseSetDefinitions?.songs">
           {{ poseSet.title }}
         </li>
       </ul>
@@ -24,20 +25,22 @@
       全体ポーズ:
       <span
         *ngIf="
-          this.poseSets.commonPoses === undefined ||
-          this.poseSets.commonPoses.length === 0
+          this.poseSetDefinitions.commonPoses === undefined ||
+          this.poseSetDefinitions.commonPoses.length === 0
         "
       >
         (現在未対応)
       </span>
       <ul
         *ngIf="
-          this.poseSets.commonPoses !== undefined &&
-          1 <= this.poseSets.commonPoses.length
+          this.poseSetDefinitions.commonPoses !== undefined &&
+          1 <= this.poseSetDefinitions.commonPoses.length
         "
       >
-        <li *ngFor="let poseSet of this.poseSets?.commonPoses">
-          {{ poseSet.title }}
+        <li
+          *ngFor="let poseSetDefinition of this.poseSetDefinitions?.commonPoses"
+        >
+          {{ poseSetDefinition.title }}
         </li>
       </ul>
     </li>
@@ -45,20 +48,24 @@
       ○○ちゃんっぽく:
       <span
         *ngIf="
-          this.poseSets.chanpokuPoses === undefined ||
-          this.poseSets.chanpokuPoses.length === 0
+          this.poseSetDefinitions.chanpokuPoses === undefined ||
+          this.poseSetDefinitions.chanpokuPoses.length === 0
         "
       >
         (現在未対応)
       </span>
       <ul
         *ngIf="
-          this.poseSets.chanpokuPoses !== undefined &&
-          1 <= this.poseSets.chanpokuPoses.length
+          this.poseSetDefinitions.chanpokuPoses !== undefined &&
+          1 <= this.poseSetDefinitions.chanpokuPoses.length
         "
       >
-        <li *ngFor="let poseSet of this.poseSets?.chanpokuPoses">
-          {{ poseSet.title }}
+        <li
+          *ngFor="
+            let poseSetDefinition of this.poseSetDefinitions?.chanpokuPoses
+          "
+        >
+          {{ poseSetDefinition.title }}
         </li>
       </ul>
     </li>

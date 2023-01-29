@@ -9,8 +9,8 @@ import {
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { lastValueFrom, timer } from 'rxjs';
 import { MatchedPose } from 'src/app/poses/interfaces/matched-pose';
-import { PoseSet } from 'src/app/poses/interfaces/pose-set';
 import { OnPoseSearchCompleted } from 'src/app/poses/interfaces/pose-search-event';
+import { PoseSetDefinition } from 'src/app/poses/interfaces/pose-set-definition';
 import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
 
@@ -30,7 +30,7 @@ export class PoseSetSearchCtrlComponent implements OnInit {
   public onPoseSearchCompleted: EventEmitter<OnPoseSearchCompleted> =
     new EventEmitter();
 
-  public poseSet?: PoseSet;
+  public poseSetDefinition?: PoseSetDefinition;
 
   constructor(
     private poseSearchService: PoseSearchService,
@@ -53,7 +53,9 @@ export class PoseSetSearchCtrlComponent implements OnInit {
     await lastValueFrom(timer(200));
 
     // ポーズセットを取得
-    this.poseSet = await this.poseSearchService.getPoseSet(this.poseSetName);
+    this.poseSetDefinition = await this.poseSearchService.getPoseSetDefinition(
+      this.poseSetName,
+    );
 
     // ポーズを検索
     let matchedPoses: MatchedPose[] = [];

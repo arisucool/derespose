@@ -1,7 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Pose } from 'ngx-mp-pose-extractor';
 import { lastValueFrom, Subscription } from 'rxjs';
 import { PoseList } from 'src/.api-client/models/pose-list';
 import { User } from 'src/.api-client/models/user';
