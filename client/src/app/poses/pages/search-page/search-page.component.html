@@ -99,6 +99,20 @@
   </div>
 </div>
 
+<div class="fab-container">
+  <ng-container *ngIf="this.matchedPoses">
+    <button
+      mat-fab
+      color="primary"
+      matTooltip="デレスポナビを起動"
+      (click)="navi.startNavi()"
+    >
+      <mat-icon>assistant</mat-icon>
+    </button>
+    <app-navi #navi [poses]="this.matchedPoses"></app-navi>
+  </ng-container>
+</div>
+
 <div class="app-bottom-navigation" *ngIf="this.state !== 'searching'">
   <a routerLink="/">
     <mat-icon>navigate_before</mat-icon> &nbsp; トップページへ</a

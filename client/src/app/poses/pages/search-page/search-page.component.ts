@@ -28,6 +28,9 @@ export class SearchPageComponent implements OnInit {
   // 検索結果
   public matchedPoses?: MatchedPose[] = [];
 
+  // デレスポナビを実行しているかどうか
+  public isRunningNavi = false;
+
   constructor(
     private changeDetectionRef: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
