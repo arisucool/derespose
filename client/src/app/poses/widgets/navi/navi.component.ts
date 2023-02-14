@@ -80,15 +80,20 @@ export class NaviComponent implements OnInit, OnDestroy, AfterViewInit {
 
     // ビデオ要素で再生を開始
     console.log(`[NaviComponent] startNavi - play...`);
-    document.body.appendChild(this.naviVideo);
     this.naviVideo.play();
-    this.updateMediaSession();
+
+    // 操作可能なアクションを設定 (PiP にボタンが表示される)
+    navigator.mediaSession.setActionHandler('previoustrack', () => {
+      this.onRequestPreviousTrack();
+    });
+    navigator.mediaSession.setActionHandler('nexttrack', () => {
+      this.onRequestNextTrack();
+    });
 
     // PiP を開始
     console.log(`[NaviComponent] startNavi - requestPictureInPicture...`);
     try {
       this.naviPipWindow = await this.naviVideo.requestPictureInPicture();
-      this.updateMediaSession();
     } catch (e) {
       console.error(
         `[NaviComponent] startNavi - requestPictureInPicture failed`,
@@ -101,33 +106,6 @@ export class NaviComponent implements OnInit, OnDestroy, AfterViewInit {
 
   async stopNavi() {
     this.isNaviPlaying = false;
-  }
-
-  private async updateMediaSession() {
-    navigator.mediaSession.metadata = new MediaMetadata({
-      title: 'Dummy',
-      artist: 'Dummy',
-      album: 'Dummy',
-      artwork: [
-        {
-          src: '/assets/icon-512x512.png',
-          sizes: '512x512',
-          type: 'image/png',
-        },
-      ],
-    });
-    navigator.mediaSession.setActionHandler('play', async () => {
-      this.onRequestNextTrack();
-    });
-    navigator.mediaSession.setActionHandler('pause', async () => {
-      this.onRequestNextTrack();
-    });
-    navigator.mediaSession.setActionHandler('previoustrack', () => {
-      this.onRequestPreviousTrack();
-    });
-    navigator.mediaSession.setActionHandler('nexttrack', () => {
-      this.onRequestNextTrack();
-    });
   }
 
   private async initNavi() {
@@ -147,7 +125,7 @@ export class NaviComponent implements OnInit, OnDestroy, AfterViewInit {
     await this.draw();
 
     // ストリームを生成
-    this.naviStream = this.naviCanvas.captureStream(10);
+    this.naviStream = this.naviCanvas.captureStream(1);
 
     // ビデオ要素を生成
     this.naviVideo = document.createElement('video');
@@ -155,19 +133,7 @@ export class NaviComponent implements OnInit, OnDestroy, AfterViewInit {
     this.naviVideo.height = NaviComponent.NAVI_HEIGHT;
     this.naviVideo.muted = true;
     this.naviVideo.playsInline = true;
-    this.naviVideo.controls = true;
     this.naviVideo.srcObject = this.naviStream;
-    this.naviVideo.style.position = 'absolute';
-    this.naviVideo.style.top = '0';
-    this.naviVideo.style.left = '0';
-
-    // ビデオ要素のイベントハンドラを設定
-    // (Safari では PiP において nexttrack / previoustrack による操作ができないため、一時停止で次のポーズへ遷移する)
-    this.naviVideo.onpause = () => {
-      console.log(`[NaviComponent] onpause`);
-      this.onRequestNextTrack();
-      this.naviVideo?.play();
-    };
 
     // 再生開始まで待機
     await new Promise<void>((resolve, reject) => {
@@ -175,7 +141,6 @@ export class NaviComponent implements OnInit, OnDestroy, AfterViewInit {
         return reject();
       }
       this.naviVideo.ontimeupdate = () => {
-        //console.log(`[NaviComponent] initNavi - ontimeupdate`);
         resolve();
       };
       console.log(`[NaviComponent] initNavi - play...`, this.naviStream);
@@ -184,18 +149,6 @@ export class NaviComponent implements OnInit, OnDestroy, AfterViewInit {
         reject(e);
       });
     });
-
-    // PiP を開始・終了したときのイベントハンドラを設定
-    this.naviVideo.onenterpictureinpicture = () => {
-      if (!this.naviVideo) return;
-      console.log(`[NaviComponent] onenterpictureinpicture`);
-      //this.naviVideo.style.display = 'none';
-    };
-    this.naviVideo.onleavepictureinpicture = () => {
-      if (!this.naviVideo) return;
-      console.log(`[NaviComponent] onleavepictureinpicture`);
-      //this.naviVideo.remove();
-    };
   }
 
   private async loadPoseImages() {
@@ -318,20 +271,28 @@ export class NaviComponent implements OnInit, OnDestroy, AfterViewInit {
       footerHeight,
     );
     this.naviCanvasContext.fillStyle = '#ffffff';
-    this.naviCanvasContext.font = '18px sans-serif';
+    this.naviCanvasContext.textAlign = 'start';
+    this.naviCanvasContext.font = '17px sans-serif';
     this.naviCanvasContext.fillText(
-      pose.timeSeconds + '秒頃から',
-      width / 2,
+      pose.timeSeconds + '秒頃〜' + pose.durationSeconds + '秒',
+      10,
       height - footerHeight / 2,
     );
 
-    // 状態を描画
+    // 補足情報
+    this.naviCanvasContext.font = '14px sans-serif';
+    this.naviCanvasContext.textAlign = 'end';
+    const IS_DEBUG = false;
+    const additionalText = IS_DEBUG
+      ? `${new Date().getSeconds()}`
+      : `${this.currentPoseIndex + 1}/${this.poses.length}`;
     this.naviCanvasContext.fillText(
-      `${new Date().getSeconds()}`,
-      width - 20,
+      additionalText,
+      width - 15,
       height - footerHeight / 2,
     );
 
+    // 描画ループへ
     if (isLoop && this.isNaviPlaying) {
       requestAnimationFrame(() => {
         this.draw(true);
@@ -343,10 +304,10 @@ export class NaviComponent implements OnInit, OnDestroy, AfterViewInit {
     if (!this.poses) return;
 
     if (this.poses.length - 1 <= this.currentPoseIndex) {
-      return;
+      this.currentPoseIndex = 0;
+    } else {
+      this.currentPoseIndex++;
     }
-
-    this.currentPoseIndex++;
     console.log(`[NaviComponent] onRequestNextTrack - `, this.currentPoseIndex);
 
     this.draw();
@@ -355,10 +316,10 @@ export class NaviComponent implements OnInit, OnDestroy, AfterViewInit {
   private onRequestPreviousTrack() {
     if (!this.poses) return;
     if (this.currentPoseIndex <= 0) {
-      return;
+      this.currentPoseIndex = this.poses.length - 1;
+    } else {
+      this.currentPoseIndex--;
     }
-
-    this.currentPoseIndex--;
     console.log(
       `[NaviComponent] onRequestPreviousTrack - `,
       this.currentPoseIndex,

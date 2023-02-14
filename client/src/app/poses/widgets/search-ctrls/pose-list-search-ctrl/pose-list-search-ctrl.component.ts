@@ -138,6 +138,12 @@ export class PoseListSearchCtrlComponent implements OnInit {
       console.error(e);
     }
 
+    // ポーズリストのポーズをソート
+    matchedPoses = matchedPoses.sort((a, b) => {
+      // ポーズセット名とタイミングでソート
+      return a.poseSetName.localeCompare(b.poseSetName) || a.time - b.time;
+    });
+
     // 各ポーズのタグを取得
     matchedPoses = await this.poseTagsService.setTagsToPoses(matchedPoses);
 
