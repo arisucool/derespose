@@ -30,6 +30,9 @@ export class PoseTagsService {
         loadRelationIds: true,
       })
     )
+      .filter((poseTag) => {
+        return poseTag.poses.length > 0;
+      })
       .sort((a, b) => {
         return b.poses.length - a.poses.length;
       })
