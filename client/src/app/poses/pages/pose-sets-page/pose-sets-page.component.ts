@@ -13,10 +13,8 @@ export class PoseSetsPageComponent implements OnInit {
   public poseSetsType?: 'song' | 'commonPose' | 'chanpokuPose' = undefined;
 
   // ポーズセットのリスト
+  public poseSetKeys?: string[] = undefined;
   public poseSetDefinitions?: { [key: string]: PoseSetDefinition } = undefined;
-
-  // テンプレートで使用する関数
-  public objectKeys = Object.keys;
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -49,6 +47,16 @@ export class PoseSetsPageComponent implements OnInit {
         poseSets[poseSetName] = allPoseSets[poseSetName];
       }
     }
+
+    this.poseSetKeys = Object.keys(poseSets).sort((a, b) => {
+      if (
+        poseSets[a].orderInType === undefined ||
+        poseSets[b].orderInType === undefined
+      ) {
+        return 0;
+      }
+      return poseSets[a].orderInType! - poseSets[b].orderInType!;
+    });
 
     this.poseSetDefinitions = poseSets;
   }

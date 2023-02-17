@@ -81,8 +81,7 @@ export class PoseSearchService {
     for (const poseSetName of Object.keys(poseSetDefinitionJsons)) {
       const poseSet = await this.loadPoseSet(poseSetName);
       poseSetDefinitions[poseSetName] = {
-        title: poseSetDefinitionJsons[poseSetName].title,
-        type: poseSetDefinitionJsons[poseSetName].type,
+        ...poseSetDefinitionJsons[poseSetName],
         poseSet: poseSet,
       };
     }

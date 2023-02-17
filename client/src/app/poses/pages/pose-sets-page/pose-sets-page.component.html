@@ -27,7 +27,7 @@
   <a
     class="pose-set"
     routerLink="/poses/pose-sets/{{ poseSetName }}"
-    *ngFor="let poseSetName of this.objectKeys(this.poseSetDefinitions)"
+    *ngFor="let poseSetName of poseSetKeys"
   >
     <div class="about-app app-card bordered">
       <h3>{{ this.poseSetDefinitions[poseSetName].title }}</h3>

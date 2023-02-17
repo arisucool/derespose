@@ -138,10 +138,18 @@ export class PoseListSearchCtrlComponent implements OnInit {
       console.error(e);
     }
 
+    // ポーズセットのリストを取得
+    const poseSetDefinitions =
+      (await this.poseSearchService.getPoseSetDefinitions()) || {};
+
     // ポーズリストのポーズをソート
     matchedPoses = matchedPoses.sort((a, b) => {
-      // ポーズセット名とタイミングでソート
-      return a.poseSetName.localeCompare(b.poseSetName) || a.time - b.time;
+      // ポーズセットの順序 ＆ ポーズのタイミングでソート
+      const orderOfPoseSetOfPoseA =
+        poseSetDefinitions[a.poseSetName]?.orderInType ?? 0;
+      const orderOfPoseSetOfPoseB =
+        poseSetDefinitions[b.poseSetName]?.orderInType ?? 0;
+      return orderOfPoseSetOfPoseA - orderOfPoseSetOfPoseB || a.time - b.time;
     });
 
     // 各ポーズのタグを取得
