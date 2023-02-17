@@ -10,12 +10,11 @@ import { AuthService } from './auth/services/auth.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  $currentUser!: Observable<User | undefined>;
+  $currentUser: Observable<User | undefined> = this.authService.$currentUser;
 
   constructor(private authService: AuthService) {}
 
   ngOnInit() {
-    this.$currentUser = this.authService.$currentUser;
     this.authService.getCurrentUser();
   }
 }

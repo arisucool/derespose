@@ -75,7 +75,7 @@
           color="primary"
           routerLink="poses/pose-lists"
           [queryParams]="{ userId: 'me' }"
-          *ngIf="this.authService.isLoggedIn"
+          [disabled]="!(this.$currentUser | async)"
         >
           <mat-icon style="margin-bottom: 1px; color: inherit"
             >library_books</mat-icon
