@@ -1,5 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { DeviceDetectorService } from 'ngx-device-detector';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { lastValueFrom, timer } from 'rxjs';
 import { MatchedPose } from '../../interfaces/matched-pose';
@@ -31,7 +32,11 @@ export class SearchPageComponent implements OnInit {
   // デレスポナビを実行しているかどうか
   public isRunningNavi = false;
 
+  // 端末のOS
+  public deviceOS?: string;
+
   constructor(
+    public deviceDetectorService: DeviceDetectorService,
     private changeDetectionRef: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private spinner: NgxSpinnerService,
@@ -60,6 +65,9 @@ export class SearchPageComponent implements OnInit {
       this.searchMode = 'camera';
       this.searchTarget = {};
     }
+
+    this.deviceOS = this.deviceDetectorService.getDeviceInfo().os;
+
     this.changeDetectionRef.detectChanges();
   }
 

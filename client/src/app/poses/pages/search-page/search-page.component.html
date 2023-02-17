@@ -99,7 +99,8 @@
   </div>
 </div>
 
-<div class="fab-container">
+<!-- デレスポナビ -->
+<div class="fab-container" *ngIf="this.deviceOS === 'Android'">
   <ng-container *ngIf="this.matchedPoses">
     <button
       mat-fab
@@ -112,6 +113,7 @@
     <app-navi #navi [poses]="this.matchedPoses"></app-navi>
   </ng-container>
 </div>
+<!---->
 
 <div class="app-bottom-navigation" *ngIf="this.state !== 'searching'">
   <a routerLink="/">
