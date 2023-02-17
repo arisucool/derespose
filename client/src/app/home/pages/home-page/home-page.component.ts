@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
+import { AuthService } from 'src/app/auth/services/auth.service';
 import { PoseTagsService } from '../../../poses/services/pose-tags.service';
 
 @Component({
@@ -10,7 +11,10 @@ import { PoseTagsService } from '../../../poses/services/pose-tags.service';
 export class HomePageComponent implements OnInit {
   public poseTags?: PoseTag[];
 
-  constructor(private poseTagsService: PoseTagsService) {}
+  constructor(
+    public authService: AuthService,
+    private poseTagsService: PoseTagsService,
+  ) {}
 
   async ngOnInit() {
     this.poseTags = await this.poseTagsService.getPoseTags();

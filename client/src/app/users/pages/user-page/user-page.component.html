@@ -6,14 +6,14 @@
   <div class="about-app app-card bordered">
     <h3>{{ currentUser.displayName }} さん</h3>
     <p class="user-menu">
-      <button
+      <a
         mat-stroked-button
         routerLink="/poses/pose-lists"
         [queryParams]="{ userId: 'me' }"
       >
-        <mat-icon>list</mat-icon>
+        <mat-icon>library_books</mat-icon>
         &nbsp;作成したポーズリストの一覧
-      </button>
+      </a>
       <button mat-stroked-button (click)="this.logout()">
         <mat-icon>logout</mat-icon>
         &nbsp;ログアウト

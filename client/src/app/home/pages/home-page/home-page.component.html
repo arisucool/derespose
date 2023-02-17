@@ -70,6 +70,18 @@
           <mat-icon style="margin-bottom: 1px">public</mat-icon>
           公開されたポーズリスト一覧
         </a>
+        <a
+          mat-stroked-button
+          color="primary"
+          routerLink="poses/pose-lists"
+          [queryParams]="{ userId: 'me' }"
+          *ngIf="this.authService.isLoggedIn"
+        >
+          <mat-icon style="margin-bottom: 1px; color: inherit"
+            >library_books</mat-icon
+          >
+          マイポーズリスト一覧
+        </a>
       </div>
     </li>
     <li>
