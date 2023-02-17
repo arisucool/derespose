@@ -49,11 +49,24 @@
       <div class="buttons" *ngIf="this.poseTags !== undefined">
         <a
           mat-stroked-button
-          *ngFor="let tag of this.poseTags"
+          *ngFor="let tag of this.poseTags | slice : 0 : 8"
           routerLink="poses/pose-tags/{{ tag.name }}"
         >
           <mat-icon style="margin-bottom: 1px">tag</mat-icon>
           {{ tag.name }}
+        </a>
+      </div>
+      <div class="buttons">
+        <a
+          mat-stroked-button
+          routerLink="poses/pose-tags"
+          [disabled]="this.poseTags === undefined"
+          color="primary"
+        >
+          <mat-icon style="margin-bottom: 1px; color: inherit"
+            >view_module</mat-icon
+          >
+          すべてのタグを見る
         </a>
       </div>
     </li>

@@ -1,5 +1,5 @@
 import { Controller, Get, HttpException, Param } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { Pose } from 'src/poses/entities/pose.entity';
 import { PoseTag } from './entities/pose-tag.entity';
 import { PoseTagsService } from './pose-tags.service';
@@ -16,8 +16,14 @@ export class PoseTagsController {
     description: 'タグのリスト',
     isArray: true,
   })
-  getPoseTags(): Promise<PoseTag[]> {
-    return this.poseTagsService.getPoseTags();
+  @ApiParam({
+    name: 'isIncludeRepresentivePoses',
+    description: '代表するポーズを含めるかどうか',
+    required: false,
+    type: Boolean,
+  })
+  getPoseTags(@Param() isIncludeRepresentivePoses = false): Promise<PoseTag[]> {
+    return this.poseTagsService.getPoseTags(isIncludeRepresentivePoses);
   }
 
   @Get('by-poses/:poses')

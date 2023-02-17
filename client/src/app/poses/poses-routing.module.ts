@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { PoseListsPageComponent } from './pages/pose-lists-page/pose-lists.component';
 import { PoseSetsPageComponent } from './pages/pose-sets-page/pose-sets-page.component';
+import { PoseTagsPageComponent } from './pages/pose-tags-page/pose-tags-page.component';
 import { SearchPageComponent } from './pages/search-page/search-page.component';
 
 const routes: Routes = [
@@ -12,6 +13,11 @@ const routes: Routes = [
     title: '自分でポーズをとって探す',
   },
   // タグでポーズを探す (タグ検索)
+  {
+    path: 'pose-tags',
+    component: PoseTagsPageComponent,
+    title: 'ポーズタグの一覧',
+  },
   {
     path: 'pose-tags/:tagName',
     component: SearchPageComponent,

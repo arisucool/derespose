@@ -24,10 +24,11 @@ export class PoseTagsService {
     return this.poseTagRepository.save(tag);
   }
 
-  async getPoseTags(): Promise<PoseTag[]> {
+  async getPoseTags(includePoses = false): Promise<PoseTag[]> {
     const poseTags = (
       await this.poseTagRepository.find({
-        loadRelationIds: true,
+        loadRelationIds: includePoses ? false : true,
+        relations: includePoses ? ['poses'] : [],
       })
     )
       .filter((poseTag) => {
@@ -37,7 +38,9 @@ export class PoseTagsService {
         return b.poses.length - a.poses.length;
       })
       .map((poseTag) => {
-        poseTag.poses = undefined;
+        if (!includePoses) {
+          poseTag.poses = undefined;
+        }
         return poseTag;
       });
 

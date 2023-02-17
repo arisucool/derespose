@@ -1,0 +1,47 @@
+<div class="app-page-summary">
+  <h2>ポーズタグ一覧</h2>
+</div>
+
+<p class="note">全てのポーズタグを表示します</p>
+
+<ng-container *ngIf="!this.representivePoses">
+  <div class="app-card bordered loading-message">読み込んでいます...</div>
+</ng-container>
+
+<div class="pose-tags">
+  <ng-container *ngIf="this.representivePoses">
+    <!-- ポーズタグ (および 代表ポーズ )-->
+    <a
+      class="pose-tag"
+      *ngFor="let representivePose of representivePoses"
+      routerLink="{{ representivePose.tags![0] }}"
+    >
+      <p class="pose-tag-name">
+        {{ representivePose.tags![0] }}
+      </p>
+      <img class="pose-tag-image" [src]="representivePose.imageUrl" />
+    </a>
+    <!---->
+
+    <!-- 最終行のレイアウト崩れを防ぐための要素 (不可視) -->
+    <a
+      class="pose-tag layout-adjustment-item"
+      [ngClass]="{ 'first-layout-adjustment-item': i === 1 }"
+      *ngFor="let i of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]"
+    >
+      <img
+        class="pose-tag-image"
+        [src]="
+          this.representivePoses[this.representivePoses.length - 1].imageUrl
+        "
+      />
+    </a>
+    <!---->
+  </ng-container>
+</div>
+
+<div class="app-bottom-navigation">
+  <a routerLink="/"
+    ><mat-icon>navigate_before</mat-icon> &nbsp; トップページへ</a
+  >
+</div>

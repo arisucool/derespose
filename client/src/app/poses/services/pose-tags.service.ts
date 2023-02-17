@@ -3,6 +3,7 @@ import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { ApiService } from 'src/.api-client/services/api.service';
 import { MatchedPose } from '../interfaces/matched-pose';
+import { PoseSearchService } from './pose-search.service';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,10 @@ export class PoseTagsService {
   private poseTags?: PoseTag[];
   private isRequestingPoseTags = false;
 
-  constructor(private apiService: ApiService) {}
+  constructor(
+    private apiService: ApiService,
+    private poseSearchService: PoseSearchService,
+  ) {}
 
   async getPoseTags(): Promise<PoseTag[]> {
     if (this.poseTags !== undefined) return this.poseTags;
@@ -26,11 +30,48 @@ export class PoseTagsService {
     console.log(`[PoseTagsService] getPoseTags - Requesting...`);
 
     const poseTags = await lastValueFrom(
-      this.apiService.poseTagsControllerGetPoseTags(),
+      this.apiService.poseTagsControllerGetPoseTags({
+        isIncludeRepresentivePoses: false,
+      }),
     );
     this.poseTags = poseTags;
     this.onAvailablePoseTagsChanged.emit(poseTags);
     return poseTags;
+  }
+
+  async getRepresentivePoses(): Promise<MatchedPose[]> {
+    let poseTags = await lastValueFrom(
+      this.apiService.poseTagsControllerGetPoseTags({
+        isIncludeRepresentivePoses: true,
+      }),
+    );
+
+    poseTags = poseTags.filter(async (poseTag) => {
+      if (poseTag.poses === undefined || poseTag.poses.length === 0) {
+        return false;
+      }
+      return true;
+    });
+
+    const representivePoses: MatchedPose[] = [];
+
+    for (const poseTag of poseTags) {
+      if (poseTag.poses === undefined) {
+        continue;
+      }
+
+      const pose = poseTag.poses[0];
+      const matchedPose = await this.poseSearchService.getByPoseSetNameAndTime(
+        pose.poseSetName,
+        pose.time,
+      );
+      if (!matchedPose) continue;
+
+      matchedPose.tags = [poseTag.name];
+      representivePoses.push(matchedPose);
+    }
+
+    return representivePoses;
   }
 
   async getPosesWithPoseTags(poses: MatchedPose[]) {

@@ -20,6 +20,7 @@ import { PoseListSearchCtrlComponent } from './widgets/search-ctrls/pose-list-se
 import { PoseTagSearchCtrlComponent } from './widgets/search-ctrls/pose-tag-search-ctrl/pose-tag-search-ctrl.component';
 import { PoseSetSearchCtrlComponent } from './widgets/search-ctrls/pose-set-search-ctrl/pose-set-search-ctrl.component';
 import { NaviComponent } from './widgets/navi/navi.component';
+import { PoseTagsPageComponent } from './pages/pose-tags-page/pose-tags-page.component';
 
 @NgModule({
   declarations: [
@@ -34,6 +35,7 @@ import { NaviComponent } from './widgets/navi/navi.component';
     PoseTagSearchCtrlComponent,
     PoseSetSearchCtrlComponent,
     NaviComponent,
+    PoseTagsPageComponent,
   ],
   imports: [
     CommonModule,

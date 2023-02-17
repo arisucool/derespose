@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { PoseSet } from 'ngx-mp-pose-extractor';
 import { SimilarPoseItem } from 'ngx-mp-pose-extractor/lib/interfaces/matched-pose-item';
 import { lastValueFrom } from 'rxjs';
+import { Pose } from 'src/.api-client/models/pose';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { ApiService } from 'src/.api-client/services/api.service';
 import { DetectedPose } from '../interfaces/detected-pose';
@@ -331,7 +332,7 @@ export class PoseSearchService {
 
     let matchedPoses: MatchedPose[] = [];
     for (const receivedPose of receivedPoses) {
-      const poseItem = this.getPoseByPoseSetNameAndTime(
+      const poseItem = this.getPoseSetItemByPoseSetNameAndTime(
         receivedPose.poseSetName,
         receivedPose.time,
       );
@@ -394,7 +395,50 @@ export class PoseSearchService {
     return matchedPoses;
   }
 
-  private getPoseByPoseSetNameAndTime(
+  async getByPoseSetNameAndTime(
+    poseSetName: string,
+    timeMiliseconds: number,
+  ): Promise<MatchedPose> {
+    const poseSetDefinition = await this.getPoseSetDefinition(poseSetName);
+    if (!poseSetDefinition) {
+      throw new Error(`PoseSet not found: ${poseSetName}`);
+    }
+
+    const title = poseSetDefinition.title;
+
+    const poseSetItem = this.getPoseSetItemByPoseSetNameAndTime(
+      poseSetName,
+      timeMiliseconds,
+    );
+    if (!poseSetItem) {
+      throw new Error(`Pose not found: ${poseSetName} ${timeMiliseconds}`);
+    }
+
+    const matchedPose: MatchedPose = {
+      id: poseSetItem.timeMiliseconds,
+      title: title,
+      poseSetName: poseSetName,
+      time: poseSetItem.timeMiliseconds,
+      timeSeconds: Math.floor(poseSetItem.timeMiliseconds / 1000),
+      durationSeconds:
+        Math.floor((poseSetItem.durationMiliseconds / 1000) * 10) / 10,
+      score: 0,
+      scoreString: 'N/A',
+      scoreDetails: {
+        similarity: 0,
+        foundTargetPoseIndex: 0,
+        duration: 0,
+        time: 0,
+      },
+      isFavorite: false,
+      tags: undefined, // TODO: タグを取得する
+      imageUrl: `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/frame-${poseSetItem.timeMiliseconds}.webp`,
+    };
+
+    return matchedPose;
+  }
+
+  private getPoseSetItemByPoseSetNameAndTime(
     poseSetName: string,
     timeMiliseconds: number,
   ) {
