@@ -3,6 +3,7 @@ import { RouterModule, Routes, TitleStrategy } from '@angular/router';
 import { HomePageComponent } from './home/pages/home-page/home-page.component';
 import { AppTitleStrategy } from './app.title-strategy';
 import { UserPageComponent } from './users/pages/user-page/user-page.component';
+import { AuthGuard } from './auth/auth.guard';
 
 const routes: Routes = [
   {
@@ -14,6 +15,7 @@ const routes: Routes = [
     path: 'users/me',
     component: UserPageComponent,
     title: 'ユーザ',
+    canActivate: [AuthGuard],
   },
   {
     path: 'about',
