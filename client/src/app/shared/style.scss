@@ -12,13 +12,17 @@ h4 {
 
 // リンク
 
-a:not([mat-stroked-button]) {
+a:not([mat-stroked-button], [mat-raised-button]) {
   word-wrap: break-word;
   color: #4d75c2;
   transition: all 0.2s ease-in-out;
 
   &:hover {
     opacity: 0.7;
+  }
+
+  .app-card {
+    color: #333333;
   }
 }
 
