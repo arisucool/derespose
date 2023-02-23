@@ -136,7 +136,6 @@ export class PoseSearchService {
         poseSetItem,
       );
       matchedPoses.push(matchedPose);
-      console.log(matchedPoses);
     }
 
     return matchedPoses;
