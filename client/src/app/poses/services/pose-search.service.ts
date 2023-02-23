@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { PoseSet } from 'ngx-mp-pose-extractor';
-import { SimilarPoseItem } from 'ngx-mp-pose-extractor/lib/interfaces/matched-pose-item';
+import { SimilarPoseItem } from 'ngx-mp-pose-extractor/lib/interfaces/similar-pose-item';
 import { lastValueFrom } from 'rxjs';
 import { Pose } from 'src/.api-client/models/pose';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
