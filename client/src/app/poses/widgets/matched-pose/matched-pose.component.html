@@ -5,7 +5,9 @@
     </p>
     <p
       class="pose-time"
-      matTooltip="{{ pose.scoreString }} --> {{ pose.scoreDetails | json }}"
+      matTooltip="{{ pose.scoreString }} --> {{ pose.scoreDetails | json }} / {{
+        pose.faceExpression?.top | json
+      }}"
     >
       {{ pose.timeSeconds }} 秒頃から {{ pose.durationSeconds }} 秒間
     </p>

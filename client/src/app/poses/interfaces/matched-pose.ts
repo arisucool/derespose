@@ -14,6 +14,18 @@ export interface MatchedPose {
   // ポーズの長さ
   durationSeconds: number;
 
+  // 表情
+  faceExpression?: {
+    top: {
+      label: string;
+      prob: number;
+    };
+    predictions: {
+      label: string;
+      prob: number;
+    }[];
+  };
+
   // スコア
   score: number;
   scoreString: string;

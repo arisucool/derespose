@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { PoseSet } from 'ngx-mp-pose-extractor';
+import { PoseSet, PoseSetItem } from 'ngx-mp-pose-extractor';
 import { SimilarPoseItem } from 'ngx-mp-pose-extractor/lib/interfaces/similar-pose-item';
 import { lastValueFrom } from 'rxjs';
 import { Pose } from 'src/.api-client/models/pose';
@@ -123,29 +123,15 @@ export class PoseSearchService {
     const title = poseSetDefinition.title;
 
     let matchedPoses: MatchedPose[] = [];
-    for (const poseItem of poseSet.getPoses()) {
+    for (const poseSetItem of poseSet.getPoses()) {
       // 整形して配列へ追加
-      const matchedPose: MatchedPose = {
-        id: poseItem.timeMiliseconds,
-        title: title,
-        poseSetName: poseSetName,
-        time: poseItem.timeMiliseconds,
-        timeSeconds: Math.floor(poseItem.timeMiliseconds / 1000),
-        durationSeconds:
-          Math.floor((poseItem.durationMiliseconds / 1000) * 10) / 10,
-        score: 0,
-        scoreString: 'N/A',
-        scoreDetails: {
-          similarity: 0,
-          foundTargetPoseIndex: 0,
-          duration: 0,
-          time: 0,
-        },
-        isFavorite: false,
-        tags: [],
-        imageUrl: `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/frame-${poseItem.timeMiliseconds}.webp`,
-      };
+      const matchedPose: MatchedPose = this.getMatchedPose(
+        poseSetName,
+        title,
+        poseSetItem,
+      );
       matchedPoses.push(matchedPose);
+      console.log(matchedPoses);
     }
 
     return matchedPoses;
@@ -172,30 +158,15 @@ export class PoseSearchService {
       const poseSet = await this.getPoseSetDefinition(pose.poseSetName);
       if (!poseSet) continue;
 
-      const poseItem = poseSet.poseSet.getPoseByTime(pose.time);
-      if (!poseItem) continue;
+      const poseSetItem = poseSet.poseSet.getPoseByTime(pose.time);
+      if (!poseSetItem) continue;
 
       // 整形して配列へ追加
-      const matchedPose: MatchedPose = {
-        id: poseItem.timeMiliseconds,
-        title: poseSet.title,
-        poseSetName: pose.poseSetName,
-        time: poseItem.timeMiliseconds,
-        timeSeconds: Math.floor(poseItem.timeMiliseconds / 1000),
-        durationSeconds:
-          Math.floor((poseItem.durationMiliseconds / 1000) * 10) / 10,
-        score: 0,
-        scoreString: 'N/A',
-        scoreDetails: {
-          similarity: 0,
-          foundTargetPoseIndex: 0,
-          duration: 0,
-          time: 0,
-        },
-        isFavorite: false,
-        tags: [],
-        imageUrl: `${PoseSearchService.POSESET_BASE_URL}${pose.poseSetName}/frame-${poseItem.timeMiliseconds}.webp`,
-      };
+      const matchedPose: MatchedPose = this.getMatchedPose(
+        pose.poseSetName,
+        poseSet.title,
+        poseSetItem,
+      );
       matchedPoses.push(matchedPose);
     }
 
@@ -282,26 +253,21 @@ export class PoseSearchService {
         const scoreString: string = `${Math.round(score * 100) / 100}`;
 
         // 整形して配列へ追加
-        const matchedPose: MatchedPose = {
-          id: item.poseItem.timeMiliseconds,
-          title: title,
-          poseSetName: poseSetName,
-          time: item.poseItem.timeMiliseconds,
-          timeSeconds: Math.floor(item.poseItem.timeMiliseconds / 1000),
-          durationSeconds:
-            Math.floor((item.poseItem.durationMiliseconds / 1000) * 10) / 10,
-          score: score,
-          scoreString: scoreString,
-          scoreDetails: {
-            similarity: item.poseItem.similarity,
-            foundTargetPoseIndex: item.foundTargetPoseIndex,
-            duration: item.poseItem.durationMiliseconds,
-            time: item.poseItem.timeMiliseconds,
+        const matchedPose: MatchedPose = this.getMatchedPose(
+          poseSetName,
+          title,
+          item.poseItem,
+          {
+            score: score,
+            scoreString: scoreString,
+            scoreDetails: {
+              similarity: item.poseItem.similarity,
+              foundTargetPoseIndex: item.foundTargetPoseIndex,
+              duration: item.poseItem.durationMiliseconds,
+              time: item.poseItem.timeMiliseconds,
+            },
           },
-          isFavorite: false,
-          tags: [],
-          imageUrl: `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/frame-${item.poseItem.timeMiliseconds}.webp`,
-        };
+        );
         matchedPoses.push(matchedPose);
       }
     }
@@ -332,11 +298,11 @@ export class PoseSearchService {
 
     let matchedPoses: MatchedPose[] = [];
     for (const receivedPose of receivedPoses) {
-      const poseItem = this.getPoseSetItemByPoseSetNameAndTime(
+      const poseSetItem = this.getPoseSetItemByPoseSetNameAndTime(
         receivedPose.poseSetName,
         receivedPose.time,
       );
-      if (!poseItem) continue;
+      if (!poseSetItem) continue;
 
       let poseSetTitle = 'Unknown';
       if (
@@ -347,10 +313,10 @@ export class PoseSearchService {
       }
 
       // スコア算出 - ポーズの長さ
-      let score = (poseItem.durationMiliseconds / 1000) * 0.1;
+      let score = (poseSetItem.durationMiliseconds / 1000) * 0.1;
 
       // スコア算出 - ポーズの登場する早さ
-      score -= (poseItem.timeMiliseconds / 1000) * 0.01;
+      score -= (poseSetItem.timeMiliseconds / 1000) * 0.01;
 
       // スコア算出 - お気に入りの数
       // TODO
@@ -362,28 +328,24 @@ export class PoseSearchService {
       const scoreString: string = `${Math.round(score * 100) / 100}`;
 
       // 整形して配列へ追加
-      const matchedPose: MatchedPose = {
-        id: receivedPose.id,
-        title: poseSetTitle,
-        poseSetName: receivedPose.poseSetName,
-        time: receivedPose.time,
-        timeSeconds: Math.floor(receivedPose.time / 1000),
-        durationSeconds:
-          Math.floor((poseItem.durationMiliseconds / 1000) * 10) / 10,
-        score: score,
-        scoreString: scoreString,
-        scoreDetails: {
-          similarity: -1,
-          foundTargetPoseIndex: -1,
-          duration: poseItem.durationMiliseconds,
-          time: poseItem.timeMiliseconds,
+      const matchedPose: MatchedPose = this.getMatchedPose(
+        receivedPose.poseSetName,
+        poseSetTitle,
+        poseSetItem,
+        {
+          score: score,
+          scoreString: scoreString,
+          scoreDetails: {
+            similarity: -1,
+            foundTargetPoseIndex: -1,
+            duration: poseSetItem.durationMiliseconds,
+            time: poseSetItem.timeMiliseconds,
+          },
         },
-        isFavorite: false,
-        tags: receivedPose?.tags?.map((tag: PoseTag) => {
-          return tag.name;
-        }),
-        imageUrl: `${PoseSearchService.POSESET_BASE_URL}${receivedPose.poseSetName}/frame-${receivedPose.time}.webp`,
-      };
+      );
+      matchedPose.tags = receivedPose?.tags?.map((tag: PoseTag) => {
+        return tag.name;
+      });
       matchedPoses.push(matchedPose);
     }
 
@@ -398,7 +360,7 @@ export class PoseSearchService {
   async getByPoseSetNameAndTime(
     poseSetName: string,
     timeMiliseconds: number,
-  ): Promise<MatchedPose> {
+  ): Promise<MatchedPose | undefined> {
     const poseSetDefinition = await this.getPoseSetDefinition(poseSetName);
     if (!poseSetDefinition) {
       throw new Error(`PoseSet not found: ${poseSetName}`);
@@ -411,17 +373,53 @@ export class PoseSearchService {
       timeMiliseconds,
     );
     if (!poseSetItem) {
-      throw new Error(`Pose not found: ${poseSetName} ${timeMiliseconds}`);
+      return;
     }
 
-    const matchedPose: MatchedPose = {
+    const matchedPose: MatchedPose = this.getMatchedPose(
+      poseSetName,
+      title,
+      poseSetItem,
+    );
+
+    return matchedPose;
+  }
+
+  private getMatchedPose(
+    poseSetName: string,
+    poseSetTitle: string,
+    poseSetItem: PoseSetItem,
+    score?: {
+      score: number;
+      scoreString: string;
+      scoreDetails: {
+        similarity: number;
+        foundTargetPoseIndex: number;
+        duration: number;
+        time: number;
+      };
+    },
+  ): MatchedPose {
+    return {
       id: poseSetItem.timeMiliseconds,
-      title: title,
+      title: poseSetTitle,
       poseSetName: poseSetName,
       time: poseSetItem.timeMiliseconds,
       timeSeconds: Math.floor(poseSetItem.timeMiliseconds / 1000),
       durationSeconds:
         Math.floor((poseSetItem.durationMiliseconds / 1000) * 10) / 10,
+      faceExpression:
+        poseSetItem.extendedData &&
+        poseSetItem.extendedData['faceExp'] &&
+        1 <= poseSetItem.extendedData['faceExp'].length
+          ? {
+              top: {
+                label: poseSetItem.extendedData['faceExp'][0].label,
+                prob: poseSetItem.extendedData['faceExp'][0].prob,
+              },
+              predictions: poseSetItem.extendedData['faceExp'],
+            }
+          : undefined,
       score: 0,
       scoreString: 'N/A',
       scoreDetails: {
@@ -431,11 +429,9 @@ export class PoseSearchService {
         time: 0,
       },
       isFavorite: false,
-      tags: undefined, // TODO: タグを取得する
+      tags: [], // TODO: タグを取得する
       imageUrl: `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/frame-${poseSetItem.timeMiliseconds}.webp`,
     };
-
-    return matchedPose;
   }
 
   private getPoseSetItemByPoseSetNameAndTime(
