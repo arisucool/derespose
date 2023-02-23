@@ -21,4 +21,10 @@
     </ng-container>
     {{ this.poseSetDefinition?.title }}
   </p>
+
+  <!-- 絞り込み -->
+  <app-search-filter
+    (onFilterChanged)="this.onFilterChanged($event)"
+  ></app-search-filter>
+  <!---->
 </div>

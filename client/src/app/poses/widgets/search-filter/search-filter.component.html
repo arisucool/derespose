@@ -1,0 +1,17 @@
+<p>
+  <mat-form-field appearance="outline">
+    <mat-label>
+      <mat-icon
+        style="margin-bottom: 4px; vertical-align: middle; margin-right: 1rem"
+        >mood</mat-icon
+      >
+      表情
+    </mat-label>
+    <mat-select [(ngModel)]="faceExpression" (ngModelChange)="this.onChanged()">
+      <mat-option value="all">すべて</mat-option>
+      <mat-option *ngFor="let exp of this.faceExpressions" [value]="exp.value">
+        {{ exp.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</p>

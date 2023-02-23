@@ -21,6 +21,7 @@ import { PoseTagSearchCtrlComponent } from './widgets/search-ctrls/pose-tag-sear
 import { PoseSetSearchCtrlComponent } from './widgets/search-ctrls/pose-set-search-ctrl/pose-set-search-ctrl.component';
 import { NaviComponent } from './widgets/navi/navi.component';
 import { PoseTagsPageComponent } from './pages/pose-tags-page/pose-tags-page.component';
+import { SearchFilterComponent } from './widgets/search-filter/search-filter.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +37,7 @@ import { PoseTagsPageComponent } from './pages/pose-tags-page/pose-tags-page.com
     PoseSetSearchCtrlComponent,
     NaviComponent,
     PoseTagsPageComponent,
+    SearchFilterComponent,
   ],
   imports: [
     CommonModule,

@@ -10,6 +10,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { lastValueFrom, timer } from 'rxjs';
 import { MatchedPose } from 'src/app/poses/interfaces/matched-pose';
 import { OnPoseSearchCompleted } from 'src/app/poses/interfaces/pose-search-event';
+import { PoseSearchFilter } from 'src/app/poses/interfaces/pose-search-filter';
 import { PoseSetDefinition } from 'src/app/poses/interfaces/pose-set-definition';
 import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
@@ -31,6 +32,8 @@ export class PoseSetSearchCtrlComponent implements OnInit {
     new EventEmitter();
 
   public poseSetDefinition?: PoseSetDefinition;
+
+  public poseSearchFilter?: PoseSearchFilter;
 
   constructor(
     private poseSearchService: PoseSearchService,
@@ -71,9 +74,27 @@ export class PoseSetSearchCtrlComponent implements OnInit {
     // 各ポーズのタグを取得
     matchedPoses = await this.poseTagsService.setTagsToPoses(matchedPoses);
 
+    // ポーズをフィルタ
+    if (this.poseSearchFilter !== undefined) {
+      if ((this, this.poseSearchFilter.faceExpression !== 'all')) {
+        matchedPoses = matchedPoses.filter((matchedPose) => {
+          return (
+            matchedPose.faceExpression &&
+            matchedPose.faceExpression.top.label ===
+              this.poseSearchFilter!.faceExpression
+          );
+        });
+      }
+    }
+
     // 完了
     this.onPoseSearchCompleted.emit({
       poses: matchedPoses,
     });
+  }
+
+  public onFilterChanged(event: PoseSearchFilter) {
+    this.poseSearchFilter = event;
+    this.poseSearch();
   }
 }
