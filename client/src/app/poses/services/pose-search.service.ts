@@ -15,16 +15,16 @@ import { PoseListsService } from './pose-lists.service';
   providedIn: 'root',
 })
 export class PoseSearchService {
-  // ポーズセットのURL
+  // ポーズセット定義ファイルのURL
   public static readonly POSESET_BASE_URL =
     'https://arisucool.github.io/derespose-poses/';
   public static readonly POSESET_DEFINITIONS_URL = `${PoseSearchService.POSESET_BASE_URL}pose-sets.json`;
 
-  // ポーズファイル定義のキャッシュ有効期限 (6時間)
-  public static readonly POSESET_DEFINITIONS_CACHE_EXPIRES = 1000 * 60 * 60 * 6;
+  // ポーズセット定義ファイルのキャッシュ有効期限 (1時間)
+  public static readonly POSESET_DEFINITIONS_CACHE_EXPIRES = 1000 * 60 * 60 * 1;
 
-  // ポーズファイルのキャッシュ有効期限 (1週間)
-  public static readonly POSESET_CACHE_EXPIRES = 1000 * 60 * 60 * 24 * 7;
+  // ポーズセットファイルのキャッシュ有効期限 (2週間)
+  public static readonly POSESET_CACHE_EXPIRES = 1000 * 60 * 60 * 24 * 14;
 
   // ポーズの類似度のしきい値
   public static readonly POSE_SIMILARITY_THRESHOLD = 0.85;
@@ -48,8 +48,8 @@ export class PoseSearchService {
       return;
     }
 
-    // ポーズ定義ファイルを読み込む
-    let poseSetDefinitionJsons: {
+    // ポーズセット定義ファイルを読み込む
+    let poseSetDefinitionJson: {
       [key: string]: PoseSetDefinitionJson;
     };
 
@@ -59,30 +59,35 @@ export class PoseSearchService {
     );
 
     if (cache !== undefined) {
-      poseSetDefinitionJsons = cache;
+      poseSetDefinitionJson = cache;
     } else {
       console.log(
         `[PoseSearchService] loadPoses - Requesting poseset definitions...`,
       );
-      const res = await fetch(PoseSearchService.POSESET_DEFINITIONS_URL);
-      poseSetDefinitionJsons = await res.json();
-
-      this.setCachedJson(
-        'poseSetDefinitions',
-        poseSetDefinitionJsons,
-        PoseSearchService.POSESET_DEFINITIONS_CACHE_EXPIRES,
+      const res = await fetch(
+        PoseSearchService.POSESET_DEFINITIONS_URL + '?v=' + Date.now(),
       );
+      poseSetDefinitionJson = await res.json();
+
+      this.setCachedJson('poseSetDefinitions', poseSetDefinitionJson);
     }
     console.log(
       `[PoseSearchService] loadPoses - Loaded poseset definitions`,
-      poseSetDefinitionJsons,
+      poseSetDefinitionJson,
     );
 
+    // 各ポーズセットファイルを読み込む
     const poseSetDefinitions: { [key: string]: PoseSetDefinition } = {};
-    for (const poseSetName of Object.keys(poseSetDefinitionJsons)) {
-      const poseSet = await this.loadPoseSet(poseSetName);
+    for (const poseSetName of Object.keys(poseSetDefinitionJson)) {
+      const expectVersion =
+        poseSetDefinitionJson[poseSetName].version !== undefined
+          ? poseSetDefinitionJson[poseSetName].version!
+          : -1;
+
+      const poseSet = await this.loadPoseSet(poseSetName, expectVersion);
+
       poseSetDefinitions[poseSetName] = {
-        ...poseSetDefinitionJsons[poseSetName],
+        ...poseSetDefinitionJson[poseSetName],
         poseSet: poseSet,
       };
     }
@@ -447,34 +452,41 @@ export class PoseSearchService {
     return pose;
   }
 
-  private async loadPoseSet(poseSetName: string) {
-    let pose: PoseSet;
+  private async loadPoseSet(poseSetName: string, expectVersion: number) {
+    let poseSet: PoseSet;
     try {
       let cache = this.getCachedJson(
         poseSetName,
         PoseSearchService.POSESET_CACHE_EXPIRES,
       );
 
-      pose = new PoseSet();
-      if (cache !== undefined) {
-        pose.loadJson(JSON.stringify(cache));
+      poseSet = new PoseSet();
+      if (
+        cache !== undefined &&
+        cache.version !== undefined &&
+        cache.version === expectVersion
+      ) {
+        // キャッシュから読み込み
+        poseSet.loadJson(JSON.stringify(cache.poseSet));
       } else {
+        // サーバから読み込み
         console.log(
           `[PoseSearchService] loadPoses - Requesting poseset...`,
           poseSetName,
         );
         const req = await fetch(
-          `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/poses.json`,
+          `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/poses.json?v=` +
+            expectVersion,
         );
 
-        const poseJson = await req.text();
-        pose.loadJson(poseJson);
+        const poseSetJson = await req.text();
+        poseSet.loadJson(poseSetJson);
 
-        this.setCachedJson(
-          poseSetName,
-          poseJson,
-          PoseSearchService.POSESET_CACHE_EXPIRES,
-        );
+        // キャッシュへ保存
+        this.setCachedJson(poseSetName, {
+          version: expectVersion,
+          poseSet: JSON.parse(poseSetJson),
+        });
       }
     } catch (e: any) {
       console.error(
@@ -483,10 +495,10 @@ export class PoseSearchService {
       );
       throw e;
     }
-    return pose;
+    return poseSet;
   }
 
-  private getCachedJson(key: string, expires: number) {
+  private getCachedJson(key: string, expires?: number) {
     const cacheStr = window.localStorage.getItem(`cache__${key}`);
     if (cacheStr === null) return undefined;
 
@@ -504,7 +516,7 @@ export class PoseSearchService {
     }
 
     const now = new Date().getTime();
-    if (expires < now - cache.createdAt) {
+    if (expires !== undefined && expires < now - cache.createdAt) {
       window.localStorage.removeItem(key);
       return undefined;
     }
@@ -512,7 +524,7 @@ export class PoseSearchService {
     return cache['content'];
   }
 
-  private setCachedJson(key: string, content: any, expires: number) {
+  private setCachedJson(key: string, content: any) {
     const now = new Date().getTime();
 
     if (typeof content === 'string') {
