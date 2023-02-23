@@ -1,0 +1,20 @@
+version: '3'
+services:
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_USER: derespose
+      POSTGRES_PASSWORD: derespose
+      POSTGRES_DB: derespose
+    ports:
+      - 5432:5432
+  adminer:
+    image: mugiply/adminer-quick
+    environment:
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
+      DATABASE_DRIVER: pgsql
+    ports:
+      - 18080:8080
+    depends_on:
+      - db
