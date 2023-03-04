@@ -17,6 +17,7 @@ import { DetectedPose } from 'src/app/poses/interfaces/detected-pose';
 import { OnPoseSearchCompleted } from 'src/app/poses/interfaces/pose-search-event';
 import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-camera-search-ctrl',
@@ -60,7 +61,7 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
   public onResultsEventEmitterSubscription?: Subscription;
 
   // 検索対象とするポーズ
-  public searchTargetPose: any;
+  public searchTargetPose?: DetectedPose;
   public searchTargetPoseImageDataUrl?: string;
 
   // 状態
@@ -119,6 +120,9 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
 
     // シャッターボタンにフォーカスを当てる
     this.setFocusToShutterButton();
+
+    // セッションの復元
+    this.restoreSession();
   }
 
   ngOnDestroy() {
@@ -139,7 +143,7 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
   }
 
   async searchPoses() {
-    console.log(`[CameraSearchCtrl] searchPoses`);
+    console.log(`[CameraSearchCtrl] searchPoses`, this.recentlyPoses);
 
     // 読み込み中表示を開始
     this.onPoseSearchStarted.emit();
@@ -325,6 +329,10 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     mpResults: DetectedPose,
     posePreviewImageDataUrl: string,
   ) {
+    if (this.cameraVideoElement.nativeElement.paused) {
+      return;
+    }
+
     this.currentPosePreviewImageDataUrl = posePreviewImageDataUrl;
     this.currentPose = mpResults;
 
@@ -341,6 +349,9 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     this.state = 'completed';
 
     this.stopCamera();
+
+    // セッションを保存
+    this.saveSession();
 
     // 検索
     this.searchPoses();
@@ -376,5 +387,57 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
       if (this.shutterButtonRef === undefined) return;
       this.shutterButtonRef.focus();
     }, 100);
+  }
+
+  private restoreSession(): boolean {
+    if (environment.production) return false;
+
+    const previousPosesJson = window.sessionStorage.getItem(
+      'deresposePreviousPoses',
+    );
+    const previousPosePreviewImageDataUrl = window.sessionStorage.getItem(
+      'deresposePreviousPosePreviewImageDataUrl',
+    );
+    if (!previousPosesJson || !previousPosePreviewImageDataUrl) {
+      return false;
+    }
+
+    this.stopCamera();
+
+    this.recentlyPoses = JSON.parse(previousPosesJson);
+
+    this.currentPose = this.recentlyPoses[this.recentlyPoses.length - 1];
+    this.currentPosePreviewImageDataUrl = previousPosePreviewImageDataUrl;
+
+    this.searchTargetPose = this.currentPose;
+    this.searchTargetPoseImageDataUrl =
+      this.currentPosePreviewImageDataUrl + '';
+
+    // 検索
+    this.searchPoses();
+
+    return true;
+  }
+
+  private saveSession() {
+    if (environment.production) return;
+
+    let poses: any[] = [];
+    if (this.recentlyPoses.length > 0) {
+      poses = this.recentlyPoses.map((pose) => {
+        let p = JSON.parse(JSON.stringify(pose));
+        p.image = null;
+        return p;
+      });
+    }
+
+    window.sessionStorage.setItem(
+      'deresposePreviousPoses',
+      JSON.stringify(poses),
+    );
+    window.sessionStorage.setItem(
+      'deresposePreviousPosePreviewImageDataUrl',
+      this.currentPosePreviewImageDataUrl!,
+    );
   }
 }

@@ -31,7 +31,7 @@ export class PoseSearchService {
   public static readonly HAND_POSE_SIMILARITY_THRESHOLD = 0.6;
 
   // ポーズの最大数
-  public static readonly MAX_POSE_SEARCH_RESULT_COUNT = 25;
+  public static readonly MAX_POSE_SEARCH_RESULT_COUNT = 50;
 
   public availableTags: string[] = [];
 
@@ -182,6 +182,10 @@ export class PoseSearchService {
     targetPoses: DetectedPose[],
     targetRange: 'all' | 'bodyPose' | 'handPose',
   ): Promise<MatchedPose[]> {
+    console.log(
+      `[PoseSearchService] searchPoseByPose - Searching...`,
+      targetPoses,
+    );
     if (!this.poseSetDefinitions) {
       await this.loadPoseSets();
     }
@@ -247,10 +251,13 @@ export class PoseSearchService {
         if (targetRange === 'all') {
           score =
             ((item.poseItem.bodyPoseSimilarity ?? 0.0) +
-              (item.poseItem.handPoseSimilarity ?? 0.0)) *
-            1.5;
+              (item.poseItem.handPoseSimilarity === undefined ||
+              item.poseItem.handPoseSimilarity === -1
+                ? 0.0
+                : item.poseItem.handPoseSimilarity)) *
+            2;
         } else {
-          score = item.poseItem.similarity * 1.5;
+          score = item.poseItem.similarity * 2;
         }
 
         // スコア算出 - どの撮影タイミングのポーズに一番近いか
