@@ -107,17 +107,25 @@
       }
     }
 
-    .shutter-button-container {
+    .buttons {
       width: 100;
       display: flex;
       justify-content: center;
       align-items: center;
 
+      // シャッターボタン
       .shutter-button {
         width: calc(100% + 0.5rem);
       }
 
-      .shutter-menu-button {
+      // 検索範囲設定ボタン
+      .search-range-menu-button {
+        position: relative;
+        left: 0.5rem;
+      }
+
+      // セルフタイマー設定ボタン
+      .self-timer-menu-button {
         position: relative;
         right: -0.5rem;
       }

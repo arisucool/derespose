@@ -177,7 +177,10 @@ export class PoseSearchService {
     return matchedPoses;
   }
 
-  async searchPoseByPose(targetPoses: DetectedPose[]): Promise<MatchedPose[]> {
+  async searchPoseByPose(
+    targetPoses: DetectedPose[],
+    targetRange: 'all' | 'bodyPose' | 'handPose',
+  ): Promise<MatchedPose[]> {
     if (!this.poseSetDefinitions) {
       await this.loadPoseSets();
     }

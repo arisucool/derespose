@@ -35,9 +35,11 @@
       </ng-container>
     </div>
     <!---->
+
     <!-- シャッターアニメーション用領域 -->
     <div class="shutter" *ngIf="isEnableShutterAnimation"></div>
     <!---->
+
     <!-- カメラ映像領域 -->
     <video
       #cameraVideo
@@ -70,15 +72,16 @@
     <!---->
   </div>
 
-  <!-- 撮影/キャンセルボタン -->
+  <!-- ボタン領域 -->
   <div
-    class="shutter-button-container"
+    class="buttons"
     *ngIf="
       this.state === 'standby' ||
       this.state === 'completed' ||
       this.state === 'countdown'
     "
   >
+    <!-- シャッターボタン -->
     <button
       #shutterButton
       class="shutter-button"
@@ -105,11 +108,58 @@
     >
       &nbsp; キャンセル &nbsp;
     </button>
+    <!---->
 
+    <!-- 検索範囲設定ボタン/メニュー -->
     <button
-      class="shutter-menu-button"
+      class="search-range-menu-button"
       mat-icon-button
       [matMenuTriggerFor]="shutterMenu"
+      aria-label="検索範囲"
+      matTooltip="検索範囲"
+      [disabled]="this.state === 'countdown'"
+    >
+      <mat-icon *ngIf="this.searchPoseRange === 'all'">emoji_people</mat-icon>
+      <mat-icon *ngIf="this.searchPoseRange === 'bodyPose'"
+        >accessibility</mat-icon
+      >
+      <mat-icon *ngIf="this.searchPoseRange === 'handPose'"
+        >sign_language</mat-icon
+      >
+    </button>
+    <mat-menu #shutterMenu="matMenu">
+      <button
+        (click)="this.setSearchPoseRange('all')"
+        mat-menu-item
+        [disabled]="this.searchPoseRange === 'all'"
+      >
+        <mat-icon>emoji_people</mat-icon>
+        <span>身体＋手指でポーズを探す</span>
+      </button>
+      <button
+        (click)="this.setSearchPoseRange('bodyPose')"
+        mat-menu-item
+        [disabled]="this.searchPoseRange === 'bodyPose'"
+      >
+        <mat-icon>accessibility</mat-icon>
+        <span>身体でポーズを探す</span>
+      </button>
+      <button
+        (click)="this.setSearchPoseRange('handPose')"
+        mat-menu-item
+        [disabled]="this.searchPoseRange === 'handPose'"
+      >
+        <mat-icon>sign_language</mat-icon>
+        <span>手指でポーズを探す</span>
+      </button>
+    </mat-menu>
+    <!---->
+
+    <!-- セルフタイマー設定ボタン/メニュー -->
+    <button
+      class="self-timer-menu-button"
+      mat-icon-button
+      [matMenuTriggerFor]="selfTimerMenu"
       aria-label="ポーズ認識までの待ち時間"
       matTooltip="ポーズ認識までの待ち時間"
       [disabled]="this.state === 'countdown'"
@@ -121,7 +171,7 @@
         >timer_10</mat-icon
       >
     </button>
-    <mat-menu #shutterMenu="matMenu">
+    <mat-menu #selfTimerMenu="matMenu">
       <button
         (click)="this.setCountdownSecondsForDecidePose(3)"
         mat-menu-item
@@ -139,6 +189,7 @@
         <span>10秒後にポーズ認識</span>
       </button>
     </mat-menu>
+    <!---->
   </div>
   <!---->
 </div>

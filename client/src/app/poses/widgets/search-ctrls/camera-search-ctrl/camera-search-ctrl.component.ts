@@ -73,6 +73,9 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     | 'completed'
     | 'retrying' = 'initializing';
 
+  // 検索対象とする範囲
+  public searchPoseRange: 'all' | 'bodyPose' | 'handPose' = 'all';
+
   // 撮影までのカウントダウン
   public countdownSecondsForDecidePose: 3 | 10 = 3;
   public countdownRemainSeconds = this.countdownSecondsForDecidePose;
@@ -145,6 +148,7 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     // ポーズを検索
     let matchedPoses = await this.poseSearchService.searchPoseByPose(
       this.recentlyPoses,
+      this.searchPoseRange,
     );
     if (!matchedPoses) {
       matchedPoses = [];
@@ -227,6 +231,10 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
       'deresposeConfig',
       JSON.stringify({ countdownSecondsForDecidePose: seconds }),
     );
+  }
+
+  public setSearchPoseRange(poseRange: 'all' | 'bodyPose' | 'handPose') {
+    this.searchPoseRange = poseRange;
   }
 
   private async initCamera() {
