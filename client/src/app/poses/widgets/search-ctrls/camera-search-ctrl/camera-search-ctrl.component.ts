@@ -202,7 +202,7 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
       this.countdownTimerSubscription?.unsubscribe();
       this.state = 'processing';
       this.isEnableShutterAnimation = true;
-      this.searchPose();
+      this.onCountdownFinished();
     });
   }
 
@@ -235,6 +235,13 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
 
   public setSearchPoseRange(poseRange: 'all' | 'bodyPose' | 'handPose') {
     this.searchPoseRange = poseRange;
+
+    if (this.searchTargetPose) {
+      // すでに検索済みならば、再検索
+      this.searchPoses();
+      // シャッターボタンにフォーカスを当てる
+      this.setFocusToShutterButton();
+    }
   }
 
   private async initCamera() {
@@ -327,7 +334,7 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     }
   }
 
-  private searchPose() {
+  private onCountdownFinished() {
     this.searchTargetPose = this.currentPose;
     this.searchTargetPoseImageDataUrl =
       this.currentPosePreviewImageDataUrl + '';

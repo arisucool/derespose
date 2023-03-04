@@ -110,6 +110,42 @@
     </button>
     <!---->
 
+    <!-- セルフタイマー設定ボタン/メニュー -->
+    <button
+      class="self-timer-menu-button"
+      mat-icon-button
+      [matMenuTriggerFor]="selfTimerMenu"
+      aria-label="ポーズ認識までの待ち時間"
+      matTooltip="ポーズ認識までの待ち時間"
+      [disabled]="this.state === 'countdown'"
+    >
+      <mat-icon *ngIf="this.countdownSecondsForDecidePose === 3"
+        >timer_3</mat-icon
+      >
+      <mat-icon *ngIf="this.countdownSecondsForDecidePose === 10"
+        >timer_10</mat-icon
+      >
+    </button>
+    <mat-menu #selfTimerMenu="matMenu">
+      <button
+        (click)="this.setCountdownSecondsForDecidePose(3)"
+        mat-menu-item
+        [disabled]="this.countdownSecondsForDecidePose === 3"
+      >
+        <mat-icon>timer_3</mat-icon>
+        <span>3秒後にポーズ認識</span>
+      </button>
+      <button
+        (click)="this.setCountdownSecondsForDecidePose(10)"
+        mat-menu-item
+        [disabled]="this.countdownSecondsForDecidePose === 10"
+      >
+        <mat-icon>timer_10</mat-icon>
+        <span>10秒後にポーズ認識</span>
+      </button>
+    </mat-menu>
+    <!---->
+
     <!-- 検索範囲設定ボタン/メニュー -->
     <button
       class="search-range-menu-button"
@@ -151,42 +187,6 @@
       >
         <mat-icon>sign_language</mat-icon>
         <span>手指でポーズを探す</span>
-      </button>
-    </mat-menu>
-    <!---->
-
-    <!-- セルフタイマー設定ボタン/メニュー -->
-    <button
-      class="self-timer-menu-button"
-      mat-icon-button
-      [matMenuTriggerFor]="selfTimerMenu"
-      aria-label="ポーズ認識までの待ち時間"
-      matTooltip="ポーズ認識までの待ち時間"
-      [disabled]="this.state === 'countdown'"
-    >
-      <mat-icon *ngIf="this.countdownSecondsForDecidePose === 3"
-        >timer_3</mat-icon
-      >
-      <mat-icon *ngIf="this.countdownSecondsForDecidePose === 10"
-        >timer_10</mat-icon
-      >
-    </button>
-    <mat-menu #selfTimerMenu="matMenu">
-      <button
-        (click)="this.setCountdownSecondsForDecidePose(3)"
-        mat-menu-item
-        [disabled]="this.countdownSecondsForDecidePose === 3"
-      >
-        <mat-icon>timer_3</mat-icon>
-        <span>3秒後にポーズ認識</span>
-      </button>
-      <button
-        (click)="this.setCountdownSecondsForDecidePose(10)"
-        mat-menu-item
-        [disabled]="this.countdownSecondsForDecidePose === 10"
-      >
-        <mat-icon>timer_10</mat-icon>
-        <span>10秒後にポーズ認識</span>
       </button>
     </mat-menu>
     <!---->

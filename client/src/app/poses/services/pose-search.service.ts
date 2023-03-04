@@ -27,10 +27,11 @@ export class PoseSearchService {
   public static readonly POSESET_CACHE_EXPIRES = 1000 * 60 * 60 * 24 * 14;
 
   // ポーズの類似度のしきい値
-  public static readonly POSE_SIMILARITY_THRESHOLD = 0.85;
+  public static readonly BODY_POSE_SIMILARITY_THRESHOLD = 0.75;
+  public static readonly HAND_POSE_SIMILARITY_THRESHOLD = 0.6;
 
   // ポーズの最大数
-  public static readonly MAX_POSE_COUNT = 10;
+  public static readonly MAX_POSE_SEARCH_RESULT_COUNT = 25;
 
   public availableTags: string[] = [];
 
@@ -213,7 +214,10 @@ export class PoseSearchService {
         try {
           poseItems_ = pose.getSimilarPoses(
             targetPose as any,
-            PoseSearchService.POSE_SIMILARITY_THRESHOLD,
+            targetRange === 'handPose'
+              ? PoseSearchService.HAND_POSE_SIMILARITY_THRESHOLD
+              : PoseSearchService.BODY_POSE_SIMILARITY_THRESHOLD,
+            targetRange,
           ); // TODO 型定義を修正する
         } catch (e) {
           console.error(e);
@@ -239,7 +243,15 @@ export class PoseSearchService {
 
       for (const item of poseItems) {
         // スコア算出 - 類似度
-        let score = item.poseItem.similarity * 1.2;
+        let score: number;
+        if (targetRange === 'all') {
+          score =
+            ((item.poseItem.bodyPoseSimilarity ?? 0.0) +
+              (item.poseItem.handPoseSimilarity ?? 0.0)) *
+            1.5;
+        } else {
+          score = item.poseItem.similarity * 1.5;
+        }
 
         // スコア算出 - どの撮影タイミングのポーズに一番近いか
         score += item.foundTargetPoseIndex * 0.1;
@@ -269,6 +281,8 @@ export class PoseSearchService {
             scoreString: scoreString,
             scoreDetails: {
               similarity: item.poseItem.similarity,
+              bodyPoseSimilarity: item.poseItem.bodyPoseSimilarity,
+              handPoseSimilarity: item.poseItem.handPoseSimilarity,
               foundTargetPoseIndex: item.foundTargetPoseIndex,
               duration: item.poseItem.durationMiliseconds,
               time: item.poseItem.timeMiliseconds,
@@ -285,7 +299,10 @@ export class PoseSearchService {
     });
 
     // 上限まで削る
-    matchedPoses = matchedPoses.slice(0, PoseSearchService.MAX_POSE_COUNT);
+    matchedPoses = matchedPoses.slice(
+      0,
+      PoseSearchService.MAX_POSE_SEARCH_RESULT_COUNT,
+    );
 
     return matchedPoses;
   }
@@ -401,6 +418,8 @@ export class PoseSearchService {
       scoreString: string;
       scoreDetails: {
         similarity: number;
+        bodyPoseSimilarity?: number;
+        handPoseSimilarity?: number;
         foundTargetPoseIndex: number;
         duration: number;
         time: number;
@@ -427,13 +446,13 @@ export class PoseSearchService {
               predictions: poseSetItem.extendedData['faceExp'],
             }
           : undefined,
-      score: 0,
-      scoreString: 'N/A',
-      scoreDetails: {
-        similarity: 0,
-        foundTargetPoseIndex: 0,
-        duration: 0,
-        time: 0,
+      score: score?.score ?? 0,
+      scoreString: score?.scoreString ?? 'N/A',
+      scoreDetails: score?.scoreDetails ?? {
+        similarity: -1,
+        foundTargetPoseIndex: -1,
+        duration: poseSetItem.durationMiliseconds,
+        time: poseSetItem.timeMiliseconds,
       },
       isFavorite: false,
       tags: [], // TODO: タグを取得する
