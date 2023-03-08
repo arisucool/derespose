@@ -10,8 +10,10 @@ async function bootstrap() {
   app.setGlobalPrefix('api');
 
   // Build the OpenAPI document (published under `/api/docs`) with Swagger
-  const doc_options = new DocumentBuilder().setTitle(`API Document`).build();
-  const doc = SwaggerModule.createDocument(app, doc_options);
+  const docBuilder = new DocumentBuilder();
+  docBuilder.setTitle(`API Document`).addBearerAuth();
+  const docConfig = docBuilder.build();
+  const doc = SwaggerModule.createDocument(app, docConfig);
   if (process.env.NODE_ENV && process.env.NODE_ENV === 'development') {
     // Enable Swagger UI for development env
     SwaggerModule.setup('api/docs', app, doc);
