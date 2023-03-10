@@ -25,6 +25,8 @@
     "@fortawesome/angular-fontawesome": "^0.12.1",
     "@fortawesome/fontawesome-svg-core": "^6.3.0",
     "@fortawesome/free-brands-svg-icons": "^6.2.1",
+    "@kvs/indexeddb": "^2.1.3",
+    "@kvs/storage": "^2.1.3",
     "@mediapipe/drawing_utils": "^0.3.1620248257",
     "@mediapipe/holistic": "^0.5.1635989137",
     "@types/uuid": "^9.0.0",

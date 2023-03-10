@@ -5,6 +5,7 @@ import { lastValueFrom } from 'rxjs';
 import { Pose } from 'src/.api-client/models/pose';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { ApiService } from 'src/.api-client/services/api.service';
+import { AppCacheService } from 'src/app/shared/services/app-cache.service';
 import { DetectedPose } from '../interfaces/detected-pose';
 import { MatchedPose } from '../interfaces/matched-pose';
 import { PoseSetDefinition } from '../interfaces/pose-set-definition';
@@ -42,6 +43,7 @@ export class PoseSearchService {
   constructor(
     private apiService: ApiService,
     private poseListsService: PoseListsService,
+    private appCacheService: AppCacheService,
   ) {}
 
   async loadPoseSets() {
@@ -54,7 +56,7 @@ export class PoseSearchService {
       [key: string]: PoseSetDefinitionJson;
     };
 
-    const cache = this.getCachedJson(
+    const cache = await this.appCacheService.getCachedJson(
       'poseSetDefinitions',
       PoseSearchService.POSESET_DEFINITIONS_CACHE_EXPIRES,
     );
@@ -70,7 +72,10 @@ export class PoseSearchService {
       );
       poseSetDefinitionJson = await res.json();
 
-      this.setCachedJson('poseSetDefinitions', poseSetDefinitionJson);
+      await this.appCacheService.setCachedJson(
+        'poseSetDefinitions',
+        poseSetDefinitionJson,
+      );
     }
     console.log(
       `[PoseSearchService] loadPoses - Loaded poseset definitions`,
@@ -483,7 +488,7 @@ export class PoseSearchService {
   private async loadPoseSet(poseSetName: string, expectVersion: number) {
     let poseSet: PoseSet;
     try {
-      let cache = this.getCachedJson(
+      let cache = await this.appCacheService.getCachedJson(
         poseSetName,
         PoseSearchService.POSESET_CACHE_EXPIRES,
       );
@@ -511,7 +516,7 @@ export class PoseSearchService {
         poseSet.loadJson(poseSetJson);
 
         // キャッシュへ保存
-        this.setCachedJson(poseSetName, {
+        this.appCacheService.setCachedJson(poseSetName, {
           version: expectVersion,
           poseSet: JSON.parse(poseSetJson),
         });
@@ -524,45 +529,5 @@ export class PoseSearchService {
       throw e;
     }
     return poseSet;
-  }
-
-  private getCachedJson(key: string, expires?: number) {
-    const cacheStr = window.localStorage.getItem(`cache__${key}`);
-    if (cacheStr === null) return undefined;
-
-    let cache: {
-      content: any;
-      createdAt: number;
-    };
-    try {
-      cache = JSON.parse(cacheStr);
-    } catch (e: any) {
-      return undefined;
-    }
-    if (!cache || !cache.content || !cache.createdAt) {
-      return undefined;
-    }
-
-    const now = new Date().getTime();
-    if (expires !== undefined && expires < now - cache.createdAt) {
-      window.localStorage.removeItem(key);
-      return undefined;
-    }
-
-    return cache['content'];
-  }
-
-  private setCachedJson(key: string, content: any) {
-    const now = new Date().getTime();
-
-    if (typeof content === 'string') {
-      content = JSON.parse(content);
-    }
-
-    const cache = {
-      content: content,
-      createdAt: now,
-    };
-    window.localStorage.setItem(`cache__${key}`, JSON.stringify(cache));
   }
 }
