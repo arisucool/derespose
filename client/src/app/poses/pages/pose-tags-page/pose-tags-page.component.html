@@ -9,7 +9,9 @@
 </ng-container>
 
 <div class="pose-tags">
-  <ng-container *ngIf="this.representivePoses">
+  <ng-container
+    *ngIf="this.representivePoses && this.representivePoses.length > 0"
+  >
     <!-- ポーズタグ (および 代表ポーズ )-->
     <a
       class="pose-tag"

@@ -7,7 +7,7 @@ export class AddPoseToPoseListDto {
   poseSetName: string;
 
   @ApiProperty({
-    description: 'ポーズの時間',
+    description: 'ポーズID',
   })
-  poseTime: number;
+  poseSetItemId: number;
 }

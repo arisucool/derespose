@@ -4,6 +4,7 @@ import {
   Get,
   HttpException,
   Param,
+  ParseIntPipe,
   Post,
 } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
@@ -24,70 +25,55 @@ export class PosesController {
     return this.posesService.getPosesByPoseTag(poseTagName);
   }
 
-  @Get(':poseSetName/:poseTime/pose-tags')
+  @Get(':poseSetName/:poseSetItemId/pose-tags')
   @ApiResponse({
     type: PoseTag,
     isArray: true,
   })
   async getPoseTags(
-    @Param('poseSetName') poseSetName,
-    @Param('poseTime') poseTimeString,
+    @Param('poseSetName') poseSetName: string,
+    @Param('poseSetItemId', ParseIntPipe) poseSetItemId: number,
   ) {
-    const poseTime = parseInt(poseTimeString, 10);
-    if (isNaN(poseTime)) {
-      throw new HttpException('Invalid pose time', 400);
-    }
-
-    const pose = await this.posesService.getPose(poseSetName, poseTime);
+    const pose = await this.posesService.getPose(poseSetName, poseSetItemId);
     if (!pose) {
       return [];
     }
     return pose.tags;
   }
 
-  @Post(':poseSetName/:poseTime/pose-tags/:poseTagName')
+  @Post(':poseSetName/:poseSetItemId/pose-tags/:poseTagName')
   @ApiResponse({
     type: PoseTag,
     isArray: true,
   })
   async addPoseTag(
     @Param('poseSetName') poseSetName: string,
-    @Param('poseTime') poseTimeString: string,
+    @Param('poseSetItemId', ParseIntPipe) poseSetItemId: number,
     @Param('poseTagName') poseTagName: string,
   ) {
-    const poseTime = parseInt(poseTimeString, 10);
-    if (isNaN(poseTime)) {
-      throw new HttpException('Invalid pose time', 400);
-    }
-
-    let pose = await this.posesService.getPose(poseSetName, poseTime);
+    let pose = await this.posesService.getPose(poseSetName, poseSetItemId);
 
     if (!pose) {
-      pose = await this.posesService.registerPose(poseSetName, poseTime);
+      pose = await this.posesService.registerPose(poseSetName, poseSetItemId);
     }
 
     return this.posesService.addPoseTag(pose.id, poseTagName);
   }
 
-  @Delete(':poseSetName/:poseTime/pose-tags/:poseTagName')
+  @Delete(':poseSetName/:poseSetItemId/pose-tags/:poseTagName')
   @ApiResponse({
     type: PoseTag,
     isArray: true,
   })
   async removePoseTag(
     @Param('poseSetName') poseSetName: string,
-    @Param('poseTime') poseTimeString: string,
+    @Param('poseSetItemId', ParseIntPipe) poseSetItemId: number,
     @Param('poseTagName') poseTagName: string,
   ) {
-    const poseTime = parseInt(poseTimeString, 10);
-    if (isNaN(poseTime)) {
-      throw new HttpException('Invalid pose time', 400);
-    }
-
-    let pose = await this.posesService.getPose(poseSetName, poseTime);
+    let pose = await this.posesService.getPose(poseSetName, poseSetItemId);
 
     if (!pose) {
-      pose = await this.posesService.registerPose(poseSetName, poseTime);
+      pose = await this.posesService.registerPose(poseSetName, poseSetItemId);
     }
 
     return this.posesService.removePoseTag(pose.id, poseTagName);

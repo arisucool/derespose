@@ -61,9 +61,9 @@ export class PoseTagsService {
       }
 
       const pose = poseTag.poses[0];
-      const matchedPose = await this.poseSearchService.getByPoseSetNameAndTime(
+      const matchedPose = await this.poseSearchService.getByPoseSetNameAndId(
         pose.poseSetName,
-        pose.time,
+        pose.poseSetItemId,
       );
       if (!matchedPose) continue;
 
@@ -78,13 +78,17 @@ export class PoseTagsService {
     return lastValueFrom(
       this.apiService.poseTagsControllerGetPoseTagsByPoses({
         poses: poses
-          .map((pose) => `${pose.poseSetName}:${pose.time}`)
+          .map((pose) => `${pose.poseSetName}:${pose.poseSetItemId}`)
           .join(','),
       }),
     );
   }
 
-  async addPoseTag(poseSetName: string, poseTime: number, poseTagName: string) {
+  async addPoseTag(
+    poseSetName: string,
+    poseSetItemId: number,
+    poseTagName: string,
+  ) {
     if (this.poseTags === undefined) {
       await this.getPoseTags();
     }
@@ -92,7 +96,7 @@ export class PoseTagsService {
     let poseTags = await lastValueFrom(
       this.apiService.posesControllerAddPoseTag({
         poseSetName: poseSetName,
-        poseTime: poseTime.toString(),
+        poseSetItemId: poseSetItemId,
         poseTagName: poseTagName,
       }),
     );
@@ -112,13 +116,13 @@ export class PoseTagsService {
 
   async removePoseTag(
     poseSetName: string,
-    poseTime: number,
+    poseSetItemId: number,
     poseTagName: string,
   ) {
     return await lastValueFrom(
       this.apiService.posesControllerRemovePoseTag({
         poseSetName: poseSetName,
-        poseTime: poseTime.toString(),
+        poseSetItemId: poseSetItemId,
         poseTagName: poseTagName,
       }),
     );
@@ -136,7 +140,7 @@ export class PoseTagsService {
       const matchedPose = matchedPoses.find((matchedPose: MatchedPose) => {
         return (
           matchedPose.poseSetName === poseWithPoseTags.poseSetName &&
-          matchedPose.time === poseWithPoseTags.time
+          matchedPose.poseSetItemId === poseWithPoseTags.poseSetItemId
         );
       });
       if (!matchedPose) {

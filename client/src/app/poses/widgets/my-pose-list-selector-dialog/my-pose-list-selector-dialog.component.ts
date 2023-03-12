@@ -11,7 +11,7 @@ import { MyPoseListCreateDialogComponent } from '../my-pose-list-create-dialog/m
 
 export interface MyPoseListSelectorDialogData {
   poseSetName: string;
-  poseTime: number;
+  poseSetItemId: number;
   pose: MatchedPose;
 }
 
@@ -74,7 +74,7 @@ export class MyPoseListSelectorDialogComponent implements OnInit, OnDestroy {
       const p = poseList.poses?.find((pose) => {
         if (
           pose.poseSetName === this.data.poseSetName &&
-          pose.time === this.pose?.time
+          pose.poseSetItemId === this.pose?.poseSetItemId
         ) {
           return true;
         }
@@ -102,7 +102,7 @@ export class MyPoseListSelectorDialogComponent implements OnInit, OnDestroy {
       await this.poseListsService.addPoseFromList(
         result.data.poseList.id,
         this.pose?.poseSetName,
-        this.pose?.time,
+        this.pose?.poseSetItemId,
       );
     } catch (e: any) {
       console.error(e);
@@ -137,13 +137,13 @@ export class MyPoseListSelectorDialogComponent implements OnInit, OnDestroy {
         await this.poseListsService.addPoseFromList(
           poseListId,
           this.pose.poseSetName,
-          this.pose.time,
+          this.pose.poseSetItemId,
         );
       } else {
         await this.poseListsService.removePoseFromList(
           poseListId,
           this.pose.poseSetName,
-          this.pose.time,
+          this.pose.poseSetItemId,
         );
       }
     } catch (e: any) {

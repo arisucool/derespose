@@ -1,6 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
-import { CreatePostListDto } from 'src/.api-client/models/create-post-list-dto';
 import { PoseList } from 'src/.api-client/models/pose-list';
 import { UpdatePoseListDto } from 'src/.api-client/models/update-pose-list-dto';
 import { ApiService } from 'src/.api-client/services/api.service';
@@ -61,7 +60,7 @@ export class PoseListsService {
     return poseLists;
   }
 
-  async getPoseListsByPose(poseSetName: string, poseTime: number) {
+  async getPoseListsByPose(poseSetName: string, poseSetItemId: number) {
     if (!this.myPoseLists) {
       await this.getMyPoseLists();
     }
@@ -71,7 +70,10 @@ export class PoseListsService {
     const poseLists: PoseList[] = [];
     for (const poseList of this.myPoseLists) {
       const p = poseList.poses?.find((pose) => {
-        if (pose.poseSetName === poseSetName && pose.time === poseTime) {
+        if (
+          pose.poseSetName === poseSetName &&
+          pose.poseSetItemId === poseSetItemId
+        ) {
           return true;
         }
         return false;
@@ -120,7 +122,7 @@ export class PoseListsService {
   async addPoseFromList(
     poseListId: string,
     poseSetName: string,
-    poseTime: number,
+    poseSetItemId: number,
   ) {
     this.lastAddedPoseListId = poseListId;
 
@@ -129,7 +131,7 @@ export class PoseListsService {
         id: poseListId,
         body: {
           poseSetName: poseSetName,
-          poseTime: poseTime,
+          poseSetItemId: poseSetItemId,
         },
       }),
     );
@@ -148,14 +150,14 @@ export class PoseListsService {
   async removePoseFromList(
     poseListId: string,
     poseSetName: string,
-    poseTime: number,
+    poseSetItemId: number,
   ) {
     const poseList = await lastValueFrom(
       this.apiService.poseListsControllerRemovePoseFromPoseList({
         id: poseListId,
         body: {
           poseSetName: poseSetName,
-          poseTime: poseTime,
+          poseSetItemId: poseSetItemId,
         },
       }),
     );
@@ -175,7 +177,7 @@ export class PoseListsService {
     let poseIdentifiers: string[] = [];
     if (poseList.poses) {
       poseIdentifiers = poseList.poses?.map((pose) => {
-        return `${pose.poseSetName}:${pose.time}`;
+        return `${pose.poseSetName}:${pose.poseSetItemId}`;
       });
     }
 

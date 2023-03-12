@@ -149,7 +149,10 @@ export class PoseListSearchCtrlComponent implements OnInit {
         poseSetDefinitions[a.poseSetName]?.orderInType ?? 0;
       const orderOfPoseSetOfPoseB =
         poseSetDefinitions[b.poseSetName]?.orderInType ?? 0;
-      return orderOfPoseSetOfPoseA - orderOfPoseSetOfPoseB || a.time - b.time;
+      return (
+        orderOfPoseSetOfPoseA - orderOfPoseSetOfPoseB ||
+        a.timeSeconds - b.timeSeconds
+      );
     });
 
     // 各ポーズのタグを取得

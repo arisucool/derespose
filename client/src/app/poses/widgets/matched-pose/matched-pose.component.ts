@@ -101,7 +101,7 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
     // 当該ポーズの属するポーズリストを取得
     this.addedPoseLists = await this.poseListsService.getPoseListsByPose(
       this.pose.poseSetName,
-      this.pose.time,
+      this.pose.poseSetItemId,
     );
   }
 
@@ -144,7 +144,7 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
     const data: MyPoseListSelectorDialogData = {
       pose: this.pose,
       poseSetName: this.pose.poseSetName,
-      poseTime: this.pose.time,
+      poseSetItemId: this.pose.poseSetItemId,
     };
 
     this.matDialog.open(MyPoseListSelectorDialogComponent, {
@@ -198,7 +198,7 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
 
     await this.poseTagsService.removePoseTag(
       this.pose.poseSetName,
-      this.pose.time,
+      this.pose.poseSetItemId,
       tagName,
     );
 
@@ -226,7 +226,7 @@ export class MatchedPoseComponent implements OnInit, OnDestroy {
     try {
       await this.poseTagsService.addPoseTag(
         this.pose.poseSetName,
-        this.pose.time,
+        this.pose.poseSetItemId,
         tagName,
       );
       message.dismiss();

@@ -48,12 +48,12 @@ export class PoseTagsService {
   }
 
   async getPosesWithPoseTags(
-    requestedPoses: { poseSetName: string; poseTime: number }[],
+    requestedPoses: { poseSetName: string; poseSetItemId: number }[],
   ): Promise<Pose[]> {
     const wheres = requestedPoses.map((pose) => {
       return {
         poseSetName: pose.poseSetName,
-        time: pose.poseTime,
+        poseSetItemId: pose.poseSetItemId,
       };
     });
 

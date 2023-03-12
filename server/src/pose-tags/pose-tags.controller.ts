@@ -37,13 +37,13 @@ export class PoseTagsController {
       throw new HttpException('Invalid pose identifier', 400);
     }
 
-    const requestedPoses: { poseSetName: string; poseTime: number }[] = [];
+    const requestedPoses: { poseSetName: string; poseSetItemId: number }[] = [];
     const poseIdentifiers = poseIdentifier.split(',');
     for (const poseIdentifier of poseIdentifiers) {
-      const [poseSetName, poseTime] = poseIdentifier.split(':');
+      const [poseSetName, poseId] = poseIdentifier.split(':');
       requestedPoses.push({
         poseSetName: poseSetName,
-        poseTime: Number(poseTime),
+        poseSetItemId: Number(poseId),
       });
     }
 

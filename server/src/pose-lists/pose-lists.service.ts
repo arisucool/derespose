@@ -170,7 +170,7 @@ export class PoseListsService {
   ): Promise<PoseList> {
     const pose = await this.posesService.getPose(
       dto.poseSetName,
-      dto.poseTime,
+      dto.poseSetItemId,
       true,
     );
 
@@ -202,7 +202,7 @@ export class PoseListsService {
   ): Promise<PoseList> {
     const pose = await this.posesService.getPose(
       dto.poseSetName,
-      dto.poseTime,
+      dto.poseSetItemId,
       true,
     );
 
@@ -279,16 +279,20 @@ export class PoseListsService {
     });
   }
 
-  private async getPoseByPoseIdentifiers(poseIdentifiers: string[]) {
+  private async getPoseByPoseIdentifiers(poseSetItemIdentifiers: string[]) {
     const poses = [];
-    for (const poseIdentifier of poseIdentifiers) {
-      const arr = poseIdentifier.split(/:/);
+    for (const poseSetItemIdentifier of poseSetItemIdentifiers) {
+      const arr = poseSetItemIdentifier.split(/:/);
       if (arr.length !== 2) {
         continue;
       }
       const poseSetName = arr[0];
-      const poseTime = parseInt(arr[1], 10);
-      const pose = await this.posesService.getPose(poseSetName, poseTime, true);
+      const poseSetItemId = parseInt(arr[1], 10);
+      const pose = await this.posesService.getPose(
+        poseSetName,
+        poseSetItemId,
+        true,
+      );
       if (!pose) continue;
       poses.push(pose);
     }

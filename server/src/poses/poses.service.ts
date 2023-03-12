@@ -19,18 +19,18 @@ export class PosesService {
 
   async getPose(
     poseSetName: string,
-    poseTime: number,
+    poseSetItemId: number,
     shouldCreate = false,
   ): Promise<Pose> {
     let pose = await this.poseRepository.findOne({
       where: {
         poseSetName: poseSetName,
-        time: poseTime,
+        poseSetItemId: poseSetItemId,
       },
     });
 
     if (!pose && shouldCreate) {
-      pose = await this.registerPose(poseSetName, poseTime);
+      pose = await this.registerPose(poseSetName, poseSetItemId);
     }
 
     return pose;
@@ -47,21 +47,24 @@ export class PosesService {
     });
   }
 
-  registerPose(poseSetName: string, poseTime: number): Promise<Pose> {
+  registerPose(poseSetName: string, poseSetItemId: number): Promise<Pose> {
     return this.poseRepository.save({
       poseSetName: poseSetName,
-      time: poseTime,
+      poseSetItemId: poseSetItemId,
     });
   }
 
-  async addPoseTag(poseId: number, poseTagName: string): Promise<PoseTag[]> {
+  async addPoseTag(
+    poseSetItemId: number,
+    poseTagName: string,
+  ): Promise<PoseTag[]> {
     if (await this.poseTagsService.isBlockedPoseTag(poseTagName)) {
       throw new HttpException('このタグ名は使用できません', 400);
     }
 
     const pose = await this.poseRepository.findOne({
       where: {
-        id: poseId,
+        id: poseSetItemId,
       },
       relations: ['tags'],
     });
@@ -81,10 +84,10 @@ export class PosesService {
     return pose.tags;
   }
 
-  async removePoseTag(poseId: number, poseTagName: any) {
+  async removePoseTag(poseSetItemId: number, poseTagName: any) {
     const pose = await this.poseRepository.findOne({
       where: {
-        id: poseId,
+        id: poseSetItemId,
       },
       relations: ['tags'],
     });

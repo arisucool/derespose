@@ -21,10 +21,10 @@ export class Pose extends BaseEntity {
   @ApiProperty()
   poseSetName: string;
 
-  // ポーズの時間
+  // ポーズセット内のID
   @Column()
   @ApiProperty()
-  time: number;
+  poseSetItemId: number;
 
   // タグ
   @ManyToMany(() => PoseTag, (poseTag) => poseTag.poses)

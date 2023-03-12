@@ -168,7 +168,7 @@ export class PoseSearchService {
       const poseSet = await this.getPoseSetDefinition(pose.poseSetName);
       if (!poseSet) continue;
 
-      const poseSetItem = poseSet.poseSet.getPoseByTime(pose.time);
+      const poseSetItem = poseSet.poseSet.getPoseById(pose.poseSetItemId);
       if (!poseSetItem) continue;
 
       // 整形して配列へ追加
@@ -334,9 +334,9 @@ export class PoseSearchService {
 
     let matchedPoses: MatchedPose[] = [];
     for (const receivedPose of receivedPoses) {
-      const poseSetItem = this.getPoseSetItemByPoseSetNameAndTime(
+      const poseSetItem = this.getPoseSetItemByPoseSetNameAndId(
         receivedPose.poseSetName,
-        receivedPose.time,
+        receivedPose.poseSetItemId,
       );
       if (!poseSetItem) continue;
 
@@ -393,10 +393,7 @@ export class PoseSearchService {
     return matchedPoses;
   }
 
-  async getByPoseSetNameAndTime(
-    poseSetName: string,
-    timeMiliseconds: number,
-  ): Promise<MatchedPose | undefined> {
+  async getByPoseSetNameAndId(poseSetName: string, poseSetItemId: number) {
     const poseSetDefinition = await this.getPoseSetDefinition(poseSetName);
     if (!poseSetDefinition) {
       throw new Error(`PoseSet not found: ${poseSetName}`);
@@ -404,9 +401,9 @@ export class PoseSearchService {
 
     const title = poseSetDefinition.title;
 
-    const poseSetItem = this.getPoseSetItemByPoseSetNameAndTime(
+    const poseSetItem = this.getPoseSetItemByPoseSetNameAndId(
       poseSetName,
-      timeMiliseconds,
+      poseSetItemId,
     );
     if (!poseSetItem) {
       return;
@@ -439,10 +436,10 @@ export class PoseSearchService {
     },
   ): MatchedPose {
     return {
-      id: poseSetItem.timeMiliseconds,
+      id: poseSetItem.id,
       title: poseSetTitle,
       poseSetName: poseSetName,
-      time: poseSetItem.timeMiliseconds,
+      poseSetItemId: poseSetItem.id,
       timeSeconds: Math.floor(poseSetItem.timeMiliseconds / 1000),
       durationSeconds:
         Math.floor((poseSetItem.durationMiliseconds / 1000) * 10) / 10,
@@ -468,20 +465,20 @@ export class PoseSearchService {
       },
       isFavorite: false,
       tags: [], // TODO: タグを取得する
-      imageUrl: `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/frame-${poseSetItem.timeMiliseconds}.webp`,
+      imageUrl: `${PoseSearchService.POSESET_BASE_URL}${poseSetName}/frame-${poseSetItem.id}.webp`,
     };
   }
 
-  private getPoseSetItemByPoseSetNameAndTime(
+  private getPoseSetItemByPoseSetNameAndId(
     poseSetName: string,
-    timeMiliseconds: number,
+    poseSetItemId: number,
   ) {
     if (!this.poseSetDefinitions) return;
 
     const poseSet = this.poseSetDefinitions[poseSetName];
     if (!poseSet) return;
 
-    const pose = poseSet.poseSet.getPoseByTime(timeMiliseconds);
+    const pose = poseSet.poseSet.getPoseById(poseSetItemId);
     return pose;
   }
 
