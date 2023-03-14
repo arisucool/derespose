@@ -85,9 +85,9 @@ img.pose-image {
 // ポーズカード > タグ
 
 .pose-tags {
-  background-color: #808080bb;
+  background-color: #fefefebb;
   backdrop-filter: blur(8px);
-  color: #ffffff;
+  color: #505050;
   position: absolute;
   bottom: 0;
   width: 100%;
@@ -95,18 +95,22 @@ img.pose-image {
   padding: 0 0 0 0;
 
   &.empty-tags:not(.opened) {
-    background-color: #ffffffbb;
+    background-color: #808080bb;
     .tag-toggle-button {
-      color: #888888;
+      color: #fafafa;
     }
   }
 
   &.opened {
     background-color: #777777bb;
+    color: #ffffff;
+    .tag-toggle-button {
+      color: #ffffff;
+    }
   }
 
   .tag-toggle-button {
-    color: #fefefe;
+    color: #505050;
     cursor: pointer;
     font-size: 0.8rem;
     width: 100%;
