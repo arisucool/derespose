@@ -13,6 +13,7 @@
 mat-toolbar {
   border-top: 5px solid #bedbfd;
   background-color: white;
+  font-family: 'M PLUS 1p', sans-serif;
   position: relative;
 
   a {
@@ -26,7 +27,6 @@ mat-toolbar {
   }
 
   .app-title {
-    font-family: 'M PLUS 1p', sans-serif;
     font-weight: lighter;
     margin-left: 1rem;
   }

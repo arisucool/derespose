@@ -24,6 +24,7 @@ $app-theme: mat.define-light-theme(
 );
 
 @include mat.all-component-themes($app-theme);
+@include mat.typography-hierarchy($app-theme);
 
 html,
 body {

@@ -48,6 +48,12 @@ export class AuthService {
     try {
       user = await lastValueFrom(this.apiService.usersControllerGetMe());
     } catch (e: any) {
+      if (e.status === 401) {
+        this.currentUser = undefined;
+        this.clearAccessToken();
+        this.currentUserSource.next(undefined);
+        return undefined;
+      }
       console.error(`Error getting current user: ${e.message}`);
     }
 
@@ -70,6 +76,10 @@ export class AuthService {
   getAccessToken(): string | null {
     const accessToken = window.localStorage.getItem('deresposeToken');
     return accessToken;
+  }
+
+  clearAccessToken() {
+    window.localStorage.removeItem('deresposeToken');
   }
 
   async logout() {
