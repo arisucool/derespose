@@ -4,7 +4,8 @@ export type PoseFaceExpression =
   | 'smile'
   | 'blush'
   | 'surprise'
-  | 'others';
+  | 'others'
+  | 'unknown';
 
 export interface PoseSearchFilter {
   faceExpression: PoseFaceExpression;

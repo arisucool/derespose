@@ -1,17 +1,21 @@
 <p>
-  <mat-form-field appearance="outline">
+  <mat-form-field
+    appearance="outline"
+    matTooltip="表情により絞り込みます。α版のため、分類に失敗している場合がまだまだあります。ご了承ください。"
+  >
     <mat-label>
       <mat-icon
         style="margin-bottom: 4px; vertical-align: middle; margin-right: 1rem"
         >mood</mat-icon
       >
-      表情
+      表情 (α版)
     </mat-label>
     <mat-select [(ngModel)]="faceExpression" (ngModelChange)="this.onChanged()">
       <mat-option value="all">すべて</mat-option>
       <mat-option *ngFor="let exp of this.faceExpressions" [value]="exp.value">
         {{ exp.label }}
       </mat-option>
+      <!--<mat-option value="unknown">分類失敗</mat-option>-->
     </mat-select>
   </mat-form-field>
 </p>

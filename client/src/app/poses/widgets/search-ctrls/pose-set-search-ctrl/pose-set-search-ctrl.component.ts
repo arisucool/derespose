@@ -76,7 +76,11 @@ export class PoseSetSearchCtrlComponent implements OnInit {
 
     // ポーズをフィルタ
     if (this.poseSearchFilter !== undefined) {
-      if ((this, this.poseSearchFilter.faceExpression !== 'all')) {
+      if (this.poseSearchFilter.faceExpression === 'unknown') {
+        matchedPoses = matchedPoses.filter((matchedPose) => {
+          return !matchedPose.faceExpression;
+        });
+      } else if (this.poseSearchFilter.faceExpression !== 'all') {
         matchedPoses = matchedPoses.filter((matchedPose) => {
           return (
             matchedPose.faceExpression &&
