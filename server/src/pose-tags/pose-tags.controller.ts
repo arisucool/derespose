@@ -1,6 +1,14 @@
-import { Controller, Get, HttpException, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  HttpException,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { Pose } from 'src/poses/entities/pose.entity';
+import { GetPoseTagsByPosesDto } from './dtos/get-pose-tags-by-poses.dto';
 import { PoseTag } from './entities/pose-tag.entity';
 import { PoseTagsService } from './pose-tags.service';
 
@@ -26,20 +34,18 @@ export class PoseTagsController {
     return this.poseTagsService.getPoseTags(isIncludeRepresentivePoses);
   }
 
-  @Get('by-poses/:poses')
+  @Post('by-poses')
   @ApiOkResponse({
     type: Pose,
     description: 'タグ付けされたポーズのリスト',
     isArray: true,
   })
-  getPoseTagsByPoses(@Param('poses') poseIdentifier: string): Promise<Pose[]> {
-    if (!poseIdentifier) {
-      throw new HttpException('Invalid pose identifier', 400);
-    }
-
+  getPoseTagsByPoses(@Body() dto: GetPoseTagsByPosesDto): Promise<Pose[]> {
     const requestedPoses: { poseSetName: string; poseSetItemId: number }[] = [];
-    const poseIdentifiers = poseIdentifier.split(',');
-    for (const poseIdentifier of poseIdentifiers) {
+    if (!dto.poseIdentifiers) {
+      throw new HttpException('poseIdentifiers is required', 400);
+    }
+    for (const poseIdentifier of dto.poseIdentifiers) {
       const [poseSetName, poseId] = poseIdentifier.split(':');
       requestedPoses.push({
         poseSetName: poseSetName,

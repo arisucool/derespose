@@ -77,9 +77,11 @@ export class PoseTagsService {
   async getPosesWithPoseTags(poses: MatchedPose[]) {
     return lastValueFrom(
       this.apiService.poseTagsControllerGetPoseTagsByPoses({
-        poses: poses
-          .map((pose) => `${pose.poseSetName}:${pose.poseSetItemId}`)
-          .join(','),
+        body: {
+          poseIdentifiers: poses.map((pose) => {
+            return `${pose.poseSetName}:${pose.poseSetItemId}`;
+          }),
+        },
       }),
     );
   }
