@@ -17,6 +17,7 @@
       mat-icon-button
       [ngClass]="{ favorite: pose.isFavorite }"
       (click)="onFavoriteButtonClicked()"
+      matTooltip="このポーズをマイリストへ追加"
     >
       <mat-icon
         *ngIf="!pose?.isFavorite"

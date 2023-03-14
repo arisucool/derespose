@@ -1,4 +1,4 @@
-<h1 mat-dialog-title>ポーズリストへ追加...</h1>
+<h1 mat-dialog-title>マイリストへ追加...</h1>
 <mat-dialog-content>
   <!-- ログインしているとき -->
   <ng-container *ngIf="isLoggedIn">
@@ -20,10 +20,11 @@
   <!-- ログインしていないとき -->
   <ng-container *ngIf="!isLoggedIn">
     <p>
-      ポーズリストを作成するには、Twitter アカウントによるログインが必要です。
+      見つけたポーズをマイリストに追加して、まとめることで、<br />
+      お出かけ先で確認したり、他のユーザに共有したりできます。
     </p>
     <p>
-      ポーズをリストにまとめて、お出かけ先で確認したり、他のユーザに共有したり。<br />
+      この機能を使うには、Twitter アカウントによるログインが必要です。<br />
       <a href="/auth/login" target="_blank" style="font-size: 0.8rem"
         >できることについて詳しくはこちら</a
       >

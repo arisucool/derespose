@@ -249,7 +249,7 @@ export class PoseListSearchCtrlComponent implements OnInit {
     });
     this.isRequestingUpdatePoseList = false;
 
-    // マイポーズ一覧へ遷移
+    // マイリスト一覧へ遷移
     this.router.navigate(['/poses/pose-lists'], {
       queryParams: {
         userId: 'me',

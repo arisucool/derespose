@@ -3,7 +3,6 @@ import { MatDialog, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { lastValueFrom, Subscription } from 'rxjs';
 import { PoseList } from 'src/.api-client/models/pose-list';
-import { User } from 'src/.api-client/models/user';
 import { AuthService } from 'src/app/auth/services/auth.service';
 import { MatchedPose } from 'src/app/poses/interfaces/matched-pose';
 import { PoseListsService } from '../../services/pose-lists.service';
