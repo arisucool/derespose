@@ -97,6 +97,10 @@
 }
 
 @media screen and (max-width: 799px) {
+  :host {
+    padding: 0 0.2rem 0 0.2rem;
+  }
+
   .container {
     flex-direction: column;
 
@@ -118,10 +122,6 @@
 
     .matched-poses-container {
       width: 100%;
-
-      .layout-adjustment-item {
-        display: none;
-      }
     }
   }
 
