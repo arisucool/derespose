@@ -13,6 +13,15 @@
   }
 }
 
+@keyframes blinker {
+  30% {
+    opacity: 0.8;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
 :host {
   display: flex;
   flex-direction: column;
@@ -90,6 +99,7 @@
           background-color: white;
           font-size: 0.8rem;
           color: black;
+          animation: blinker 1.5s ease-in-out infinite;
         }
 
         mat-icon {
