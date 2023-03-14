@@ -31,12 +31,22 @@
 
   <img class="pose-image" [src]="pose.imageUrl" />
 
-  <div class="pose-tags">
+  <div
+    class="pose-tags"
+    [ngClass]="{
+      'empty-tags': !pose.tags || pose.tags.length === 0,
+      opened: isShowingTagEditForm
+    }"
+  >
     <!-- タグのトグルボタン -->
     <div
       class="tag-toggle-button"
       (click)="isShowingTagEditForm = !isShowingTagEditForm"
-      [ngClass]="{ 'empty-tags': !pose.tags || pose.tags.length === 0 }"
+      [matTooltip]="
+        !isShowingTagEditForm && pose.tags?.length === 0
+          ? 'このポーズに意味を見つけたときは、タグの付与にご協力ください'
+          : ''
+      "
     >
       <ng-container *ngIf="isShowingTagEditForm">
         <mat-icon style="line-height: 2rem">expand_more</mat-icon>

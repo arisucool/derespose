@@ -1,6 +1,6 @@
 :host {
   display: block;
-  //padding: 1rem 1rem;
+  padding: 1rem 1rem;
 }
 
 // ポーズカード
@@ -85,26 +85,33 @@ img.pose-image {
 // ポーズカード > タグ
 
 .pose-tags {
-  background-color: #777777aa;
+  background-color: #808080bb;
   backdrop-filter: blur(8px);
-  color: #fefefe;
+  color: #ffffff;
   position: absolute;
   bottom: 0;
   width: 100%;
   min-height: 2.5rem;
   padding: 0 0 0 0;
 
+  &.empty-tags:not(.opened) {
+    background-color: #ffffffbb;
+    .tag-toggle-button {
+      color: #888888;
+    }
+  }
+
+  &.opened {
+    background-color: #777777bb;
+  }
+
   .tag-toggle-button {
-    color: #eeeeee;
+    color: #fefefe;
     cursor: pointer;
     font-size: 0.8rem;
     width: 100%;
     line-height: 2.5rem;
     text-align: center;
-
-    &.empty-tags {
-      color: #ffffff;
-    }
   }
 
   .tag-toggle-button:hover {
@@ -138,6 +145,11 @@ img.pose-image {
 // モバイル対応
 
 @media screen and (max-width: 799px) {
+  // コンテナ
+  :host {
+    padding: 0 0 0 0;
+  }
+
   // ポーズカード
 
   .container.app-card {
