@@ -15,7 +15,10 @@ $app-theme: mat.define-light-theme(
       accent: $app-accent,
       warn: $app-warn,
     ),
-    typography: mat.define-typography-config(),
+    typography:
+      mat.define-typography-config(
+        $font-family: 'M PLUS 1p',
+      ),
     density: 0,
   )
 );
@@ -28,5 +31,5 @@ body {
 }
 body {
   margin: 0;
-  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  font-family: 'M PLUS 1p', 'Helvetica Neue', sans-serif !important;
 }

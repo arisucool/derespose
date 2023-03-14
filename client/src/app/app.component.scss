@@ -26,6 +26,7 @@ mat-toolbar {
   }
 
   .app-title {
+    font-family: 'M PLUS 1p', sans-serif;
     font-weight: lighter;
     margin-left: 1rem;
   }
@@ -87,6 +88,7 @@ mat-toolbar {
 // フッタ
 
 footer {
+  font-family: 'M PLUS 1p', 'Noto Color Emoji', sans-serif;
   margin-top: auto;
   position: relative;
   bottom: 0.5rem;
