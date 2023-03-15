@@ -1,3 +1,10 @@
+// テキストの改行
+
+.wbr {
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+
 // 見出し
 
 h3 {

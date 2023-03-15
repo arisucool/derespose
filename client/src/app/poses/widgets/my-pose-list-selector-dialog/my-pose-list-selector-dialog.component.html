@@ -1,4 +1,9 @@
-<h1 mat-dialog-title>マイリストへ追加...</h1>
+<h1 mat-dialog-title>
+  <ng-container *ngIf="!isLoggedIn"
+    >見つけたポーズを<wbr />マイリストでまとめましょう
+  </ng-container>
+  <ng-container *ngIf="isLoggedIn">マイリストに追加...</ng-container>
+</h1>
 <mat-dialog-content>
   <!-- ログインしているとき -->
   <ng-container *ngIf="isLoggedIn">
@@ -20,14 +25,14 @@
   <!-- ログインしていないとき -->
   <ng-container *ngIf="!isLoggedIn">
     <p>
-      見つけたポーズをマイリストに追加して、まとめることで、<br />
-      お出かけ先で確認したり、他のユーザに共有したりできます。
+      ポーズをまとめて、外出先で確認したり、<wbr />他のPさんに共有したりできます。
     </p>
     <p>
-      この機能を使うには、Twitter アカウントによるログインが必要です。<br />
+      この機能を使うには<wbr />Twitterアカウントでログインが必要です<br />
       <a href="/auth/login" target="_blank" style="font-size: 0.8rem"
-        >できることについて詳しくはこちら</a
+        >詳しくはこちら</a
       >
+      &nbsp;&nbsp;
     </p>
     <p style="text-align: right; padding-bottom: 0">
       <app-login-form [openWithNewWindow]="true"></app-login-form>
