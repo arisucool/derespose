@@ -1,4 +1,5 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { firstValueFrom, lastValueFrom } from 'rxjs';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { ApiService } from 'src/.api-client/services/api.service';
@@ -18,6 +19,7 @@ export class PoseTagsService {
   constructor(
     private apiService: ApiService,
     private poseSearchService: PoseSearchService,
+    private snackBar: MatSnackBar,
   ) {}
 
   async getPoseTags(): Promise<PoseTag[]> {

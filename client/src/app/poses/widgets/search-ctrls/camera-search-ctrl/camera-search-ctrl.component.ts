@@ -18,6 +18,7 @@ import { OnPoseSearchCompleted } from 'src/app/poses/interfaces/pose-search-even
 import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
 import { environment } from '../../../../../environments/environment';
+import { MatchedPose } from 'src/app/poses/interfaces/matched-pose';
 
 @Component({
   selector: 'app-camera-search-ctrl',
@@ -150,10 +151,18 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     await lastValueFrom(timer(100));
 
     // ポーズを検索
-    let matchedPoses = await this.poseSearchService.searchPoseByPose(
-      this.recentlyPoses,
-      this.searchPoseRange,
-    );
+    let matchedPoses: MatchedPose[] = [];
+    try {
+      matchedPoses = await this.poseSearchService.searchPoseByPose(
+        this.recentlyPoses,
+        this.searchPoseRange,
+      );
+    } catch (e) {
+      console.error(e);
+      this.snackBar.open('エラー: ポーズの検索に失敗しました', 'OK');
+      return;
+    }
+
     if (!matchedPoses) {
       matchedPoses = [];
     }
@@ -165,7 +174,18 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     }
 
     // 各ポーズのタグを取得
-    matchedPoses = await this.poseTagsService.setTagsToPoses(matchedPoses);
+    try {
+      matchedPoses = await this.poseTagsService.setTagsToPoses(matchedPoses);
+    } catch (e) {
+      console.error(e);
+      const message = this.snackBar.open(
+        'エラー: タグの取得に失敗しました',
+        '再試行',
+      );
+      message.onAction().subscribe(() => {
+        this.searchPoses();
+      });
+    }
 
     console.log(`[CameraSearchCtrl] searchPoses - Found`, matchedPoses);
 

@@ -42,10 +42,10 @@ export class PoseSetSearchCtrlComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.poseSearch();
+    this.searchPoses();
   }
 
-  async poseSearch() {
+  async searchPoses() {
     console.log(`[PoseSetSearchCtrl] poseSearch`, this.poseSetName);
     if (this.poseSetName === undefined) {
       return;
@@ -60,19 +60,26 @@ export class PoseSetSearchCtrlComponent implements OnInit {
       this.poseSetName,
     );
 
-    // ポーズを検索
+    // ポーズおよびタグを検索
     let matchedPoses: MatchedPose[] = [];
     try {
+      // ポーズを検索
       matchedPoses = await this.poseSearchService.getPosesByPoseSetName(
         this.poseSetName,
       );
+      // 各ポーズのタグを取得
+      matchedPoses = await this.poseTagsService.setTagsToPoses(matchedPoses);
     } catch (e: any) {
-      this.snackBar.open('エラー: ポーズの取得に失敗しました', 'OK');
       console.error(e);
+      const message = this.snackBar.open(
+        'エラー: ポーズの検索に失敗しました',
+        '再試行',
+      );
+      message.onAction().subscribe(() => {
+        this.searchPoses();
+      });
+      return;
     }
-
-    // 各ポーズのタグを取得
-    matchedPoses = await this.poseTagsService.setTagsToPoses(matchedPoses);
 
     // ポーズをフィルタ
     if (this.poseSearchFilter !== undefined) {
@@ -99,6 +106,6 @@ export class PoseSetSearchCtrlComponent implements OnInit {
 
   public onFilterChanged(event: PoseSearchFilter) {
     this.poseSearchFilter = event;
-    this.poseSearch();
+    this.searchPoses();
   }
 }

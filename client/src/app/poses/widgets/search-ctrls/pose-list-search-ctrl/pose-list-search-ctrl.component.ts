@@ -66,10 +66,10 @@ export class PoseListSearchCtrlComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.poseSearch();
+    this.searchPoses();
   }
 
-  async poseSearch() {
+  async searchPoses() {
     console.log(`[PoseListSearchCtrl] poseSearch`, this.poseListId);
     if (this.poseListId === undefined) {
       return;
@@ -127,36 +127,43 @@ export class PoseListSearchCtrlComponent implements OnInit {
       `https://twitter.com/intent/tweet?${tweetUrlParams.toString()}`,
     );
 
-    // ポーズを検索
+    // ポーズおよびタグを検索
     let matchedPoses: MatchedPose[] = [];
     try {
+      // ポーズを検索
       matchedPoses = await this.poseSearchService.getPosesByPoseListId(
         this.poseListId,
       );
+
+      // ポーズセットのリストを取得
+      const poseSetDefinitions =
+        (await this.poseSearchService.getPoseSetDefinitions()) || {};
+
+      // ポーズリストのポーズをソート
+      matchedPoses = matchedPoses.sort((a, b) => {
+        // ポーズセットの順序 ＆ ポーズのタイミングでソート
+        const orderOfPoseSetOfPoseA =
+          poseSetDefinitions[a.poseSetName]?.orderInType ?? 0;
+        const orderOfPoseSetOfPoseB =
+          poseSetDefinitions[b.poseSetName]?.orderInType ?? 0;
+        return (
+          orderOfPoseSetOfPoseA - orderOfPoseSetOfPoseB ||
+          a.timeSeconds - b.timeSeconds
+        );
+      });
+
+      // 各ポーズのタグを取得
+      matchedPoses = await this.poseTagsService.setTagsToPoses(matchedPoses);
     } catch (e: any) {
-      this.snackBar.open('エラー: ポーズの取得に失敗しました', 'OK');
       console.error(e);
-    }
-
-    // ポーズセットのリストを取得
-    const poseSetDefinitions =
-      (await this.poseSearchService.getPoseSetDefinitions()) || {};
-
-    // ポーズリストのポーズをソート
-    matchedPoses = matchedPoses.sort((a, b) => {
-      // ポーズセットの順序 ＆ ポーズのタイミングでソート
-      const orderOfPoseSetOfPoseA =
-        poseSetDefinitions[a.poseSetName]?.orderInType ?? 0;
-      const orderOfPoseSetOfPoseB =
-        poseSetDefinitions[b.poseSetName]?.orderInType ?? 0;
-      return (
-        orderOfPoseSetOfPoseA - orderOfPoseSetOfPoseB ||
-        a.timeSeconds - b.timeSeconds
+      const message = this.snackBar.open(
+        'エラー: ポーズの検索に失敗しました',
+        '再試行',
       );
-    });
-
-    // 各ポーズのタグを取得
-    matchedPoses = await this.poseTagsService.setTagsToPoses(matchedPoses);
+      message.onAction().subscribe(() => {
+        this.searchPoses();
+      });
+    }
 
     // 完了
     this.onPoseSearchCompleted.emit({
