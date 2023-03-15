@@ -2,15 +2,23 @@ import {
   Controller,
   Get,
   HttpException,
+  Post,
   Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiHeader,
+  ApiProduces,
+  ApiResponse,
+  ApiResponseProperty,
+} from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthService } from './auth.service';
 import { Session } from './entities/session.entity';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { RefreshTokenAuthGuard } from './guards/refresh-token-auth.guard';
 import { TwitterAuthGuard } from './guards/twitter-auth.guard';
 
 @Controller('auth')
@@ -32,8 +40,32 @@ export class AuthController {
       throw new HttpException('Session is not found', 401);
     }
 
-    const jwt = this.authService.generateJwt(session);
-    res.redirect(`/auth/callback?token=${jwt.access_token}`);
+    // JWT によるアクセストークンおよびリフレッシュトークンを生成してクライアントへ返す
+    // (クライアント側では AuthPageComponent が処理する)
+    const accessToken = this.authService.generateAccessToken(session);
+    res.redirect(
+      `/auth/callback?accessToken=${accessToken}&refreshToken=${session.refreshToken}`,
+    );
+  }
+
+  @UseGuards(RefreshTokenAuthGuard)
+  @Post('refreshToken')
+  @ApiProduces(`text/plain`)
+  @ApiHeader({
+    name: 'X-Refresh-Token',
+    description: 'リフレッシュトークン',
+  })
+  @ApiResponse({
+    type: String,
+  })
+  refreshToken(@Req() req: any) {
+    const session: Session = req.user;
+    if (!session) {
+      throw new HttpException('Session is not found', 401);
+    }
+
+    // JWT によるアクセストークンを生成してクライアントへ返す
+    return this.authService.generateAccessToken(session);
   }
 
   @UseGuards(JwtAuthGuard)

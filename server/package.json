@@ -28,8 +28,10 @@
     "@nestjs/serve-static": "^3.0.0",
     "@nestjs/swagger": "^6.1.0",
     "@nestjs/typeorm": "^9.0.1",
+    "@types/uuid": "^9.0.1",
     "express-session": "^1.17.3",
     "passport": "^0.6.0",
+    "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.1",
     "passport-twitter": "^1.0.4",
     "pg": "^8.8.0",
@@ -38,7 +40,8 @@
     "rxjs": "7.8.0",
     "sqlite3": "^5.1.4",
     "swagger-ui-express": "4.5",
-    "typeorm": "^0.3.11"
+    "typeorm": "^0.3.11",
+    "uuid": "^9.0.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^9.1.1",

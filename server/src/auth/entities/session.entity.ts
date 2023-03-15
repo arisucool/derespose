@@ -32,4 +32,8 @@ export class Session extends BaseEntity {
     type: () => User,
   })
   user: User;
+
+  // リフレッシュトークン
+  @Column()
+  refreshToken: string;
 }

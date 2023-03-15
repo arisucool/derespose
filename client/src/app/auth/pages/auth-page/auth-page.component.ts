@@ -15,12 +15,34 @@ export class AuthPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    const queryParams = this.activatedRoute.snapshot.queryParams;
-    if (queryParams['token'] && queryParams['token'].length > 0) {
-      this.authService.setAccessToken(queryParams['token']);
+    this.saveTokens();
+  }
 
-      // トップページへ遷移
-      window.location.href = '/';
+  saveTokens() {
+    const queryParams = this.activatedRoute.snapshot.queryParams;
+    if (!queryParams) {
+      return;
     }
+
+    if (
+      !queryParams['accessToken'] ||
+      queryParams['accessToken'].length === 0
+    ) {
+      return;
+    }
+    if (
+      !queryParams['refreshToken'] ||
+      queryParams['refreshToken'].length === 0
+    ) {
+      return;
+    }
+
+    this.authService.setTokens(
+      queryParams['accessToken'],
+      queryParams['refreshToken'],
+    );
+
+    // トップページへ遷移
+    window.location.href = '/';
   }
 }

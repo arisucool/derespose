@@ -9,18 +9,19 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Session } from './entities/session.entity';
 import { User } from 'src/users/entities/user.entity';
+import { RefreshTokenStrategy } from './strategies/refresh-token.strategy';
 
 @Module({
-  providers: [AuthService, TwitterStrategy, JwtStrategy],
+  providers: [AuthService, TwitterStrategy, JwtStrategy, RefreshTokenStrategy],
   imports: [
     // .env ファイルの読み込み
     ConfigModule.forRoot({
       envFilePath: ['.env.development'],
     }),
-    // JWT の設定
+    // JWT (アクセストークン) の設定
     JwtModule.register({
       secret: process.env.JWT_TOKEN_SECRET,
-      signOptions: { expiresIn: '31 days' },
+      signOptions: { expiresIn: process.env.JWT_TOKEN_EXPIRES || '10s' },
     }),
     // Passport の設定
     PassportModule.register({ session: true }),

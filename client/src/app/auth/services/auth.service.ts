@@ -4,11 +4,17 @@ import * as uuid from 'uuid';
 import { User } from 'src/.api-client/models/user';
 import { ApiService } from 'src/.api-client/services/api.service';
 
+interface SavedTokens {
+  accessToken: string;
+  refreshToken: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
   private currentUser?: User;
+  private accessToken?: string;
   private currentUserSource = new Subject<User | undefined>();
   public $currentUser = this.currentUserSource.asObservable();
 
@@ -38,7 +44,7 @@ export class AuthService {
     }, 1000);
   }
 
-  async getCurrentUser() {
+  async getCurrentUser(enableRetry = true): Promise<User | undefined> {
     if (!this.getAccessToken()) {
       this.currentUserSource.next(undefined);
       return undefined;
@@ -49,9 +55,7 @@ export class AuthService {
       user = await lastValueFrom(this.apiService.usersControllerGetMe());
     } catch (e: any) {
       if (e.status === 401) {
-        this.currentUser = undefined;
-        this.clearAccessToken();
-        this.currentUserSource.next(undefined);
+        this.clearTokens();
         return undefined;
       }
       console.error(`Error getting current user: ${e.message}`);
@@ -67,26 +71,49 @@ export class AuthService {
     return false;
   }
 
-  setAccessToken(token: string) {
-    window.localStorage.setItem('deresposeToken', token);
+  setTokens(accessToken: string, refreshToken: string) {
+    const tokens: SavedTokens = {
+      accessToken,
+      refreshToken,
+    };
+    window.localStorage.setItem('deresposeTokens', JSON.stringify(tokens));
     window.localStorage.setItem('deresposeLoggedInAt', Date.now().toString());
-    console.log(`[AuthService] - setAccessToken`);
+    console.log(`[AuthService] - setTokens`);
   }
 
-  getAccessToken(): string | null {
-    const accessToken = window.localStorage.getItem('deresposeToken');
-    return accessToken;
+  clearTokens() {
+    this.currentUser = undefined;
+    window.localStorage.removeItem('deresposeTokens');
+    window.localStorage.removeItem('deresposeLoggedInAt');
+    this.currentUserSource.next(undefined);
   }
 
-  clearAccessToken() {
-    window.localStorage.removeItem('deresposeToken');
+  getAccessToken(): string | undefined {
+    return this.getSavedTokens()?.accessToken;
+  }
+
+  async refreshAccessToken(): Promise<string | undefined> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) return undefined;
+
+    try {
+      const response = await lastValueFrom(
+        this.apiService.authControllerRefreshToken({
+          'X-Refresh-Token': refreshToken,
+        }),
+      );
+      console.log(`[AuthService] refreshAccessToken - Refreshed`);
+      this.setTokens(response, refreshToken);
+      return response;
+    } catch (e: any) {
+      console.error(`[AuthService] refreshAccessToken`, e);
+      return undefined;
+    }
   }
 
   async logout() {
     await lastValueFrom(this.apiService.authControllerLogout());
-    window.localStorage.removeItem('deresposeToken');
-    window.localStorage.removeItem('deresposeLoggedInAt');
-    this.currentUserSource.next(undefined);
+    this.clearTokens();
     window.location.href = '/';
   }
 
@@ -97,5 +124,21 @@ export class AuthService {
     identifier = uuid.v4();
     window.localStorage.setItem('deresposeRandomUID', identifier);
     return identifier;
+  }
+
+  private getRefreshToken(): string | undefined {
+    return this.getSavedTokens()?.refreshToken;
+  }
+
+  private getSavedTokens(): SavedTokens | undefined {
+    const tokensJson = window.localStorage.getItem('deresposeTokens');
+    if (!tokensJson) return undefined;
+
+    try {
+      const tokens = JSON.parse(tokensJson);
+      return tokens;
+    } catch (e: any) {}
+
+    return undefined;
   }
 }
