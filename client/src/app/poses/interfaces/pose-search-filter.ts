@@ -4,6 +4,7 @@ export type PoseFaceExpression =
   | 'smile'
   | 'blush'
   | 'surprise'
+  | 'sad'
   | 'others'
   | 'unknown';
 

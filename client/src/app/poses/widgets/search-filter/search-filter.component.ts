@@ -32,6 +32,10 @@ export class SearchFilterComponent {
       value: 'surprise',
     },
     {
+      label: '悲しみ',
+      value: 'sad',
+    },
+    {
       label: 'その他',
       value: 'others',
     },
