@@ -24,8 +24,8 @@ export class PoseSearchService {
   // ポーズセット定義ファイルのキャッシュ有効期限 (1時間)
   public static readonly POSESET_DEFINITIONS_CACHE_EXPIRES = 1000 * 60 * 60 * 1;
 
-  // ポーズセットファイルのキャッシュ有効期限 (2週間)
-  public static readonly POSESET_CACHE_EXPIRES = 1000 * 60 * 60 * 24 * 14;
+  // ポーズセットファイルのキャッシュ有効期限 (無期限)
+  public static readonly POSESET_CACHE_EXPIRES = undefined;
 
   // ポーズの類似度のしきい値
   public static readonly BODY_POSE_SIMILARITY_THRESHOLD = 0.75;
