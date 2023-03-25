@@ -1,0 +1,10 @@
+<ng-container *ngIf="onPoseLoading$ | async as loadingStatus">
+  <ng-container *ngIf="1.0 > loadingStatus && loadingStatus > 0.0">
+    <div class="modal-container">
+      <div class="modal">
+        <h4>ポーズデータを読み込んでいます...</h4>
+        <p>{{ loadingStatus * 100 | number : '1.0-0' }} %</p>
+      </div>
+    </div>
+  </ng-container>
+</ng-container>

@@ -5,9 +5,10 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { MaterialModule } from 'src/material.module';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ConfirmDialogComponent } from './widgets/dialogs/confirm-dialog/confirm-dialog.component';
+import { LoadingModalComponent } from './widgets/loading-modal/loading-modal.component';
 
 @NgModule({
-  declarations: [ConfirmDialogComponent],
+  declarations: [ConfirmDialogComponent, LoadingModalComponent],
   imports: [
     CommonModule,
     MaterialModule,
@@ -23,6 +24,7 @@ import { ConfirmDialogComponent } from './widgets/dialogs/confirm-dialog/confirm
     FormsModule,
     ReactiveFormsModule,
     NgxSpinnerModule,
+    LoadingModalComponent,
   ],
 })
 export class SharedModule {}

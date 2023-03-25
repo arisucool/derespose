@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PoseSet, PoseSetItem } from 'ngx-mp-pose-extractor';
 import { SimilarPoseItem } from 'ngx-mp-pose-extractor/lib/interfaces/similar-pose-item';
-import { lastValueFrom } from 'rxjs';
+import { lastValueFrom, Subject } from 'rxjs';
 import { Pose } from 'src/.api-client/models/pose';
 import { PoseTag } from 'src/.api-client/models/pose-tag';
 import { ApiService } from 'src/.api-client/services/api.service';
@@ -34,6 +34,10 @@ export class PoseSearchService {
   // ポーズの最大数
   public static readonly MAX_POSE_SEARCH_RESULT_COUNT = 50;
 
+  // ポーズの読み込み情報を伝えるイベント
+  private onPoseLoading: Subject<number> = new Subject();
+  public onPoseLoading$ = this.onPoseLoading.asObservable();
+
   public availableTags: string[] = [];
 
   private poseSetDefinitions?: {
@@ -50,6 +54,9 @@ export class PoseSearchService {
     if (this.poseSetDefinitions) {
       return;
     }
+
+    // イベントを伝達
+    this.onPoseLoading.next(0);
 
     // ポーズセット定義ファイルを読み込む
     let poseSetDefinitionJson: {
@@ -84,6 +91,8 @@ export class PoseSearchService {
 
     // 各ポーズセットファイルを読み込む
     const poseSetDefinitions: { [key: string]: PoseSetDefinition } = {};
+    let numOfAllPoseSets = Object.keys(poseSetDefinitionJson).length,
+      count = 0;
     for (const poseSetName of Object.keys(poseSetDefinitionJson)) {
       const expectVersion =
         poseSetDefinitionJson[poseSetName].version !== undefined
@@ -91,17 +100,23 @@ export class PoseSearchService {
           : -1;
 
       const poseSet = await this.loadPoseSet(poseSetName, expectVersion);
-
       poseSetDefinitions[poseSetName] = {
         ...poseSetDefinitionJson[poseSetName],
         poseSet: poseSet,
       };
+
+      // イベントを伝達
+      count++;
+      this.onPoseLoading.next(count / numOfAllPoseSets);
     }
     console.log(
       `[PoseSearchService] loadPoses - Loaded posesets`,
       poseSetDefinitions,
     );
     this.poseSetDefinitions = poseSetDefinitions;
+
+    // イベントを伝達
+    this.onPoseLoading.next(1.0);
   }
 
   async getPoseSetDefinitions() {
