@@ -44,7 +44,7 @@
     <video
       #cameraVideo
       [srcObject]="this.cameraVideoStream"
-      [style.display]="this.cameraPosePreviewStream ? 'none' : 'block'"
+      [ngClass]="{ hide: this.cameraPosePreviewStream }"
       class="camera-preview"
       autoplay
       muted
