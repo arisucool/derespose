@@ -1,3 +1,4 @@
+import { ViewportScroller } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DeviceDetectorService } from 'ngx-device-detector';
@@ -40,6 +41,7 @@ export class SearchPageComponent implements OnInit {
     private changeDetectionRef: ChangeDetectorRef,
     private activatedRoute: ActivatedRoute,
     private spinner: NgxSpinnerService,
+    private viewportScroller: ViewportScroller,
   ) {}
 
   async ngOnInit() {
@@ -100,5 +102,11 @@ export class SearchPageComponent implements OnInit {
     this.matchedPoses = event.poses;
     this.state = 'completed';
     this.spinner.hide();
+
+    if (this.searchMode === 'camera' && this.deviceDetectorService.isMobile()) {
+      // カメラ検索、かつ、モバイル環境では、検索結果周辺へスクロール
+      this.viewportScroller.setOffset([0, 150]);
+      this.viewportScroller.scrollToAnchor('matchedPosesContainer');
+    }
   }
 }

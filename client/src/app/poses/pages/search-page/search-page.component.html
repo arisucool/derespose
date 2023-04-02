@@ -72,7 +72,9 @@
   </div>
   <!---->
 
+  <!-- 検索結果 -->
   <div
+    id="matchedPosesContainer"
     class="matched-poses-container"
     [ngClass]="{ init: this.state === 'initializing' }"
   >
@@ -97,6 +99,7 @@
       </ng-container>
     </ng-container>
   </div>
+  <!---->
 </div>
 
 <!-- デレスポナビ -->
