@@ -19,6 +19,8 @@ import { PoseSearchService } from 'src/app/poses/services/pose-search.service';
 import { PoseTagsService } from 'src/app/poses/services/pose-tags.service';
 import { environment } from '../../../../../environments/environment';
 import { MatchedPose } from 'src/app/poses/interfaces/matched-pose';
+import { ViewportScroller } from '@angular/common';
+import { DeviceDetectorService } from 'ngx-device-detector';
 
 @Component({
   selector: 'app-camera-search-ctrl',
@@ -93,6 +95,8 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     private poseSearchService: PoseSearchService,
     private poseTagsService: PoseTagsService,
     private ngZone: NgZone,
+    private deviceDetectorService: DeviceDetectorService,
+    private viewportScroller: ViewportScroller,
   ) {}
 
   async ngOnInit() {
@@ -123,7 +127,7 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     this.setFocusToShutterButton();
 
     // セッションの復元
-    this.restoreSession();
+    // this.restoreSession();
   }
 
   ngOnDestroy() {
@@ -202,6 +206,15 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
 
     console.log(`[CameraSearchFormComponent] startPhotoShootCountdown`);
 
+    // モバイル環境ならば、カメラ映像領域へスクロール
+    if (this.deviceDetectorService.isMobile()) {
+      timer(1000).subscribe(() => {
+        this.viewportScroller.setOffset([0, 20]);
+        this.viewportScroller.scrollToAnchor('videoContainer');
+      });
+    }
+
+    // カメラが停止していたら、もう一度初期化
     if (this.cameraVideoElement.nativeElement.paused) {
       console.log(
         `[CameraSearchFormComponent] startPhotoShootCountdown - Restarting camera...`,
@@ -338,8 +351,17 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     }
 
     await this.poseExtractorService.onVideoFrame(videoElement);
+
     if (this.state === 'initializing') {
+      // 初期化中から準備完了になったときは
       this.state = 'standby';
+      // モバイル環境ならば、カメラ映像領域へスクロール
+      if (this.deviceDetectorService.isMobile()) {
+        timer(1000).subscribe(() => {
+          this.viewportScroller.setOffset([0, 20]);
+          this.viewportScroller.scrollToAnchor('videoContainer');
+        });
+      }
     }
     await new Promise(requestAnimationFrame);
     this.onCameraVideoFrame();

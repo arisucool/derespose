@@ -12,7 +12,7 @@
   </small>
 </p>
 <div class="search-ctrl app-card">
-  <div class="video-container">
+  <div class="video-container" id="videoContainer">
     <!-- メッセージ領域 -->
     <div
       class="message"
@@ -44,7 +44,9 @@
     <video
       #cameraVideo
       [srcObject]="this.cameraVideoStream"
-      [ngClass]="{ hide: this.cameraPosePreviewStream }"
+      [ngClass]="{
+        hide: this.cameraPosePreviewStream
+      }"
       class="camera-preview"
       autoplay
       muted
