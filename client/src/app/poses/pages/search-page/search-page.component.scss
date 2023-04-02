@@ -103,10 +103,11 @@
 
   .container {
     flex-direction: column;
+    margin-top: 1rem;
 
     .search-ctrl-container {
       width: 100%;
-      margin-top: 3rem !important;
+      margin-top: 0 !important;
       margin-bottom: 1rem;
       min-width: unset;
       max-width: unset;
