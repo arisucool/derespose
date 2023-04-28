@@ -37,16 +37,22 @@ export class AuthService {
       },
     });
 
-    if (!user) {
-      user = new User();
-      user.twitterAccessToken = token;
-      user.twitterUserId = profile.id;
-      user.twitterUserName = profile.username;
-      user.displayName = profile.displayName;
+    let avatarImageUrl: string | undefined;
+    if (profile.photos && profile.photos.length > 0) {
+      avatarImageUrl = profile.photos[0].value.replace(/^https:/g, '');
     }
 
+    if (!user) {
+      user = new User();
+      user.twitterUserId = profile.id;
+    }
+
+    user.twitterAccessToken = token;
     user.lastLoggedAt = new Date();
     user.lastLoggedIpAddress = ipAddress;
+    user.twitterUserName = profile.username;
+    user.displayName = profile.displayName;
+    user.avatarImageUrl = avatarImageUrl;
     user = await user.save();
 
     // セッションを生成

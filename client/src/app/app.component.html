@@ -13,7 +13,19 @@
           <span class="user-name">{{ currentUser.displayName }} </span>
           さん
         </p>
-        <mat-icon class="logged-in">account_circle</mat-icon>
+
+        <!-- アバター画像 -->
+        <mat-icon
+          class="logged-in"
+          *ngIf="currentUser.avatarImageUrl === undefined"
+          >account_circle</mat-icon
+        >
+        <img
+          class="avatar-img logged-in"
+          *ngIf="currentUser.avatarImageUrl"
+          [src]="currentUser.avatarImageUrl"
+        />
+        <!---->
       </a>
     </ng-container>
 

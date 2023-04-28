@@ -12,7 +12,6 @@ import {
   ApiHeader,
   ApiProduces,
   ApiResponse,
-  ApiResponseProperty,
 } from '@nestjs/swagger';
 import { Response } from 'express';
 import { AuthService } from './auth.service';

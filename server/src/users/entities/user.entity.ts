@@ -38,6 +38,13 @@ export class User extends BaseEntity {
   })
   twitterAccessToken?: string;
 
+  // アバター画像
+  @Column({
+    nullable: true,
+  })
+  @ApiProperty()
+  avatarImageUrl?: string;
+
   // 利用開始日時
   @CreateDateColumn()
   createdAt: Date;
