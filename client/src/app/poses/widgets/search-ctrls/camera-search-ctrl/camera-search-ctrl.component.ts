@@ -100,6 +100,7 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     private ngZone: NgZone,
     private deviceDetectorService: DeviceDetectorService,
     private viewportScroller: ViewportScroller,
+    private deviceService: DeviceDetectorService,
   ) {}
 
   async ngOnInit() {
@@ -318,6 +319,10 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
           this.snackBar.open(`カメラが見つかりません...`, 'OK');
           this.state = 'error';
           return;
+        } else if (this.deviceService.os === 'iOS') {
+          // iOS はこの時点でカメラを複数取得できない場合があるため、
+          // ひとまず、カメラの切り替えボタンを有効化し、デフォルトのカメラモードを前面カメラとする
+          this.cameraFacingMode = 'user';
         } else if (videoDevices.length == 1) {
           // カメラが1つならば、カメラの切り替えボタンを無効化
           this.cameraFacingMode = undefined;
