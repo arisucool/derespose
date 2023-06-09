@@ -140,13 +140,19 @@
       // 検索範囲設定ボタン
       .search-range-menu-button {
         position: relative;
-        left: 0.5rem;
+        right: 0rem;
       }
 
       // セルフタイマー設定ボタン
       .self-timer-menu-button {
         position: relative;
-        right: -0.5rem;
+        right: 0rem;
+      }
+
+      // カメラの切り替えボタン
+      .camera-switch-button {
+        position: relative;
+        left: 0.5rem;
       }
     }
   }

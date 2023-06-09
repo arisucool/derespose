@@ -51,6 +51,9 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
   // カメラ映像のストリーム
   public cameraVideoStream?: MediaStream;
 
+  // カメラのモード
+  public cameraFacingMode: 'user' | 'environment' | undefined = undefined;
+
   // 最新のポーズ検出結果
   public cameraPosePreviewStream?: MediaStream;
   public currentPosePreviewImageDataUrl?: string;
@@ -270,6 +273,25 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
     );
   }
 
+  public toggleCamera() {
+    if (this.cameraFacingMode === undefined) return;
+
+    let mes: string;
+    if (this.cameraFacingMode === 'user') {
+      this.cameraFacingMode = 'environment';
+      mes = '背面カメラに切り替えています...';
+    } else {
+      this.cameraFacingMode = 'user';
+      mes = '前面カメラに切り替えています...';
+    }
+    this.snackBar.open(mes, undefined, {
+      duration: 1000,
+    });
+
+    this.stopCamera();
+    this.initCamera();
+  }
+
   public setSearchPoseRange(poseRange: 'all' | 'bodyPose' | 'handPose') {
     this.searchPoseRange = poseRange;
 
@@ -284,13 +306,42 @@ export class CameraSearchCtrlComponent implements OnInit, OnDestroy {
   private async initCamera() {
     this.state = 'initializing';
 
+    if (this.cameraFacingMode === undefined) {
+      try {
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        // カメラのみを抽出
+        const videoDevices = devices.filter(
+          (device) => device.kind === 'videoinput',
+        );
+        // カメラの数を判定
+        if (videoDevices.length === 0) {
+          this.snackBar.open(`カメラが見つかりません...`, 'OK');
+          this.state = 'error';
+          return;
+        } else if (videoDevices.length == 1) {
+          // カメラが1つならば、カメラの切り替えボタンを無効化
+          this.cameraFacingMode = undefined;
+        } else {
+          // カメラが2つ以上ならば、カメラの切り替えボタンを有効化し、デフォルトのカメラモードを前面カメラとする
+          this.cameraFacingMode = 'user';
+        }
+      } catch (e: any) {
+        this.snackBar.open(`カメラが使用できません... ${e.message}`, 'OK');
+        this.state = 'error';
+        return;
+      }
+    }
+
     let stream;
 
     try {
       stream = await navigator.mediaDevices.getUserMedia({
         video: {
           width: 800,
-          facingMode: 'user',
+          facingMode:
+            this.cameraFacingMode === undefined
+              ? 'user'
+              : this.cameraFacingMode,
         },
         audio: false,
       });

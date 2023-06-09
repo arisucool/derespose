@@ -128,7 +128,7 @@
         >timer_10</mat-icon
       >
     </button>
-    <mat-menu #selfTimerMenu="matMenu">
+    <mat-menu #selfTimerMenu="matMenu" yPosition="above">
       <button
         (click)="this.setCountdownSecondsForDecidePose(3)"
         mat-menu-item
@@ -165,7 +165,7 @@
         >sign_language</mat-icon
       >
     </button>
-    <mat-menu #shutterMenu="matMenu">
+    <mat-menu #shutterMenu="matMenu" yPosition="above">
       <button
         (click)="this.setSearchPoseRange('all')"
         mat-menu-item
@@ -191,6 +191,20 @@
         <span>手指でポーズを探す</span>
       </button>
     </mat-menu>
+    <!---->
+
+    <!-- カメラ切り替えボタン -->
+    <button
+      class="camera-switch-menu-button"
+      *ngIf="this.cameraFacingMode !== undefined"
+      (click)="this.toggleCamera()"
+      mat-icon-button
+      aria-label="インカメラ/アウトカメラの切り替え"
+      matTooltip="インカメラ/アウトカメラの切り替え"
+      [disabled]="this.state === 'countdown'"
+    >
+      <mat-icon>cameraswitch</mat-icon>
+    </button>
     <!---->
   </div>
   <!---->
